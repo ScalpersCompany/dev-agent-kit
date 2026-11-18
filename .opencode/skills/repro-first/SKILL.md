@@ -1,7 +1,7 @@
 ---
 name: repro-first
 description: "Reproduce a bug with a failing test before fixing it."
-version: 1.0.0
+version: 1.1.0
 author: Nicolas Ramos
 ---
 
@@ -9,12 +9,17 @@ author: Nicolas Ramos
 
 Use when fixing a bug from a ticket, a report or a failing check.
 
+Kit root: `KIT="${DEV_AGENT_KIT:-$HOME/dev-agent-kit}"`. If the current repo has no kit
+files, use the same paths under `$KIT`.
+
 1. Restate the bug in one sentence and the expected behavior in another.
-2. Find the entry point in `docs/FEATURE_MAP.md`.
+2. Find the entry point in `docs/FEATURE_MAP.md`; if the repo has none, use
+   `$KIT/docs/FEATURE_MAP.md`.
 3. Write the smallest failing test or script that reproduces it.
 4. Run it. It must fail for the stated reason, not for an unrelated import error.
 5. Fix the root cause, not the symptom.
-6. Run the test, then `bash verify/run.sh`.
+6. Run the test, then `bash verify/run.sh` if the repo has it; otherwise
+   `bash "$KIT/verify/run.sh"`.
 7. Keep the test. If the bug can come back, it is a regression test now.
 
 ## Report

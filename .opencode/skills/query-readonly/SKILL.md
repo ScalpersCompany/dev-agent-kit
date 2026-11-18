@@ -1,7 +1,7 @@
 ---
 name: query-readonly
 description: "Answer data questions with read-only SQL and saved evidence."
-version: 1.0.0
+version: 1.1.0
 author: Nicolas Ramos
 ---
 
@@ -9,11 +9,14 @@ author: Nicolas Ramos
 
 Use when the answer needs data from the database.
 
+Kit root: `KIT="${DEV_AGENT_KIT:-$HOME/dev-agent-kit}"`. If the current repo has no
+`evidence/`, use `$KIT/evidence/`.
+
 - Only `SELECT`. Start with `SET TRANSACTION READ ONLY`.
 - No writes, no DDL, no stored procedures that write.
 - Always add `LIMIT 200` and a `WHERE` on a date or id range.
 - Never point at production. If the only database is production, stop and ask for a replica or an export.
-- Save the query and the result in `evidence/<run-id>/`.
+- Save the query and the result in `evidence/<run-id>/` (repo or `$KIT/evidence/<run-id>/`).
 
 ## Output
 

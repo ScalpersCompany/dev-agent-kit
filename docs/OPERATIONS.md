@@ -59,7 +59,9 @@ Both agents also have `odoo-11-code-review`, `factorlibre-mr-preflight`, `odoo-1
 `sga-e2e-testing` and `odoo-11-reservas-marketplace` in its global skills directory.
 
 The skills are procedures; they do not make the gates mandatory. `verify/`, `guard/` and
-`evals/` stay repo-local because their commands and database are repo-specific. The shared
+`evals/` stay repo-local because their commands and database are repo-specific. When a
+skill runs from a repo without the kit, it falls back to `DEV_AGENT_KIT` or
+`~/dev-agent-kit`; set `DEV_AGENT_KIT` if the clone lives elsewhere. The shared
 `~/.agents/AGENTS.md` does not mention the kit yet; add the gate rule there when the team
 wants every agent to run it without being asked.
 

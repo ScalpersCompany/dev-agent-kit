@@ -6,6 +6,8 @@
 
 - First real eval case: `odoo-11-code-review` over a seeded Odoo 11 module, with a weighted rubric and a `context.json` that gives the judge the source tree under review.
 - FactorLibre MR preflight eval case: a git fixture with `master`/`feature`, a static `repo.diff`, the skill copy and a weighted rubric. The preflight returns 6 ERROR, 15 WARN and 4 INFO; the credential scan finds two readable fields.
+- The five path-aware skills are now 1.1.0: when the repo has no `verify/`, `guard/`,
+  `docs/` or `evidence/`, they use `DEV_AGENT_KIT` or `~/dev-agent-kit` by absolute path.
 - Global skills on dev-nicolas: the six kit skills are installed in both OpenCode and
   Hermes; `rsc-harness-brain`, `gitlab`, `jira-cloud`, `sga-e2e-testing` and
   `odoo-11-reservas-marketplace` were added to OpenCode. The eval coverage table in
