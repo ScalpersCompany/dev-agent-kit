@@ -5,6 +5,10 @@
 ### Added
 
 - First real eval case: `odoo-11-code-review` over a seeded Odoo 11 module, with a weighted rubric and a `context.json` that gives the judge the source tree under review.
+- FactorLibre MR preflight eval case: a git fixture with `master`/`feature`, a static `repo.diff`, the skill copy and a weighted rubric. The preflight returns 6 ERROR, 15 WARN and 4 INFO; the credential scan finds two readable fields.
+- `docs/agent-quality/ENVIRONMENT.md` now has the real disposable-database test for `scalpers_partner_vat_unique` (four post-install tests, verified) and the `--entrypoint odoo` workaround for the doodba addons link.
+- FactorLibre eval baseline: 9.52/10 over K=3 (threshold 8.5), after fixing the scanner
+  and preflight script defects it exposed.
 - `docs/DEV-BASE.md`: what the kit covers in the development base and where the production gate sits.
 - `docs/EVAL-BASELINE.md`: first real eval baseline, 9.81/10 over K=3 (threshold 8.5).
 
@@ -18,6 +22,8 @@
 - The eval harness gives the judge the full source under review: `context.json` can list files or directories, and the per-file and total artifact caps were raised for a whole skill plus a module.
 - `odoo_lint` skips `evals/` so the seeded eval fixtures do not fail the guard on the kit itself; run it directly with `--root` on a case to lint that case.
 - `loop.sh` passes `MODEL` and `JUDGE_MODEL` to the harness, stops if the harness produced no `score.json`, and runs the skill edit with `--standalone`.
+- The eval harness accepts `.diff`, `.patch` and `.js` artifacts, so a FactorLibre MR case can give the judge the patch and the POS/JS files.
+- `factorlibre-mr-preflight` is now 1.1.0: `scan_secret_fields.py` no longer swallows the field after a one-line definition, and `preflight_mr.py` no longer treats `model="..."` as an xmlid.
 - The `odoo-11-code-review` skill is now 1.2.1: the review report contract fixes
   absent-file citations, per-field `help=` enumeration, `models.Constraint` and
   the `@api.one` N+1 case; the reviewer CLI and model names are placeholders and

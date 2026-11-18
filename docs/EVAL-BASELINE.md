@@ -1,7 +1,9 @@
-# First eval baseline
+# Eval baselines
 
-Internal baseline. It records the score and what the run observed; it does not name the
+Internal baselines. They record the score and what each run observed; they do not name the
 executor or the judge. Both are approved internal models, different from each other.
+
+## Odoo 11 code review
 
 - Case: `evals/cases/odoo-11-code-review/01-seeded`
 - Skill: `odoo-11-code-review` 1.2.1
@@ -23,7 +25,41 @@ returned 10.0. The remaining variance is model adherence to the skill's report
 contract, not a missing rule: the contract in 1.2.1 already requires one line per
 field without `help=` and v11-only fixes.
 
-## Command
+## FactorLibre MR preflight
+
+- Case: `evals/cases/factorlibre-mr-preflight/01-seeded`
+- Skill: `factorlibre-mr-preflight` 1.1.0
+- Runs: 3
+- Isolation: `worktree`
+- Scores: 9.50, 9.57, 9.50
+- Mean: 9.52; min 9.50; max 9.57; standard deviation 0.03
+- Threshold: 8.5; result: pass
+- Cost: 0.520649 USD; tokens: 2,731,935 (executor plus judge, summed across steps)
+- Deterministic output: 6 ERROR, 15 WARN, 4 INFO; the credential scan finds 2 clear fields.
+
+What it found: the eval caught two real defects in the skill scripts.
+`scan_secret_fields.py` read a one-line field and swallowed the next, so
+`bpost_passphrase_encoded` never appeared; `preflight_mr.py` treated `model="..."`
+as an xmlid and emitted false INFOs for `ir.*` and the module's own models. Both are
+fixed in 1.1.0.
+
+The three runs reported the six ERROR, the fifteen WARN, both credential fields and the
+manual blockers. The only repeated gap is the migration wording: the rubric asked for a
+missing `LIMIT`, while the agent correctly reported an unrestricted `UPDATE` without
+`WHERE`; the rubric now says "without WHERE or limit". Run 1 also omitted the
+`access_loyalty_card_user` row when citing the ACL; runs 2 and 3 cited it.
+
+```bash
+python3 evals/harness.py \
+  --case-dir evals/cases/factorlibre-mr-preflight/01-seeded \
+  --rubric evals/rubric.factorlibre-mr-preflight.json \
+  --agent build \
+  --model <approved> \
+  --judge-model <approved-different> \
+  --k 3
+```
+
+## Odoo 11 command
 
 ```bash
 python3 evals/harness.py \
@@ -35,5 +71,5 @@ python3 evals/harness.py \
   --k 3
 ```
 
-The shipped rubric uses `REPLACE_WITH_APPROVED_MODEL` placeholders. Do not put the
+The shipped rubrics use `REPLACE_WITH_APPROVED_MODEL` placeholders. Do not put the
 model names in this document, in a ticket, or in a commit message.

@@ -21,7 +21,7 @@ python3 evals/harness.py \
 
 The rubric ships with `REPLACE_WITH_APPROVED_MODEL` placeholders; set them in a copy or pass both flags. The judge must be a different model from the one under test.
 
-Baseline: `docs/EVAL-BASELINE.md` (9.81/10, K=3, threshold 8.5, one run at 9.44 and two at 10.0).
+Baseline: `docs/EVAL-BASELINE.md` (Odoo 11 code review 9.81/10, FactorLibre preflight 9.52/10; K=3, threshold 8.5).
 
 ## What is inside
 
@@ -36,7 +36,9 @@ guard/odoo_lint.py            deterministic Odoo checks (sudo, cr.commit, raw SQ
 evals/harness.py              k runs per case in a disposable worktree or copy, artifacts, judge of another model, score.json
 evals/rubric.example.json     rubric shape
 evals/rubric.odoo-11-code-review.json  weighted rubric for the first real eval
+evals/rubric.factorlibre-mr-preflight.json  weighted rubric for the MR preflight eval
 evals/cases/odoo-11-code-review/01-seeded/  seeded Odoo 11 module and its context.json
+evals/cases/factorlibre-mr-preflight/01-seeded/  seeded MR fixture, repo.diff and skill copy
 evals/loop.sh                 hill climb until the score passes
 scripts/scan_env.sh           discovery: stack, tests, CI, DB env var names
 docs/FEATURE_MAP.template.md  map of the app from the user's point of view

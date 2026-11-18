@@ -38,7 +38,7 @@ HEAVY = {
     ".pytest_cache",
 }
 SUPPORT_PREFIXES = (".opencode/", "AGENTS.md", "verify/", "guard/", "scripts/", "docs/")
-ARTIFACT_SUFFIXES = {".json", ".md", ".txt", ".log", ".xml", ".csv", ".yaml", ".yml", ".html", ".py", ".rst", ".po"}
+ARTIFACT_SUFFIXES = {".json", ".md", ".txt", ".log", ".xml", ".csv", ".yaml", ".yml", ".html", ".py", ".rst", ".po", ".js", ".diff", ".patch"}
 MAX_ARTIFACT_FILES = 20
 MAX_ARTIFACT_FILE_CHARS = 20000
 MAX_ARTIFACT_CHARS = 45000
