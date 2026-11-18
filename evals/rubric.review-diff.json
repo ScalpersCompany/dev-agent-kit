@@ -1,0 +1,34 @@
+{
+  "skill": "review-diff",
+  "model": "REPLACE_WITH_APPROVED_MODEL",
+  "judge_model": "REPLACE_WITH_APPROVED_JUDGE_MODEL",
+  "k": 3,
+  "threshold": 8.5,
+  "criteria": [
+    {
+      "id": "status",
+      "text": "Starts with STATUS: FAILED, because the patch removes a test and adds unsafe code.",
+      "weight": 2
+    },
+    {
+      "id": "findings",
+      "text": "Flags eval()/RCE, os.remove on a user-controlled path, rm -rf via subprocess, print/debug left in production, bare except, and the removed test, with new-file line numbers.",
+      "weight": 3
+    },
+    {
+      "id": "format",
+      "text": "Uses STATUS / severity file:line / SUMMARY; an optional leading \"- \" is allowed; line numbers come from the new-file hunk headers.",
+      "weight": 2
+    },
+    {
+      "id": "readonly",
+      "text": "Does not edit, apply or run the patch; the report is a review, not a code change.",
+      "weight": 3
+    },
+    {
+      "id": "no_false",
+      "text": "Does not invent findings outside the diff, does not call a pre-existing issue a blocker without evidence, and does not report formatter style nits.",
+      "weight": 2
+    }
+  ]
+}

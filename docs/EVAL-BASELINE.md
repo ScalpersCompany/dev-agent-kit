@@ -114,6 +114,33 @@ python3 evals/harness.py \
   --k 3
 ```
 
+## review-diff
+
+- Case: `evals/cases/review-diff/01-unsafe-handler`
+- Skill: `review-diff` 1.0.0 measured; 1.1.0 clarifies line numbers and the `- ` prefix
+- Runs: 3
+- Isolation: `worktree`
+- Scores: 10.0, 10.0, 8.92
+- Mean: 9.64; min 8.92; max 10.0; standard deviation 0.51
+- Threshold: 8.5; result: pass
+- Cost: 0.226343 USD; tokens: 706,880 (executor plus judge, summed across steps)
+
+The first two runs found the six required issues and followed the exact contract. Run 3
+used a diff position (`tests/test_service.py:35`) instead of the new-file line and was
+penalized for a leading `- ` even though the skill's example uses it; the rubric and the
+skill now state the new-file line rule and allow the optional prefix. The skill version is
+1.1.0 for that clarification; the 9.64 baseline was measured before the clarification.
+
+```bash
+python3 evals/harness.py \
+  --case-dir evals/cases/review-diff/01-unsafe-handler \
+  --rubric evals/rubric.review-diff.json \
+  --agent build \
+  --model <approved> \
+  --judge-model <approved-different> \
+  --k 3
+```
+
 ## Coverage
 
 | Skill | Case | Real run |
@@ -122,10 +149,11 @@ python3 evals/harness.py \
 | `factorlibre-mr-preflight` | `evals/cases/factorlibre-mr-preflight/01-seeded` | 9.52/10, K=3 |
 | `dev-verify` | `evals/cases/dev-verify/01-fix-failing-test` | 10.0/10, K=3 |
 | `repro-first` | `evals/cases/repro-first/01-discount-bug` | 10.0/10, K=3 |
-| `review-diff`, `correct`, `odoo-safe-change`, `query-readonly` | none | installed; no real run |
+| `review-diff` | `evals/cases/review-diff/01-unsafe-handler` | 9.64/10, K=3 |
+| `correct`, `odoo-safe-change`, `query-readonly` | none | installed; no real run |
 | `odoo-11-standards`, `odoo-11-orm-performance`, `odoo-11-credential-security`, `odoo-11-reservas-marketplace`, `sga-e2e-testing`, `gitlab`, `jira-cloud`, `rsc-harness-brain`, `gentle-ai-toolchain`, `odoo-development` | none | installed; no real run |
 
-Only the four listed above have a real score. The rest are installed globally, but they are not
+Only the five listed above have a real score. The rest are installed globally, but they are not
 claimed as verified; a case is the next step for each one that matters.
 
 ## Odoo 11 command

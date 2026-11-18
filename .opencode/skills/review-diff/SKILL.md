@@ -1,7 +1,7 @@
 ---
 name: review-diff
 description: "Read-only diff review with a machine-readable verdict."
-version: 1.0.0
+version: 1.1.0
 author: Nicolas Ramos
 ---
 
@@ -18,6 +18,9 @@ Then one finding per line:
 ```
 - <BLOCKER|CRITICAL|WARNING|SUGGESTION>: <file>:<line> <what is wrong and what to do>
 ```
+
+A leading `- ` is optional; the severity token must be the first non-space text. Use the
+new-file line number from the `@@ +start` hunk header, never the diff's own line count.
 
 End with `SUMMARY: <n> files reviewed`.
 

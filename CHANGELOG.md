@@ -11,6 +11,9 @@
 - The eval diff excludes the kit support paths (`.opencode`, `AGENTS.md`, `verify/`,
   `guard/`, `scripts/`, `docs/`), so a pre-existing support file is not reported as an
   agent change; the case files remain in the artifacts/context.
+- `review-diff` real eval: 9.64/10 over K=3 (threshold 8.5), case
+  `evals/cases/review-diff/01-unsafe-handler`; run 3 lost format/line-number points, so the
+  skill is 1.1.0 with the new-file line and prefix clarification.
 - `repro-first` real eval: 10.0/10 over K=3 (threshold 8.5), case
   `evals/cases/repro-first/01-discount-bug`; the support-path diff fix is above.
 - `dev-verify` real eval: 10.0/10 over K=3 (threshold 8.5), case

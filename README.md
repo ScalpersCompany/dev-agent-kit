@@ -21,7 +21,7 @@ python3 evals/harness.py \
 
 The rubric ships with `REPLACE_WITH_APPROVED_MODEL` placeholders; set them in a copy or pass both flags. The judge must be a different model from the one under test.
 
-Baseline: `docs/EVAL-BASELINE.md` (Odoo 11 code review 9.81/10, FactorLibre preflight 9.52/10, dev-verify 10.0/10, repro-first 10.0/10; K=3, threshold 8.5).
+Baseline: `docs/EVAL-BASELINE.md` (Odoo 11 code review 9.81/10, FactorLibre preflight 9.52/10, dev-verify 10.0/10, repro-first 10.0/10, review-diff 9.64/10; K=3, threshold 8.5).
 
 ## What is inside
 
@@ -39,10 +39,12 @@ evals/rubric.odoo-11-code-review.json  weighted rubric for the first real eval
 evals/rubric.factorlibre-mr-preflight.json  weighted rubric for the MR preflight eval
 evals/rubric.dev-verify.json  weighted rubric for the verification eval
 evals/rubric.repro-first.json  weighted rubric for the reproduction eval
+evals/rubric.review-diff.json  weighted rubric for the diff review eval
 evals/cases/odoo-11-code-review/01-seeded/  seeded Odoo 11 module and its context.json
 evals/cases/factorlibre-mr-preflight/01-seeded/  seeded MR fixture, repo.diff and skill copy
 evals/cases/dev-verify/01-fix-failing-test/  failing-test fixture for dev-verify
 evals/cases/repro-first/01-discount-bug/  failing-test fixture for repro-first
+evals/cases/review-diff/01-unsafe-handler/  unsafe diff fixture for review-diff
 evals/loop.sh                 hill climb until the score passes
 scripts/scan_env.sh           discovery: stack, tests, CI, DB env var names
 docs/FEATURE_MAP.template.md  map of the app from the user's point of view
