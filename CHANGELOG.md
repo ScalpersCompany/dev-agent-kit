@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.3.0] - 2026-11-18
+
+### Added
+
+- `guard/comment_lint.py`: blocks new explanatory comments in staged Python, XML, JavaScript/TypeScript, shell, SQL and YAML; tool directives remain allowed.
+- `tests/test_comment_lint.py`: five unit tests for Python comments, directives, docstrings, XML and JavaScript.
+- `guard/guard.sh --staged` runs the comment check in pre-commit; full runs skip it with a reason so legacy files do not block unrelated work.
+- Global norm 4.1 in the shared `AGENTS.md`: no explanatory comments in new or modified code; docstrings and Odoo `help` remain documentation.
+
 ## [1.2.0] - 2026-11-18
 
 ### Added

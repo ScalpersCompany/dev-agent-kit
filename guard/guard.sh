@@ -168,6 +168,20 @@ else
   record odoo_lint skipped "python3 or script missing"
 fi
 
+if have python3 && [ -f "$KIT_ROOT/guard/comment_lint.py" ]; then
+  if [ "$STAGED" = "1" ]; then
+    if python3 "$KIT_ROOT/guard/comment_lint.py" --root "$ROOT" --staged >/tmp/guard-comments.log 2>&1; then
+      record comments pass
+    else
+      record comments fail "$(tail -5 /tmp/guard-comments.log | tr '\n' ' ')"
+    fi
+  else
+    record comments skipped "staged additions only"
+  fi
+else
+  record comments skipped "python3 or script missing"
+fi
+
 echo
 echo "guard: $RAN checks ran, report in $REPORT"
 if [ $FAIL -ne 0 ]; then

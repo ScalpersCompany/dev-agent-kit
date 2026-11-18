@@ -13,6 +13,7 @@ human sends it to the company repository.
 | `verify/run.sh` | Boots the app, checks health, runs smoke and tests, writes `evidence/<run-id>/`. |
 | `guard/guard.sh` | Deterministic checks; writes `guard-report.json` (one JSON object per line). |
 | `guard/odoo_lint.py` | Odoo 11 AST checks: `sudo()`, `cr.commit()`, raw SQL writes, `print()`. |
+| `guard/comment_lint.py` | Blocks new explanatory comments in staged code; tool directives are allowed. |
 | `hooks/pre-commit` | Local hook: `guard --staged` on the commit's files only. |
 | `hooks/pre-push` | Local hook: `verify/run.sh`, fail-closed without `.dev-agent/verify.env`. |
 | `scripts/install-hooks.sh` | Installs either hook, backs up an existing one, excludes `.dev-agent/` locally. |

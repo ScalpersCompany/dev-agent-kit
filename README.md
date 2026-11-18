@@ -33,6 +33,7 @@ AGENTS.md                     repo rules the agent reads first
 verify/run.sh                 boot, smoke, tests, evidence/
 guard/guard.sh                ruff, black, mypy, eslint, tsc, gitleaks, Odoo AST checks
 guard/odoo_lint.py            deterministic Odoo checks (sudo, cr.commit, raw SQL, print)
+guard/comment_lint.py        blocks new comments in staged code (Python, XML, JS/TS, shell, SQL, YAML)
 evals/harness.py              k runs per case in a disposable worktree or copy, artifacts, judge of another model, score.json
 evals/rubric.example.json     rubric shape
 evals/rubric.odoo-11-code-review.json  weighted rubric for the first real eval
