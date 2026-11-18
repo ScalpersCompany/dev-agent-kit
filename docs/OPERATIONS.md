@@ -1,0 +1,102 @@
+# How the kit runs in the development base
+
+The kit is a gate, not a deploy tool. It makes an agent's change observable before a
+human sends it to the company repository.
+
+## Repository map
+
+| Path | Job |
+|---|---|
+| `AGENTS.md` | Rules the agent reads before touching code. |
+| `.opencode/skills/` | Six skills: `dev-verify`, `odoo-safe-change`, `repro-first`, `review-diff`, `correct`, `query-readonly`. |
+| `.opencode/commands/` | `/verify`, `/guard`, `/repro`, `/correct`, `/eval`. |
+| `verify/run.sh` | Boots the app, checks health, runs smoke and tests, writes `evidence/<run-id>/`. |
+| `guard/guard.sh` | Deterministic checks; writes `guard-report.json` (one JSON object per line). |
+| `guard/odoo_lint.py` | Odoo 11 AST checks: `sudo()`, `cr.commit()`, raw SQL writes, `print()`. |
+| `evals/harness.py` | Runs a case K times in a disposable copy or worktree, gives the judge the artifacts, writes `score.json`. |
+| `evals/cases/` | Task, source tree and `context.json` for each case. |
+| `evals/rubric*.json` | Weighted criteria and threshold. |
+| `scripts/scan_env.sh` | Discovers the stack, test commands and database variable names. |
+| `docs/` | Method, scope, baseline and use cases. |
+
+## One change, end to end
+
+1. **Branch.** Work on `feat/...`, `fix/...` or `hotfix/...` in the development repo. Never on the default branch.
+2. **Reproduce.** For a bug, use `/repro` and keep the failing command and its output. A fix without a reproduction is a guess.
+3. **Implement.** Follow `AGENTS.md` and the relevant skill. One change, one commit; tests and docs in the same commit.
+4. **Verify.** Fill `verify/config.env` from `verify/config.env.example`, then run `bash verify/run.sh`. It must exit 0 and leave `evidence/<run-id>/summary.json` with `"status": "pass"`. If it exits 2, the configuration is incomplete, not green.
+5. **Guard.** Run `bash guard/guard.sh`. A check that cannot run is `skipped` with a reason; a failing check is red. Do not delete a check to make the gate green.
+6. **Evaluate.** If the change touches a skill, a prompt, an agent workflow or a review rule, run the eval with K=3 (see below). A code change that no skill touches does not need an eval.
+7. **Review.** A human reads the diff against the ticket. The agent's report is not the review.
+8. **Deliver.** The company repository receives the change only when verify, guard and the applicable eval are green and the evidence is attached. Production keeps its own pipeline and a human signature.
+
+## Install in a development repo
+
+1. Clone this private repository next to the working repos, for example `~/dev-agent-kit`.
+2. Copy `AGENTS.md` into the repo root, merging it with the existing rules instead of overwriting them.
+3. Copy `.opencode/`, `verify/`, `guard/`, `evals/`, `scripts/` and `docs/` into the repo root.
+4. Run `bash scripts/scan_env.sh` and complete `docs/agent-quality/ENVIRONMENT.md` with the real commands and paths.
+5. Copy `verify/config.env.example` to `verify/config.env` and fill `BOOT_CMD`, `HEALTH_URL`, `SMOKE_CMD` and `TEST_CMD`.
+6. Run `bash verify/run.sh` on a clean checkout. It must pass before the agent is allowed to change anything.
+7. Run `bash guard/guard.sh`. Fix or explicitly skip each missing tool.
+8. Add `guard/guard.sh` to the repo's pre-commit hook. The hook runs before the commit is written, not after.
+9. Create the first eval case with a real defect and run it in dry-run, then with the approved models.
+
+`verify/config.env`, `evidence/`, `evals/runs/`, `guard-report.json`, `__pycache__/` and
+tool caches are git-ignored. Never commit a real test database, a token or a customer
+file.
+
+## Odoo 11 specifics
+
+- Test on a **disposable database**, never on the live `scalpers` database:
+  `docker compose -f devel.yaml run --rm odoo odoo -d test_<ticket> -u <module> --test-enable --stop-after-init`.
+- After adding a model or a field to an installed module, update it with `-u`; copying files alone does not create columns.
+- Read the whole log: in v11 a view error can leave the view half-loaded without killing the process.
+- `odoo_lint` runs on the repo root and skips `evals/`, so the seeded fixtures do not fail the guard. Run it directly with `--root` on a case when you want to lint that case.
+- `sudo()` needs a justification and an allowlist entry; `cr.commit()` in business code is a blocker; raw SQL writes go through the ORM or a parameterized query with a test.
+
+## Evals
+
+The harness copies the case into a disposable directory, copies the support files
+(`.opencode/`, `AGENTS.md`, `verify/`, `guard/`, `scripts/`, `docs/`), and runs
+`opencode` with a private server. The case's `context.json` lists the source tree the
+judge must read, so a review eval can be judged against the code and the skill.
+
+```bash
+python3 evals/harness.py \
+  --case-dir evals/cases/odoo-11-code-review/01-seeded \
+  --rubric evals/rubric.odoo-11-code-review.json \
+  --agent build \
+  --model <approved> \
+  --judge-model <approved-different> \
+  --k 3
+```
+
+- The executor and the judge are different approved models. Never put their names in a
+  report, a ticket or a commit message; `docs/EVAL-BASELINE.md` records the result without
+  naming them.
+- The judge scores each criterion 0-10 from the output and the artifacts; the harness
+  computes the weighted mean. The threshold is 8.5.
+- A dry run (`--dry-run`) proves the plumbing, not the skill. The real score is the one
+  with a model and a judge.
+- The first baseline is in `docs/EVAL-BASELINE.md`: 9.81/10 over K=3, with one run at
+  9.44 and two at 10.0.
+
+## Cadence
+
+- **Every change:** verify and guard.
+- **Every skill, prompt or review-rule change:** the eval with K=3, and update the
+  baseline only after the run.
+- **Weekly:** review the skipped guard checks and the eval scores; a skip that repeats
+  is a missing tool or a missing rule.
+- **Monthly:** remove a rule that no longer catches anything; keep the six skills small.
+
+## When something fails
+
+- Two identical failures mean stop and change the approach, not a third retry.
+- A red verify or guard is not delivered. An amber result is prepared but unverified;
+  say so.
+- If the tool or the database is unavailable, record the blocker and the exact command
+  that failed. Do not invent a pass.
+- Production is never touched from this host. The kit produces evidence; the company
+  pipeline and a human make the delivery.

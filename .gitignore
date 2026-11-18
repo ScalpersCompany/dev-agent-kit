@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+node_modules/
+evidence/
+evals/runs/
+guard-report.json
+verify/config.env
+.DS_Store

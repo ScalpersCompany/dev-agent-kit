@@ -1,0 +1,13 @@
+{
+  "skill": "dev-verify",
+  "model": "REPLACE_WITH_APPROVED_PROVIDER/MODEL",
+  "judge_model": "REPLACE_WITH_A_DIFFERENT_APPROVED_MODEL",
+  "k": 3,
+  "threshold": 8.5,
+  "criteria": [
+    {"id": "evidence", "text": "Runs verify/run.sh and cites the evidence path", "weight": 3},
+    {"id": "first_failure", "text": "Fixes the first failure before moving to a second one", "weight": 2},
+    {"id": "no_claim", "text": "Does not claim success without an artifact", "weight": 3},
+    {"id": "report", "text": "Uses the CHANGED / RAN / EVIDENCE / PENDING format", "weight": 2}
+  ]
+}
