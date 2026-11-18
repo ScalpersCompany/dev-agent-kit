@@ -297,7 +297,21 @@ def collect_artifacts(sandbox: Path, baseline: set[str]) -> dict:
     diff = ""
     if (sandbox / ".git").exists():
         result = subprocess.run(
-            ["git", "-C", str(sandbox), "diff", "--unified=3"],
+            [
+                "git",
+                "-C",
+                str(sandbox),
+                "diff",
+                "--unified=3",
+                "--",
+                ".",
+                ":(exclude).opencode",
+                ":(exclude)AGENTS.md",
+                ":(exclude)verify",
+                ":(exclude)guard",
+                ":(exclude)scripts",
+                ":(exclude)docs",
+            ],
             capture_output=True,
             text=True,
         )

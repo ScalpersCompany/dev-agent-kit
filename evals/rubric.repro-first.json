@@ -1,0 +1,34 @@
+{
+  "skill": "repro-first",
+  "model": "REPLACE_WITH_APPROVED_MODEL",
+  "judge_model": "REPLACE_WITH_APPROVED_JUDGE_MODEL",
+  "k": 3,
+  "threshold": 8.5,
+  "criteria": [
+    {
+      "id": "repro",
+      "text": "Creates test_shop.py with a failing case for apply_discount(100, 10) == 90 and reports the failure/exit code before the fix.",
+      "weight": 3
+    },
+    {
+      "id": "fix",
+      "text": "Fixes shop.py so the test passes; test_shop.py is not weakened or rewritten to match the bug.",
+      "weight": 3
+    },
+    {
+      "id": "verification",
+      "text": "Runs the test after the fix and reports the passing result, ideally with verify/run.sh evidence.",
+      "weight": 2
+    },
+    {
+      "id": "report",
+      "text": "Uses BUG / REPRO / BEFORE / AFTER / ROOT CAUSE with exact commands and paths.",
+      "weight": 2
+    },
+    {
+      "id": "no_false",
+      "text": "Does not claim a fix without a run, does not fix before reproducing, and does not change unrelated files.",
+      "weight": 2
+    }
+  ]
+}

@@ -86,6 +86,34 @@ python3 evals/harness.py \
   --k 3
 ```
 
+## repro-first
+
+- Case: `evals/cases/repro-first/01-discount-bug`
+- Skill: `repro-first` 1.1.0
+- Runs: 3
+- Isolation: `worktree`
+- Scores: 10.0, 10.0, 10.0
+- Mean: 10.0; min 10.0; max 10.0; standard deviation 0.0
+- Threshold: 8.5; result: pass
+- Cost: 0.284229 USD; tokens: 1,985,352 (executor plus judge, summed across steps)
+
+The agent wrote `test_shop.py`, reported the failing assertion and exit code, fixed
+`shop.py`, reran the test and cited the passing `verify/run.sh` evidence. The first K=3
+before the harness change scored 9.31: run 2 lost `no_false` because the diff included
+pre-existing support docs (`docs/OPERATIONS.md`, `docs/agent-quality/ENVIRONMENT.md`) that
+the agent had not touched. The harness now excludes the support paths from the diff; the
+fixed run is 10.0.
+
+```bash
+python3 evals/harness.py \
+  --case-dir evals/cases/repro-first/01-discount-bug \
+  --rubric evals/rubric.repro-first.json \
+  --agent build \
+  --model <approved> \
+  --judge-model <approved-different> \
+  --k 3
+```
+
 ## Coverage
 
 | Skill | Case | Real run |
@@ -93,10 +121,11 @@ python3 evals/harness.py \
 | `odoo-11-code-review` | `evals/cases/odoo-11-code-review/01-seeded` | 9.81/10, K=3 |
 | `factorlibre-mr-preflight` | `evals/cases/factorlibre-mr-preflight/01-seeded` | 9.52/10, K=3 |
 | `dev-verify` | `evals/cases/dev-verify/01-fix-failing-test` | 10.0/10, K=3 |
-| `repro-first`, `review-diff`, `correct`, `odoo-safe-change`, `query-readonly` | none | installed; no real run |
+| `repro-first` | `evals/cases/repro-first/01-discount-bug` | 10.0/10, K=3 |
+| `review-diff`, `correct`, `odoo-safe-change`, `query-readonly` | none | installed; no real run |
 | `odoo-11-standards`, `odoo-11-orm-performance`, `odoo-11-credential-security`, `odoo-11-reservas-marketplace`, `sga-e2e-testing`, `gitlab`, `jira-cloud`, `rsc-harness-brain`, `gentle-ai-toolchain`, `odoo-development` | none | installed; no real run |
 
-Only the first two have a real score. The rest are installed globally, but they are not
+Only the four listed above have a real score. The rest are installed globally, but they are not
 claimed as verified; a case is the next step for each one that matters.
 
 ## Odoo 11 command

@@ -1,0 +1,8 @@
+{
+  "paths": [
+    "shop.py",
+    "docs/FEATURE_MAP.md",
+    "verify/config.env",
+    "docs/agent-quality/ENVIRONMENT.md"
+  ]
+}

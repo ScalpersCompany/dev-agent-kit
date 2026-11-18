@@ -85,6 +85,18 @@ The gates are commands:
 the requirement impossible to skip. The kit is a toolbox plus a documented flow; it is not
 a background service.
 
+## Recommendation
+
+- **Guard: mandatory in pre-commit.** It is fast, deterministic and local; a red check
+  blocks the commit without spending a model call.
+- **Verify: mandatory in CI or pre-push, not on every edit.** It boots the app and tests a
+  disposable database; it is the delivery gate, not an editor loop.
+- **Eval: mandatory only when a skill, prompt or review rule changes.** K=3 with a
+  different judge; it is too expensive and too slow to run on every code change.
+- **Do not make every skill a hard trigger.** The model selects skills by description; the
+  hard guarantees belong in the hook and the pipeline. The skill tells the agent how to do
+  the work; the hook decides whether the work may leave the machine.
+
 ## Odoo 11 specifics
 
 - Test on a **disposable database**, never on the live `scalpers` database:

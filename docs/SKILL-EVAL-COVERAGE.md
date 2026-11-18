@@ -18,7 +18,7 @@ is the project scope, not a claim that every skill has been evaluated.
 | P0 | `odoo-11-code-review` | yes | yes | real K=3 (9.81) |
 | P0 | `odoo-safe-change` | yes | yes | installed; no case yet |
 | P0 | `query-readonly` | yes | yes | installed; no case yet |
-| P0 | `repro-first` | yes | yes | installed; no case yet |
+| P0 | `repro-first` | yes | yes | real K=3 (10.0) |
 | P0 | `review-diff` | yes | yes | installed; no case yet |
 | P1 | `chained-pr` | yes | yes | installed; no case yet |
 | P1 | `gentle-ai-toolchain` | yes | yes | installed; no case yet |
