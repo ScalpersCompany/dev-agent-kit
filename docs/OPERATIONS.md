@@ -64,6 +64,11 @@ Both agents also have `odoo-11-code-review`, `odoo-11-standards`,
 `gentle-ai-toolchain`. OpenCode additionally has `rsc-harness-brain`, `gitlab`, `jira-cloud`,
 `sga-e2e-testing` and `odoo-11-reservas-marketplace` in its global skills directory.
 
+Hermes, OpenCode and Claude Code load the same `SKILL.md` from their own skills
+directory; `preflight_mr.py` and `comment_lint.py` are plain Python 3.8+ and the
+comment gate is a git hook, so none of the three depends on an agent-specific API.
+The shared norm lives in `~/.agents/AGENTS.md`, which all three configurations point to.
+
 The skills are procedures; they do not make the gates mandatory. `verify/`, `guard/` and
 `evals/` stay repo-local because their commands and database are repo-specific. When a
 skill runs from a repo without the kit, it falls back to `DEV_AGENT_KIT` or

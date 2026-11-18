@@ -1,7 +1,7 @@
 ---
 name: factorlibre-mr-preflight
 description: "Preflight de MR en scalpers-v11 (FactorLibre)."
-version: 1.3.0
+version: 1.3.1
 author: Skippy (Nicolás Ramos)
 license: MIT
 platforms: [linux, windows, macos]
@@ -355,10 +355,22 @@ odoo -d <base_temporal> -i <modulos> --test-enable --stop-after-init
 python3 scripts/scan_secret_fields.py --root odoo/custom/src
 ```
 
+## Compatibilidad
+
+- Hermes, OpenCode y Claude Code cargan el mismo `SKILL.md` con el frontmatter estándar
+  (`name`, `description`); no hay APIs específicas de un agente.
+- La norma global vive en `~/.agents/AGENTS.md`; los tres agentes la enlazan en su
+  configuración (`SOUL.md`, `AGENTS.md` de OpenCode y `CLAUDE.md`).
+- `preflight_mr.py` y el checker de comentarios son Python 3.8+ y git; no dependen del
+  agente que los invoca. El gate de comentarios es un hook de git, no una función del
+  agente.
+
 ## Instalación en otros agentes
 
-La fuente es esta skill en `~/.hermes/skills/software-development/`. Para copiarla
-a Claude Code, OpenCode, Codex, pi/gentle-shell y la base compartida `~/.agents`:
+La fuente es esta skill en el directorio donde esté instalada. El script usa su propio
+directorio y copia a Claude Code, OpenCode, Codex, pi/gentle-shell y la base compartida
+`~/.agents`. Hermes lee la copia de `~/.hermes/skills`; las tres copias comparten el
+mismo `SKILL.md` y los mismos scripts.
 
 ```bash
 bash scripts/install-to-editors.sh

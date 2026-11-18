@@ -1,10 +1,17 @@
 # Changelog
 
+## [1.4.1] - 2026-11-18
+
+### Changed
+
+- `factorlibre-mr-preflight` 1.3.1 documents that Hermes, OpenCode and Claude Code load the same `SKILL.md`; the preflight and comment checker are plain Python 3.8+ and the comment gate is a git hook.
+- `docs/OPERATIONS.md` records the three-agent compatibility and the shared `~/.agents/AGENTS.md` norm.
+
 ## [1.4.0] - 2026-11-18
 
 ### Added
 
-- `factorlibre-mr-preflight` 1.3.0 in `.opencode/skills/`: the review logic learned from the latest connector MR, with the 1.3.0 preflight checks and reference patterns.
+- `factorlibre-mr-preflight` 1.3.1 in `.opencode/skills/`: the review logic learned from the latest connector MR, with the 1.3.0 preflight checks, the 1.3.1 compatibility note and reference patterns.
 - The skill is also installed globally in Hermes, OpenCode, Claude, Codex, pi and `~/.agents`.
 
 ### Changed

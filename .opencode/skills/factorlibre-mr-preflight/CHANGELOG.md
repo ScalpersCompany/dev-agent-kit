@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.1] - 2026-11-18
+
+### Changed
+
+- La skill documenta la compatibilidad con Hermes, OpenCode y Claude Code: mismo
+  `SKILL.md`, scripts Python 3.8+ y el gate de comentarios en un hook de git, sin API
+  específica de agente.
+
 ## [1.3.0] - 2026-11-18
 
 ### Added
