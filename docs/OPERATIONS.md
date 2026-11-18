@@ -8,7 +8,7 @@ human sends it to the company repository.
 | Path | Job |
 |---|---|
 | `AGENTS.md` | Rules the agent reads before touching code. |
-| `.opencode/skills/` | Six skills: `dev-verify`, `odoo-safe-change`, `repro-first`, `review-diff`, `correct`, `query-readonly`. |
+| `.opencode/skills/` | Seven skills: `dev-verify`, `odoo-safe-change`, `repro-first`, `review-diff`, `correct`, `query-readonly`, `factorlibre-mr-preflight`. |
 | `.opencode/commands/` | `/verify`, `/guard`, `/repro`, `/correct`, `/eval`. |
 | `verify/run.sh` | Boots the app, checks health, runs smoke and tests, writes `evidence/<run-id>/`. |
 | `guard/guard.sh` | Deterministic checks; writes `guard-report.json` (one JSON object per line). |
@@ -54,12 +54,12 @@ file.
 
 ## Global skills in dev-nicolas
 
-The kit's six skills are installed globally in both agents on this host:
+The kit's seven skills are installed globally in both agents on this host:
 
-- `~/.config/opencode/skills/software-development/{dev-verify,odoo-safe-change,repro-first,review-diff,correct,query-readonly}`
-- `~/.hermes/skills/software-development/{dev-verify,odoo-safe-change,repro-first,review-diff,correct,query-readonly}`
+- `~/.config/opencode/skills/software-development/{dev-verify,odoo-safe-change,repro-first,review-diff,correct,query-readonly,factorlibre-mr-preflight}`
+- `~/.hermes/skills/software-development/{dev-verify,odoo-safe-change,repro-first,review-diff,correct,query-readonly,factorlibre-mr-preflight}`
 
-Both agents also have `odoo-11-code-review`, `factorlibre-mr-preflight`, `odoo-11-standards`,
+Both agents also have `odoo-11-code-review`, `odoo-11-standards`,
 `odoo-11-orm-performance`, `odoo-11-credential-security`, `odoo-development` and
 `gentle-ai-toolchain`. OpenCode additionally has `rsc-harness-brain`, `gitlab`, `jira-cloud`,
 `sga-e2e-testing` and `odoo-11-reservas-marketplace` in its global skills directory.
@@ -172,7 +172,7 @@ python3 evals/harness.py \
   baseline only after the run.
 - **Weekly:** review the skipped guard checks and the eval scores; a skip that repeats
   is a missing tool or a missing rule.
-- **Monthly:** remove a rule that no longer catches anything; keep the six skills small.
+- **Monthly:** remove a rule that no longer catches anything; keep the seven skills small.
 
 ## When something fails
 

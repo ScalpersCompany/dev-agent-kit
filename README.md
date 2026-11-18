@@ -27,7 +27,7 @@ Baseline: `docs/EVAL-BASELINE.md` (Odoo 11 code review 9.81/10, FactorLibre pref
 
 ```
 AGENTS.md                     repo rules the agent reads first
-.opencode/skills/             six skills (dev-verify, odoo-safe-change, repro-first, review-diff, correct, query-readonly)
+.opencode/skills/             seven skills (dev-verify, odoo-safe-change, repro-first, review-diff, correct, query-readonly, factorlibre-mr-preflight)
 .opencode/commands/           /verify /guard /repro /correct /eval
 .opencode/agent/judge.md      read-only eval judge, strict JSON contract
 verify/run.sh                 boot, smoke, tests, evidence/
@@ -77,7 +77,7 @@ CHANGELOG.md                  what changed in each version
 ## What it does not do
 
 - It does not touch production, migrations, secrets, or customer data. Those are one-way doors and keep a human signature.
-- It does not install third-party skill catalogs. Six skills, each with a job.
+- It does not install third-party skill catalogs. Seven skills, each with a job.
 - It does not call a personal model endpoint. Set the model in your copy of `evals/rubric.example.json` or pass `--model` with the company-approved provider.
 - It does not run the agent in your working tree. Each eval runs in a disposable worktree or copy, and the judge receives the artifacts that run produced plus, when the case declares it in `context.json`, the source under review.
 - It does not auto-merge. Autonomy is earned per repo after 30 green changes and zero reverts.

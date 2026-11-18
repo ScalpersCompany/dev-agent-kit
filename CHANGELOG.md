@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.4.0] - 2026-11-18
+
+### Added
+
+- `factorlibre-mr-preflight` 1.3.0 in `.opencode/skills/`: the review logic learned from the latest connector MR, with the 1.3.0 preflight checks and reference patterns.
+- The skill is also installed globally in Hermes, OpenCode, Claude, Codex, pi and `~/.agents`.
+
+### Changed
+
+- The kit now ships seven skills, not six.
+
 ## [1.3.0] - 2026-11-18
 
 ### Added
