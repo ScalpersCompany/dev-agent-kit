@@ -3,10 +3,11 @@
 # Exit 0 = all configured checks passed. Exit 2 = nothing configured.
 set -uo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT="${VERIFY_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+ROOT="$(cd "$ROOT" && pwd)" || exit 2
 cd "$ROOT" || exit 2
 
-CONFIG="$ROOT/verify/config.env"
+CONFIG="${VERIFY_CONFIG:-$ROOT/verify/config.env}"
 if [ -f "$CONFIG" ]; then
   # shellcheck disable=SC1090
   . "$CONFIG"
@@ -27,7 +28,7 @@ RUN_ID="$(date +%Y%m%dT%H%M%S)"
 if git rev-parse --short HEAD >/dev/null 2>&1; then
   RUN_ID="${RUN_ID}-$(git rev-parse --short HEAD)"
 fi
-EVIDENCE="$ROOT/evidence/$RUN_ID"
+EVIDENCE="${VERIFY_EVIDENCE:-$ROOT/evidence}/$RUN_ID"
 mkdir -p "$EVIDENCE"
 
 STATUS=0

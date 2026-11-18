@@ -46,6 +46,11 @@ evals/cases/dev-verify/01-fix-failing-test/  failing-test fixture for dev-verify
 evals/cases/repro-first/01-discount-bug/  failing-test fixture for repro-first
 evals/cases/review-diff/01-unsafe-handler/  unsafe diff fixture for review-diff
 evals/loop.sh                 hill climb until the score passes
+hooks/pre-commit              local pre-commit: guard --staged
+hooks/pre-push                local pre-push: verify/run.sh
+scripts/install-hooks.sh      installs the hooks and backs up the existing ones
+tests/test_odoo_lint.py       unit tests for the staged/full linter modes
+.github/workflows/quality.yml unit tests, syntax and eval dry-run in CI
 scripts/scan_env.sh           discovery: stack, tests, CI, DB env var names
 docs/FEATURE_MAP.template.md  map of the app from the user's point of view
 docs/AGENT-QUALITY.md         the method in one page
@@ -65,7 +70,8 @@ CHANGELOG.md                  what changed in each version
 4. Fill `verify/config.env` with the boot, health and test commands.
 5. Run `bash guard/guard.sh`. Fix or disable each check explicitly, never by deleting it silently.
 6. Run `bash verify/run.sh` on a clean checkout. It must pass before you trust any agent.
-7. Copy one eval case, run `python3 evals/harness.py --case-dir evals/cases/dev-verify/01-clean --rubric evals/rubric.example.json --dry-run`, then a real run with the approved model.
+7. Install the hooks: `bash scripts/install-hooks.sh .` for the pre-commit guard; add `--with-verify` for the pre-push runtime gate and edit `.dev-agent/verify.env`.
+8. Copy one eval case, run `python3 evals/harness.py --case-dir evals/cases/dev-verify/01-fix-failing-test --rubric evals/rubric.dev-verify.json --dry-run`, then a real run with the approved model.
 
 ## What it does not do
 

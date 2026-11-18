@@ -13,6 +13,11 @@ human sends it to the company repository.
 | `verify/run.sh` | Boots the app, checks health, runs smoke and tests, writes `evidence/<run-id>/`. |
 | `guard/guard.sh` | Deterministic checks; writes `guard-report.json` (one JSON object per line). |
 | `guard/odoo_lint.py` | Odoo 11 AST checks: `sudo()`, `cr.commit()`, raw SQL writes, `print()`. |
+| `hooks/pre-commit` | Local hook: `guard --staged` on the commit's files only. |
+| `hooks/pre-push` | Local hook: `verify/run.sh`, fail-closed without `.dev-agent/verify.env`. |
+| `scripts/install-hooks.sh` | Installs either hook, backs up an existing one, excludes `.dev-agent/` locally. |
+| `tests/test_odoo_lint.py` | Unit tests for full and staged linter modes. |
+| `.github/workflows/quality.yml` | CI: unit tests, shell/Python syntax, eval dry-run. |
 | `evals/harness.py` | Runs a case K times in a disposable copy or worktree, gives the judge the artifacts, writes `score.json`. |
 | `evals/cases/` | Task, source tree and `context.json` for each case. |
 | `evals/rubric*.json` | Weighted criteria and threshold. |
@@ -39,7 +44,7 @@ human sends it to the company repository.
 5. Copy `verify/config.env.example` to `verify/config.env` and fill `BOOT_CMD`, `HEALTH_URL`, `SMOKE_CMD` and `TEST_CMD`.
 6. Run `bash verify/run.sh` on a clean checkout. It must pass before the agent is allowed to change anything.
 7. Run `bash guard/guard.sh`. Fix or explicitly skip each missing tool.
-8. Add `guard/guard.sh` to the repo's pre-commit hook. The hook runs before the commit is written, not after.
+8. Install the local hooks with `bash scripts/install-hooks.sh .`; add `--with-verify` for the pre-push runtime gate and edit `.dev-agent/verify.env`. Existing hooks are backed up, never deleted.
 9. Create the first eval case with a real defect and run it in dry-run, then with the approved models.
 
 `verify/config.env`, `evidence/`, `evals/runs/`, `guard-report.json`, `__pycache__/` and
@@ -96,6 +101,32 @@ a background service.
 - **Do not make every skill a hard trigger.** The model selects skills by description; the
   hard guarantees belong in the hook and the pipeline. The skill tells the agent how to do
   the work; the hook decides whether the work may leave the machine.
+
+## Make it mandatory
+
+The recommendation is mechanical, not prose:
+
+1. **Pre-commit (guard).** `bash scripts/install-hooks.sh <repo>` copies the local
+   `pre-commit` hook. It runs `guard/guard.sh --staged`, so it checks only the files in the
+   commit and does not fail on pre-existing findings. The report lives in
+   `.git/guard-report.json`, outside the worktree. Existing hooks are backed up as
+   `<name>.bak-<timestamp>`.
+2. **Pre-push or CI (verify).** `bash scripts/install-hooks.sh <repo> --with-verify` adds
+   the `pre-push` hook. It runs `verify/run.sh` against the repository and fails closed
+   until `.dev-agent/verify.env` has a real `TEST_CMD`; evidence goes to
+   `.git/dev-agent-evidence`. A missing config is not green.
+3. **Kit CI.** `.github/workflows/quality.yml` runs the unit tests for the linter, shell and
+   Python syntax checks, and an eval dry-run on every push and pull request. The real K=3
+   eval stays manual because it spends model budget; it is required only when a skill,
+   rubric, prompt or review rule changes.
+4. **Limits.** A local hook is not a sandbox: `git commit --no-verify` and
+   `git push --no-verify` bypass it. The CI job is the hard gate. A hook installed in one
+   repository does not cover its subrepositories; install it in each repository that takes
+   commits.
+5. **Where it is installed.** On this host the pre-commit hook is installed in
+   `odoo/custom/src/private/scalpers-v11`; the pre-push hook uses the disposable Odoo test
+   in `.dev-agent/verify.env`. The kit itself keeps its own CI and does not run the Odoo
+   pre-push hook.
 
 ## Odoo 11 specifics
 

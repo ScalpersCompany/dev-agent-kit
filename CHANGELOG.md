@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.2.0] - 2026-11-18
+
+### Added
+
+- Local pre-commit hook that runs `guard/guard.sh --staged` on the files in the commit, with the report in `.git/guard-report.json`.
+- Local pre-push hook that runs `verify/run.sh` and fails closed until `.dev-agent/verify.env` has a real `TEST_CMD`.
+- `scripts/install-hooks.sh`: installs either hook, backs up an existing one as `.bak-<timestamp>`, and adds `.dev-agent/` to the local exclude.
+- `tests/test_odoo_lint.py`: full scan, staged-file mode and interpolation checks; three unit tests.
+- `.github/workflows/quality.yml`: unit tests, shell and Python syntax checks and an eval dry-run on push and pull request.
+
+### Changed
+
+- `guard/guard.sh` now accepts `GUARD_ROOT` and `GUARD_REPORT` and, with `--staged`, scans only staged Python/JS files; ruff, black, mypy, eslint and tsc receive that file list.
+- `guard/odoo_lint.py` accepts `--files` and `--allowlist`, so a target repository can use the kit's allowlist without copying it.
+- `verify/run.sh` accepts `VERIFY_ROOT`, `VERIFY_CONFIG` and `VERIFY_EVIDENCE`, so a pre-push hook can run the kit's runner against another repository.
+
+### Fixed
+
+- A pre-commit guard no longer scans the whole repository and fails on pre-existing findings; the commit sees only what it changes.
+- `docs/OPERATIONS.md` no longer tells the reader to hand-wire `guard/guard.sh`; it points at the installer and states the `--no-verify` and CI limits.
+
 ## [1.1.0] - 2026-11-18
 
 ### Added

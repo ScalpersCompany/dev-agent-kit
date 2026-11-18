@@ -10,13 +10,14 @@ import ast
 import fnmatch
 import sys
 from pathlib import Path
+from typing import Optional
 
 SKIP_DIRS = {".git", "node_modules", ".venv", "venv", "__pycache__", "dist", "build", ".mypy_cache", "evals"}
 WRITE_SQL = ("INSERT ", "UPDATE ", "DELETE ", "ALTER ", "DROP ", "TRUNCATE ")
 
 
-def load_allowlist(root: Path) -> list[str]:
-    path = root / "guard" / "odoo_allowlist.txt"
+def load_allowlist(root: Path, path_arg: Optional[str] = None) -> list[str]:
+    path = Path(path_arg) if path_arg else root / "guard" / "odoo_allowlist.txt"
     if not path.exists():
         return []
     out = []
@@ -106,24 +107,41 @@ def module_roots(root: Path) -> list[Path]:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", default=".")
+    parser.add_argument("--files", nargs="*", default=None)
+    parser.add_argument("--allowlist")
     parser.add_argument("--warn-only", action="store_true")
     args = parser.parse_args()
 
     root = Path(args.root).resolve()
-    patterns = load_allowlist(root)
+    patterns = load_allowlist(root, args.allowlist)
     findings: list[tuple[str, int, str, str]] = []
 
-    roots = module_roots(root)
-    if not roots:
-        print("odoo_lint: no Odoo modules found, nothing to scan")
-        return 0
-
-    for module_root in roots:
-        for path in module_root.rglob("*.py"):
-            rel_parts = path.relative_to(root).parts
+    if args.files is not None:
+        for name in args.files:
+            path = (root / name).resolve()
+            if not path.is_file() or path.suffix != ".py":
+                continue
+            try:
+                rel_parts = path.relative_to(root).parts
+            except ValueError:
+                continue
             if any(part in SKIP_DIRS for part in rel_parts):
                 continue
             findings.extend(scan_file(path, root, patterns, args.warn_only))
+        if not args.files:
+            print("odoo_lint: no files to scan")
+    else:
+        roots = module_roots(root)
+        if not roots:
+            print("odoo_lint: no Odoo modules found, nothing to scan")
+            return 0
+
+        for module_root in roots:
+            for path in module_root.rglob("*.py"):
+                rel_parts = path.relative_to(root).parts
+                if any(part in SKIP_DIRS for part in rel_parts):
+                    continue
+                findings.extend(scan_file(path, root, patterns, args.warn_only))
 
     for rel, line, severity, message in sorted(findings):
         print(f"{rel}:{line}: {severity} {message}")

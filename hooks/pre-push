@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Pre-push gate: boot and test the target repository with the kit's verify runner.
+# Fails closed when the repository has no .dev-agent/verify.env.
+# Install with scripts/install-hooks.sh --with-verify; the hook is local and not committed.
+set -uo pipefail
+
+KIT="${DEV_AGENT_KIT:-/home/scalpers/dev-agent-kit}"
+if [ ! -x "$KIT/verify/run.sh" ]; then
+  echo "dev-agent-kit verify not found: $KIT/verify/run.sh" >&2
+  echo "set DEV_AGENT_KIT to the kit checkout" >&2
+  exit 1
+fi
+
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || {
+  echo "pre-push: not inside a git worktree" >&2
+  exit 1
+}
+GIT_DIR="$(cd "$(git rev-parse --git-dir)" && pwd)"
+CONFIG="${DEV_AGENT_VERIFY_CONFIG:-$ROOT/.dev-agent/verify.env}"
+
+if [ ! -f "$CONFIG" ]; then
+  echo "dev-agent-kit verify: missing $CONFIG" >&2
+  echo "Copy $KIT/verify/config.env.example to .dev-agent/verify.env and set TEST_CMD." >&2
+  echo "Remove .git/hooks/pre-push if this repository has no runtime test yet." >&2
+  exit 1
+fi
+
+export VERIFY_ROOT="$ROOT"
+export VERIFY_CONFIG="$CONFIG"
+export VERIFY_EVIDENCE="$GIT_DIR/dev-agent-evidence"
+exec "$KIT/verify/run.sh"

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Pre-commit gate: deterministic checks over the staged files only.
+# Install with scripts/install-hooks.sh; the hook is local and not committed.
+set -uo pipefail
+
+KIT="${DEV_AGENT_KIT:-/home/scalpers/dev-agent-kit}"
+if [ ! -x "$KIT/guard/guard.sh" ]; then
+  echo "dev-agent-kit guard not found: $KIT/guard/guard.sh" >&2
+  echo "set DEV_AGENT_KIT to the kit checkout" >&2
+  exit 1
+fi
+
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || {
+  echo "pre-commit: not inside a git worktree" >&2
+  exit 1
+}
+GIT_DIR="$(cd "$(git rev-parse --git-dir)" && pwd)"
+
+export GUARD_ROOT="$ROOT"
+export GUARD_REPORT="$GIT_DIR/guard-report.json"
+exec "$KIT/guard/guard.sh" --staged
