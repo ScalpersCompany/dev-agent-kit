@@ -8,6 +8,8 @@
 - FactorLibre MR preflight eval case: a git fixture with `master`/`feature`, a static `repo.diff`, the skill copy and a weighted rubric. The preflight returns 6 ERROR, 15 WARN and 4 INFO; the credential scan finds two readable fields.
 - The five path-aware skills are now 1.1.0: when the repo has no `verify/`, `guard/`,
   `docs/` or `evidence/`, they use `DEV_AGENT_KIT` or `~/dev-agent-kit` by absolute path.
+- `dev-verify` real eval: 10.0/10 over K=3 (threshold 8.5), case
+  `evals/cases/dev-verify/01-fix-failing-test`.
 - Global skills on dev-nicolas: the six kit skills are installed in both OpenCode and
   Hermes; `rsc-harness-brain`, `gitlab`, `jira-cloud`, `sga-e2e-testing` and
   `odoo-11-reservas-marketplace` were added to OpenCode. The eval coverage table in

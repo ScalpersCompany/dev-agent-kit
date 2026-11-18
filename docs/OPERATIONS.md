@@ -65,6 +65,26 @@ skill runs from a repo without the kit, it falls back to `DEV_AGENT_KIT` or
 `~/.agents/AGENTS.md` does not mention the kit yet; add the gate rule there when the team
 wants every agent to run it without being asked.
 
+## Invocation model
+
+The skills are **model-selected**, not hooks. Hermes and OpenCode list them and the agent
+loads one when the task matches its description; no skill runs on every edit by itself.
+`dev-verify`, `repro-first`, `review-diff`, `correct`, `odoo-safe-change` and
+`query-readonly` are procedures the agent follows after it loads them.
+
+The gates are commands:
+
+- `verify/run.sh` runs when a person or the agent calls it; it is too slow for every edit.
+  Put it in CI or a pre-push hook when it must block a delivery.
+- `guard/guard.sh` is fast enough for a pre-commit hook. That hook is the deterministic
+  guarantee; an `AGENTS.md` sentence is only an instruction the model may follow.
+- `evals/harness.py` runs when a skill, prompt or review rule changes, K=3, not on every
+  code change.
+
+`AGENTS.md` can require the commands before a report, but only the hook or the CI job makes
+the requirement impossible to skip. The kit is a toolbox plus a documented flow; it is not
+a background service.
+
 ## Odoo 11 specifics
 
 - Test on a **disposable database**, never on the live `scalpers` database:

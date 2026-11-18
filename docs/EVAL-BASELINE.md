@@ -59,13 +59,40 @@ python3 evals/harness.py \
   --k 3
 ```
 
+## dev-verify
+
+- Case: `evals/cases/dev-verify/01-fix-failing-test`
+- Skill: `dev-verify` 1.1.0
+- Runs: 3
+- Isolation: `worktree`
+- Scores: 10.0, 10.0, 10.0
+- Mean: 10.0; min 10.0; max 10.0; standard deviation 0.0
+- Threshold: 8.5; result: pass
+- Cost: 0.208256 USD; tokens: 1,308,633 (executor plus judge, summed across steps)
+
+The agent ran `verify/run.sh` first, reported the failing `AssertionError` and the red
+evidence, changed only `calc.py`, reran, and cited the passing `summary.json`. The report
+used `CHANGED / RAN / EVIDENCE / PENDING`. Run 1 also noticed that the sandbox had the case
+files untracked; the task wording now says that is expected, so the PENDING line is not a
+false alarm in future runs.
+
+```bash
+python3 evals/harness.py \
+  --case-dir evals/cases/dev-verify/01-fix-failing-test \
+  --rubric evals/rubric.dev-verify.json \
+  --agent build \
+  --model <approved> \
+  --judge-model <approved-different> \
+  --k 3
+```
+
 ## Coverage
 
 | Skill | Case | Real run |
 |---|---|---|
 | `odoo-11-code-review` | `evals/cases/odoo-11-code-review/01-seeded` | 9.81/10, K=3 |
 | `factorlibre-mr-preflight` | `evals/cases/factorlibre-mr-preflight/01-seeded` | 9.52/10, K=3 |
-| `dev-verify` | `evals/cases/dev-verify/01-clean` | dry-run only; no real run |
+| `dev-verify` | `evals/cases/dev-verify/01-fix-failing-test` | 10.0/10, K=3 |
 | `repro-first`, `review-diff`, `correct`, `odoo-safe-change`, `query-readonly` | none | installed; no real run |
 | `odoo-11-standards`, `odoo-11-orm-performance`, `odoo-11-credential-security`, `odoo-11-reservas-marketplace`, `sga-e2e-testing`, `gitlab`, `jira-cloud`, `rsc-harness-brain`, `gentle-ai-toolchain`, `odoo-development` | none | installed; no real run |
 
