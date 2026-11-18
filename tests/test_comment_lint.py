@@ -35,6 +35,10 @@ class CommentLintTest(unittest.TestCase):
         result = self.run_lint({"mod.py": "value = 1  # noqa\nother = 2  # type: ignore\n"})
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    def test_legal_header_is_allowed(self):
+        result = self.run_lint({"mod.py": "# -*- coding: utf-8 -*-\n# © 2026 Scalpers\n# License AGPL-3.0\nvalue = 1\n"})
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
     def test_python_docstring_is_not_a_comment(self):
         result = self.run_lint({"mod.py": '"""Documented function."""\nvalue = 1\n'})
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)

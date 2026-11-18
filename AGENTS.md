@@ -10,7 +10,7 @@ These rules apply to every agent and every session in this repo. The repo is the
 4. **No `cr.commit()`.** The framework owns the transaction. A commit inside business code is a defect.
 5. **No raw SQL without a written reason.** Prefer the ORM. If SQL is unavoidable, parameterize it and add a test for the edge case.
 6. **No secrets in code.** Keys, tokens, passwords and customer data come from the environment or a vault. If you see one committed, stop and report it.
-7. **No comments in code.** No explanatory comments in new or modified code in any language. Tool directives only (`# noqa`, `# type: ignore`, `# pylint: disable`, `# shellcheck`, `// eslint-disable`, `@ts-ignore`). Docstrings and Odoo `help` are documentation, not comments. `guard/comment_lint.py` blocks new comments in `guard/guard.sh --staged`.
+7. **No comments in code.** No explanatory comments in new or modified code in any language. Tool directives only (`# noqa`, `# type: ignore`, `# pylint: disable`, `# shellcheck`, `// eslint-disable`, `@ts-ignore`) plus legal copyright/license/SPDX headers. Docstrings and Odoo `help` are documentation, not comments. `guard/comment_lint.py` blocks new comments in `guard/guard.sh --staged`.
 8. **One feature, one directory.** Do not create a second place for an existing concept. When two places already exist, do not add a third.
 9. **Two corrections of the same kind become a mechanism.** The third time you fix the same mistake, it becomes a lint rule, a test, or a CI check, not another paragraph in this file.
 10. **Report the real state.** End every task with: what changed, what ran, what failed, what is pending. Never claim a check you did not run.

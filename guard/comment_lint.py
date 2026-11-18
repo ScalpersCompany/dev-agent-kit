@@ -15,7 +15,7 @@ SH_EXT = {".sh", ".bash"}
 SQL_EXT = {".sql"}
 YAML_EXT = {".yml", ".yaml"}
 DIRECTIVE = re.compile(
-    r"^(?:!|.*-\*-.*coding|noqa\b|type:\s*ignore|pylint:\s*disable|pragma:\s*no\s*cover|"
+    r"^(?:!|.*-\*-.*coding|©|copyright|license|spdx|noqa\b|type:\s*ignore|pylint:\s*disable|pragma:\s*no\s*cover|"
     r"fmt:\s*(?:off|skip)|isort:\s*skip|nosec\b|coverage:\s*ignore|shellcheck\b|"
     r"eslint-disable|@ts-ignore|@ts-expect-error|istanbul ignore|prettier-ignore)",
     re.IGNORECASE,
