@@ -59,6 +59,19 @@ python3 evals/harness.py \
   --k 3
 ```
 
+## Coverage
+
+| Skill | Case | Real run |
+|---|---|---|
+| `odoo-11-code-review` | `evals/cases/odoo-11-code-review/01-seeded` | 9.81/10, K=3 |
+| `factorlibre-mr-preflight` | `evals/cases/factorlibre-mr-preflight/01-seeded` | 9.52/10, K=3 |
+| `dev-verify` | `evals/cases/dev-verify/01-clean` | dry-run only; no real run |
+| `repro-first`, `review-diff`, `correct`, `odoo-safe-change`, `query-readonly` | none | installed; no real run |
+| `odoo-11-standards`, `odoo-11-orm-performance`, `odoo-11-credential-security`, `odoo-11-reservas-marketplace`, `sga-e2e-testing`, `gitlab`, `jira-cloud`, `rsc-harness-brain`, `gentle-ai-toolchain`, `odoo-development` | none | installed; no real run |
+
+Only the first two have a real score. The rest are installed globally, but they are not
+claimed as verified; a case is the next step for each one that matters.
+
 ## Odoo 11 command
 
 ```bash

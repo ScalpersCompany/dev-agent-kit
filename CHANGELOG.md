@@ -6,6 +6,10 @@
 
 - First real eval case: `odoo-11-code-review` over a seeded Odoo 11 module, with a weighted rubric and a `context.json` that gives the judge the source tree under review.
 - FactorLibre MR preflight eval case: a git fixture with `master`/`feature`, a static `repo.diff`, the skill copy and a weighted rubric. The preflight returns 6 ERROR, 15 WARN and 4 INFO; the credential scan finds two readable fields.
+- Global skills on dev-nicolas: the six kit skills are installed in both OpenCode and
+  Hermes; `rsc-harness-brain`, `gitlab`, `jira-cloud`, `sga-e2e-testing` and
+  `odoo-11-reservas-marketplace` were added to OpenCode. The eval coverage table in
+  `docs/EVAL-BASELINE.md` says which ones have a real run and which are only installed.
 - `docs/agent-quality/ENVIRONMENT.md` now has the real disposable-database test for `scalpers_partner_vat_unique` (four post-install tests, verified) and the `--entrypoint odoo` workaround for the doodba addons link.
 - FactorLibre eval baseline: 9.52/10 over K=3 (threshold 8.5), after fixing the scanner
   and preflight script defects it exposed.

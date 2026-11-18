@@ -46,6 +46,23 @@ human sends it to the company repository.
 tool caches are git-ignored. Never commit a real test database, a token or a customer
 file.
 
+## Global skills in dev-nicolas
+
+The kit's six skills are installed globally in both agents on this host:
+
+- `~/.config/opencode/skills/software-development/{dev-verify,odoo-safe-change,repro-first,review-diff,correct,query-readonly}`
+- `~/.hermes/skills/software-development/{dev-verify,odoo-safe-change,repro-first,review-diff,correct,query-readonly}`
+
+Both agents also have `odoo-11-code-review`, `factorlibre-mr-preflight`, `odoo-11-standards`,
+`odoo-11-orm-performance`, `odoo-11-credential-security`, `odoo-development` and
+`gentle-ai-toolchain`. OpenCode additionally has `rsc-harness-brain`, `gitlab`, `jira-cloud`,
+`sga-e2e-testing` and `odoo-11-reservas-marketplace` in its global skills directory.
+
+The skills are procedures; they do not make the gates mandatory. `verify/`, `guard/` and
+`evals/` stay repo-local because their commands and database are repo-specific. The shared
+`~/.agents/AGENTS.md` does not mention the kit yet; add the gate rule there when the team
+wants every agent to run it without being asked.
+
 ## Odoo 11 specifics
 
 - Test on a **disposable database**, never on the live `scalpers` database:
