@@ -35,7 +35,7 @@ for i in $(seq 1 "$MAX"); do
       echo "MODEL not set; refusing to edit the skill with an unapproved default model"
       exit 1
     fi
-    opencode run --standalone --agent build --model "$MODEL" "Read $OUT/score.json and the skill under .opencode/skills. Fix the failures by changing the skill or its supporting files. Do not weaken the rubric and do not change the judge. Stop after the edit."
+    opencode run --standalone --agent build --model "$MODEL" "Read $OUT/score.json and the skill under skills/. Fix the failures by changing the skill or its supporting files. Do not weaken the rubric and do not change the judge. Stop after the edit."
     echo "review the diff before keeping the skill edit"
   else
     echo "below threshold; improve the skill and run again (set AUTO_IMPROVE=1 to let the agent edit it)"

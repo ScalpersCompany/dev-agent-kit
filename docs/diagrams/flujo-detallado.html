@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flujo detallado del sistema</title>
+<style>
+:root { color-scheme: light dark; }
+* { box-sizing: border-box; }
+body { margin: 0; color: var(--foreground); }
+.board { width: min(1120px, 100%); display: flex; flex-direction: column; gap: 14px; font-size: 14px; line-height: 1.45; }
+.eyebrow { text-transform: uppercase; letter-spacing: .14em; font-size: 10px; color: var(--muted-foreground); }
+h1 { font-size: clamp(22px, 3vw, 31px); line-height: 1.1; letter-spacing: -.02em; margin: 4px 0 6px; }
+.lede { margin: 0; max-width: 95ch; color: var(--muted-foreground); font-size: 13px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+.badge { border: 1px solid var(--border); border-radius: 999px; padding: 3px 9px; font-size: 10px; color: var(--muted-foreground); }
+.badge.ok { border-color: var(--accent); color: var(--accent); }
+.badge.pending { border-style: dashed; }
+.badge.human { border-color: #c2410c; color: #c2410c; }
+.flow { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+.step { display: grid; grid-template-columns: 104px 1fr; gap: 12px; border: 1px solid var(--border); background: var(--card); border-radius: 13px; padding: 11px 12px; }
+.step.pending { border-style: dashed; }
+.step.human { border-color: #c2410c; }
+.step .lane { display: flex; flex-direction: column; gap: 4px; border-right: 1px solid var(--border); padding-right: 10px; }
+.lane b { font-size: 11px; color: var(--accent); }
+.lane span { font-size: 10px; color: var(--muted-foreground); }
+.step h2 { font-size: 13px; margin: 0 0 3px; letter-spacing: -.01em; }
+.step p { margin: 0; color: var(--muted-foreground); font-size: 11px; }
+.step .art { margin-top: 5px; font-size: 10px; color: var(--muted-foreground); }
+.step .art b { color: var(--foreground); font-weight: 600; }
+.arrow { text-align: center; color: var(--accent); font-size: 18px; line-height: 1; }
+.decision { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 7px; }
+.option { border: 1px solid var(--border); border-radius: 9px; padding: 7px 9px; font-size: 11px; color: var(--muted-foreground); }
+.option b { display: block; color: var(--foreground); font-size: 11px; margin-bottom: 2px; }
+.option.yes { border-color: var(--accent); }
+.option.no { border-style: dashed; }
+.loop { margin-top: 6px; border-left: 2px solid #c2410c; padding-left: 8px; font-size: 10px; color: #c2410c; }
+.artifacts { border: 1px solid var(--border); border-radius: 13px; padding: 11px 12px; background: var(--card); }
+.artifacts h2 { font-size: 13px; margin: 0 0 6px; }
+.artifacts ul { margin: 0; padding-left: 16px; color: var(--muted-foreground); font-size: 11px; }
+.artifacts li { margin: 2px 0; }
+.footer { border-top: 1px solid var(--border); padding-top: 9px; color: var(--muted-foreground); font-size: 10px; display: flex; flex-wrap: wrap; gap: 6px 14px; }
+@media (max-width: 760px) {
+  .step { grid-template-columns: 1fr; }
+  .step .lane { border-right: 0; border-bottom: 1px solid var(--border); padding: 0 0 6px; }
+  .decision { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<main class="board">
+  <header>
+    <div class="eyebrow">dev-nicolas · flujo detallado · 19 nov 2026</div>
+    <h1>De la petición a la entrega, con bucles y puertas</h1>
+    <p class="lede">Cada caja es un paso; cada rombo es una decisión; cada bucle vuelve al punto donde se puede corregir. El agente propone; la puerta decide; la persona autoriza.</p>
+    <div class="legend">
+      <span class="badge ok">implementado</span>
+      <span class="badge pending">pendiente</span>
+      <span class="badge">opcional</span>
+      <span class="badge human">decisión humana</span>
+      <span class="badge pending">eval aún atada a OpenCode</span>
+    </div>
+  </header>
+
+  <section class="step">
+    <div class="lane"><b>Fuente</b><span>neutral</span></div>
+    <div>
+      <h2>0. Contexto y adaptadores</h2>
+      <p>El repo guarda una sola fuente: <b>skills/</b>, <b>commands/</b> y <b>agents/</b>. <b>install-agent-adapters.sh</b> genera .opencode/ y .claude/ para el agente que los use; gentle-ai sincroniza los globales de Hermes, Codex y pi. AGENTS.md y el AGENTS.fragment del perfil se leen en todos.</p>
+      <div class="art"><b>Artefactos:</b> skills/*/SKILL.md, AGENTS.md, AGENTS.fragment.md, adapters gitignored</div>
+    </div>
+  </section>
+  <div class="arrow" aria-hidden="true">↓</div>
+
+  <section class="step human">
+    <div class="lane"><b>Persona</b><span>negocio</span></div>
+    <div>
+      <h2>1. Entrada</h2>
+      <p>Jira SIS, ticket, bug o idea. La persona fija el alcance, la prioridad y lo que no se toca. El agente no inventa el objetivo.</p>
+      <div class="art"><b>Artefacto:</b> ticket o TASK.md con el resultado esperado</div>
+    </div>
+  </section>
+  <div class="arrow" aria-hidden="true">↓</div>
+
+  <section class="step">
+    <div class="lane"><b>Agente</b><span>clasifica</span></div>
+    <div>
+      <h2>2. ¿Qué tipo de trabajo es?</h2>
+      <div class="decision">
+        <div class="option yes"><b>Bug reproducible</b>repro-first: escribe el test que falla, conserva la salida y recién después corrige.</div>
+        <div class="option no"><b>Feature o cambio</b>SDD (spec-driven-development): spec, criterios de aceptación y plan antes de tocar código.</div>
+      </div>
+      <div class="loop">Si no se puede reproducir o el requisito es ambiguo, vuelve a la persona; no adivines.</div>
+    </div>
+  </section>
+  <div class="arrow" aria-hidden="true">↓</div>
+
+  <section class="step">
+    <div class="lane"><b>Perfil</b><span>uno activo</span></div>
+    <div>
+      <h2>3. Preparar el entorno</h2>
+      <p>Rama feat/fix/hotfix. Elige el perfil: <b>odoo11</b> (guard/odoo.sh, verify, skills, casos) o <b>php</b> (esqueleto). Escribe <b>DEV_AGENT_PROFILE</b> en .dev-agent/config. Rellena verify/config.env con base desechable; nunca la base compartida.</p>
+      <div class="art"><b>Artefactos:</b> profile.json/env, .dev-agent/config, verify/config.env, rama</div>
+    </div>
+  </section>
+  <div class="arrow" aria-hidden="true">↓</div>
+
+  <section class="step">
+    <div class="lane"><b>Agente</b><span>implementa</span></div>
+    <div>
+      <h2>4. Implementar</h2>
+      <p>Cambio, tests y documentación en el mismo commit. Respeta las reglas del perfil y del núcleo: evidencia, sin secretos, sin producción, sin comentarios de prosa, un cambio un commit.</p>
+      <div class="art"><b>Artefactos:</b> diff, tests, CHANGELOG, docs</div>
+    </div>
+  </section>
+  <div class="arrow" aria-hidden="true">↓</div>
+
+  <section class="step">
+    <div class="lane"><b>Puerta</b><span>pre-commit</span></div>
+    <div>
+      <h2>5. Guard: genérico + perfil</h2>
+      <p>El hook ejecuta <b>guard.sh --staged</b>: ruff, black, mypy, eslint, tsc, gitleaks, comment_lint y los checks del perfil. Odoo añade sudo, cr.commit, SQL y print. <b>skipped no es pass</b>: se dice por qué se omitió.</p>
+      <div class="decision">
+        <div class="option yes"><b>Pasa</b>Continúa a verify.</div>
+        <div class="option no"><b>Falla</b>Corrige la causa raíz; no borres el check para ponerlo verde.</div>
+      </div>
+      <div class="loop">↺ Falla → vuelve a implementar → guard otra vez.</div>
+      <div class="art"><b>Artefacto:</b> guard-report.json</div>
+    </div>
+  </section>
+  <div class="arrow" aria-hidden="true">↓</div>
+
+  <section class="step">
+    <div class="lane"><b>Puerta</b><span>pre-push</span></div>
+    <div>
+      <h2>6. Verify: comportamiento real</h2>
+      <p><b>verify/run.sh</b> arranca el entorno, comprueba salud, ejecuta smoke y tests, y escribe evidence/&lt;run-id&gt;/summary.json. El TEST_CMD debe cubrir el cambio; no un smoke de otro módulo. Sin configuración, sale 2: no es verde.</p>
+      <div class="decision">
+        <div class="option yes"><b>Pasa</b>Continúa a la decisión de eval.</div>
+        <div class="option no"><b>Falla</b>Corrige el primer fallo; vuelve a verify.</div>
+      </div>
+      <div class="loop">↺ Falla → implementar → guard → verify.</div>
+      <div class="art"><b>Artefacto:</b> evidence/&lt;run&gt;/summary.json y logs</div>
+    </div>
+  </section>
+  <div class="arrow" aria-hidden="true">↓</div>
+
+  <section class="step pending">
+    <div class="lane"><b>Eval</b><span>solo si cambia</span></div>
+    <div>
+      <h2>7. ¿Cambió una skill, prompt, regla o rúbrica?</h2>
+      <div class="decision">
+        <div class="option no"><b>No</b>Salta a revisión humana.</div>
+        <div class="option yes"><b>Sí</b>Caso con TASK.md y context.json; dry-run; K=3 con juez distinto; score.json.</div>
+      </div>
+      <p>Umbral 8,5. Si baja, mejora la skill y repite; no debilites la rúbrica ni cambies el juez. El juez recibe artefactos, no la narración del agente.</p>
+      <div class="loop">↺ score &lt; 8,5 → editar skill → repetir K=3 → registrar línea base.</div>
+      <div class="art"><b>Artefactos:</b> score.json, run-*/output.md, docs/EVAL-BASELINE.md</div>
+      <div class="art"><b>Deuda conocida:</b> evals/harness.py y evals/loop.sh todavía ejecutan OpenCode; el runner neutral está pendiente de revisión.</div>
+    </div>
+  </section>
+  <div class="arrow" aria-hidden="true">↓</div>
+
+  <section class="step human">
+    <div class="lane"><b>Persona</b><span>revisa</span></div>
+    <div>
+      <h2>8. Revisión humana</h2>
+      <p>Una persona lee el diff, el summary y, si aplica, el score. GGA es consejo opcional; no sustituye a guard/verify. La revisión no se delega al agente que escribió el cambio.</p>
+      <div class="art"><b>Artefactos:</b> diff revisado, informe de GGA si se usó, comentarios</div>
+    </div>
+  </section>
+  <div class="arrow" aria-hidden="true">↓</div>
+
+  <section class="step human">
+    <div class="lane"><b>Repo/CI</b><span>entrega</span></div>
+    <div>
+      <h2>9. Rama, MR, CI y merge</h2>
+      <p>Rama y MR con el cambio y la evidencia. El CI del repo es la garantía dura; los hooks se pueden saltar con --no-verify. Si el CI está rojo, se corrige. El merge y el despliegue son decisiones humanas; el kit no despliega.</p>
+      <div class="decision">
+        <div class="option yes"><b>CI verde + revisión</b>Merge humano; producción solo con autorización explícita.</div>
+        <div class="option no"><b>CI rojo</b>Corrige y repite; no se fuerza el merge.</div>
+      </div>
+      <div class="art"><b>Artefactos:</b> MR, pipeline, commit firmado, evidencia adjunta</div>
+    </div>
+  </section>
+  <div class="arrow" aria-hidden="true">↓</div>
+
+  <section class="step">
+    <div class="lane"><b>Memoria</b><span>aprende</span></div>
+    <div>
+      <h2>10. Cerrar el ciclo</h2>
+      <p>engram guarda la decisión o el bug no obvio; rsc-brain guarda lo reutilizable con fuentes; el CHANGELOG y la skill recogen la lección. Si el mismo error aparece dos veces, se convierte en lint, test o CI.</p>
+      <div class="art"><b>Artefactos:</b> entry de engram, página de brain, CHANGELOG, nueva regla</div>
+    </div>
+  </section>
+
+  <section class="artifacts">
+    <h2>Qué queda por el camino</h2>
+    <ul>
+      <li><b>Contexto:</b> AGENTS.md, AGENTS.fragment.md, skills, commands, agents.</li>
+      <li><b>Trabajo:</b> TASK.md, spec, test rojo, diff, tests, docs.</li>
+      <li><b>Puertas:</b> guard-report.json, summary.json, score.json.</li>
+      <li><b>Entrega:</b> rama, MR, pipeline, revisión humana, autorización de producción.</li>
+      <li><b>Memoria:</b> engram, rsc-brain, CHANGELOG, nueva regla.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <span>La puerta es un comando; el agente es intercambiable.</span>
+    <span>Odoo 11 y PHP viven en dev-agent-profiles, no en el core.</span>
+    <span>Fuente: docs/CREAR-PERFIL.md · docs/DIAGRAMA-SISTEMA.md</span>
+  </footer>
+</main>
+</body>
+</html>

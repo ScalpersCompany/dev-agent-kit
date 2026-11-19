@@ -4,6 +4,12 @@ __pycache__/
 .mypy_cache/
 .venv/
 venv/
+.opencode/
+.claude/skills/
+.claude/commands/
+.claude/agents/
+.codex/skills/
+.codex/commands/
 node_modules/
 evidence/
 evals/runs/

@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.2.0] - 2026-11-19
+
+### Added
+
+- `scripts/install-agent-adapters.sh`: generates `.opencode/` and `.claude/` adapters from the neutral `skills/`, `commands/` and `agents/` source; the generated directories are gitignored.
+- `tests/test_agent_adapters.py`: checks the generated OpenCode and Claude adapters and rejects unknown agents.
+- `docs/diagrams/flujo-detallado.html` and the detailed Mermaid flow in `docs/DIAGRAMA-SISTEMA.md`: decisions, loops, artifacts and the OpenCode eval gap.
+
+### Changed
+
+- The core skills and commands moved out of `.opencode/` into neutral `skills/` and `commands/`; the eval judge moved to `agents/judge.md`. `.opencode/` is no longer a tracked source directory.
+- The eval harness support paths now cover `skills/`, `commands/` and `agents/`; the loop points at `skills/`.
+- README, install guide, operations, profile template and architecture state the neutral source, the generated adapters and the remaining OpenCode-only eval runner.
+- The generated `.claude/` and `.codex/` adapter paths are gitignored.
+
 ## [2.1.0] - 2026-11-19
 
 ### Added

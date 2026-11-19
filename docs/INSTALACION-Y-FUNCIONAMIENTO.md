@@ -40,10 +40,10 @@ bash scripts/bootstrap.sh /ruta/al/repo --with-verify
 bash scripts/bootstrap.sh /ruta/al/repo --with-gga
 ```
 
-Copia `AGENTS.md`, `.opencode/`, `verify/`, `guard/`, `evals/`, `scripts/`, `docs/` y
-`profiles/_template/`; respalda lo que reemplaza como `.bak-<fecha>`; crea
-`verify/config.env` desde el ejemplo e instala el `pre-commit`. `--with-verify` añade el
-`pre-push` y `.dev-agent/verify.env`; `--with-gga` añade los ficheros de GGA. No toca
+Copia `AGENTS.md`, `skills/`, `commands/`, `agents/`, `verify/`, `guard/`, `evals/`,
+`scripts/`, `docs/` y `profiles/_template/`; respalda lo que reemplaza como `.bak-<fecha>`;
+crea `verify/config.env` desde el ejemplo e instala el `pre-commit`. `--with-verify` añade
+el `pre-push` y `.dev-agent/verify.env`; `--with-gga` añade los ficheros de GGA. No toca
 producción, el historial de git ni un registro de perfiles.
 
 ### 3.2 Manual (respaldo)
@@ -52,7 +52,9 @@ producción, el historial de git ni un registro de perfiles.
 git clone git@github.com:nramosscalpers/dev-agent-kit.git ~/dev-agent-kit
 cd /ruta/al/repo-de-desarrollo
 cp -a ~/dev-agent-kit/AGENTS.md .
-cp -a ~/dev-agent-kit/.opencode .
+cp -a ~/dev-agent-kit/skills .
+cp -a ~/dev-agent-kit/commands .
+cp -a ~/dev-agent-kit/agents .
 cp -a ~/dev-agent-kit/verify .
 cp -a ~/dev-agent-kit/guard .
 cp -a ~/dev-agent-kit/evals .
@@ -61,7 +63,8 @@ cp -a ~/dev-agent-kit/docs .
 ```
 
 No copies `verify/config.env`, `evidence/`, `guard-report.json` ni `evals/runs/`. Si el
-repo ya tiene `AGENTS.md` o `.opencode`, fusiona.
+repo ya tiene `AGENTS.md`, fusiónalo. Los adaptadores `.opencode/` o `.claude/` se generan
+con `bash scripts/install-agent-adapters.sh . --agents opencode,claude`; no se versionan.
 
 ### 3.3 Configurar verify
 
@@ -154,6 +157,7 @@ python3 evals/harness.py \
 Cada ejecución va en un worktree o copia desechable. El juez recibe los artefactos y el
 `context.json`. El umbral es 8,5; `--dry-run` valida el caso sin gastar modelo. `score.json`
 incluye scores, media, mínimo, máximo, desviación, tokens, coste, aislamiento y `passed`.
+El harness y `evals/loop.sh` todavía invocan OpenCode; el runner neutral está pendiente.
 
 La línea base del núcleo está en `docs/EVAL-BASELINE.md`; la del perfil Odoo, en
 `dev-agent-profiles/profiles/odoo11/docs/EVAL-BASELINE.md`.

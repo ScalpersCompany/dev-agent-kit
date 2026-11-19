@@ -9,7 +9,8 @@
 3. **Verify.** `bash verify/run.sh` boots, checks health, runs smoke and tests, and writes
    `evidence/<run-id>/summary.json`.
 4. **Eval.** Only when a skill, prompt, rule or rubric changes. K=3, a judge different from
-   the executor, threshold 8.5.
+   the executor, threshold 8.5. The harness and `evals/loop.sh` still use OpenCode; the
+   neutral runner is pending.
 5. **Review and delivery.** A human reads the diff. The repository decides push, PR and CI.
 
 ## The gate
@@ -36,7 +37,7 @@ The git hooks are shared. The profile changes what the hook executes, not the ho
 ## Skills
 
 Core skills are `dev-verify`, `repro-first`, `review-diff`, `correct` and `query-readonly`.
-They are installed in the agents' skills directories and copied from `.opencode/skills/`.
+They are installed in the agents' skills directories from `skills/` through the adapter script or `gentle-ai sync`.
 The Odoo domain skills are in the profile. SDD is `spec-driven-development`; ODD is
 always-on `AGENTS.md`/`SOUL.md` text; RDD is the `gentle-ai review` binary. None of ODD or
 RDD is a skill.

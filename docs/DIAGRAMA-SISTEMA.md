@@ -69,6 +69,56 @@ flowchart TB
   O -.-> C
 ```
 
+## Flujo detallado
+
+El mapa visual con los bucles y las decisiones está en
+`docs/diagrams/flujo-detallado.html`. Esta es la versión Mermaid:
+
+```mermaid
+flowchart TD
+  N0[skills/ + commands/ + agents/] --> N1[adapters .opencode/.claude]
+  N0 --> N2[gentle-ai global]
+  N1 --> A[Entrada: Jira SIS / ticket / bug / idea]
+  N2 --> A
+
+  A --> B{¿Bug reproducible?}
+  B -->|sí| C[repro-first: test rojo]
+  B -->|no| D[SDD: spec y criterios]
+  C --> E[rama + perfil activo + verify config]
+  D --> E
+  E --> F[implementar + tests + docs]
+
+  F --> G[pre-commit: guard genérico + perfil]
+  G --> H{¿guard pasa?}
+  H -->|no| F
+  H -->|sí| I[pre-push: verify + evidencia]
+  I --> J{¿verify pasa?}
+  J -->|no| F
+  J -->|sí| K{¿cambia skill, prompt, regla o rúbrica?}
+
+  K -->|no| L[revisión humana del diff]
+  K -->|sí| M[eval: TASK + context + K=3 + juez distinto]
+  M --> N{¿score >= 8.5?}
+  N -->|no| O[mejorar skill o rúbrica] --> M
+  N -->|sí| L
+
+  L --> P[rama / MR / CI]
+  P --> Q{¿CI verde?}
+  Q -->|no| F
+  Q -->|sí| R[merge humano]
+  R --> S[producción: autorización humana]
+
+  F -.-> T[engram / rsc-brain / CHANGELOG]
+  G -.-> U[guard-report.json]
+  I -.-> V[evidence/summary.json]
+  M -.-> W[score.json]
+```
+
+La deuda conocida está marcada en el mapa: `docs/CREAR-PERFIL.md` y el README
+explican que el **harness de eval** y `evals/loop.sh` todavía ejecutan OpenCode; la
+fuente de skills, comandos y juez ya es neutral, pero el runner de eval no. El flujo
+neutral de guard/verify no depende de OpenCode.
+
 ## Cómo leerlo
 
 - **Entrada**: la persona decide qué se hace y con qué prioridad.
@@ -79,7 +129,8 @@ flowchart TB
 - **Perfil**: el núcleo no sabe Odoo ni PHP. Odoo 11 aporta su linter, verify, skills y
   casos; PHP es un esqueleto.
 - **Puerta**: pre-commit y pre-push son los mismos hooks para todos los perfiles. La
-  evaluación se ejecuta cuando cambia una skill, un prompt, una regla o una rúbrica.
+  evaluación se ejecuta cuando cambia una skill, un prompt, una regla o una rúbrica. El
+  harness de eval todavía ejecuta OpenCode; el runner neutral está pendiente.
 - **Salida**: la revisión, el merge y el despliegue son humanos. El kit no toca producción.
 - **Capas**: `gentle-ai` distribuye; `engram` recuerda; `rsc-brain` conserva conocimiento
   curado.

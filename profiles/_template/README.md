@@ -21,8 +21,8 @@ place for a real profile.
 
 The core owns `guard/guard.sh`, `verify/run.sh`, `evals/harness.py`, the git hooks and
 the five generic skills (`dev-verify`, `repro-first`, `review-diff`, `correct`,
-`query-readonly`). The hooks are shared: a profile changes what the hook executes, not the
-hook itself.
+`query-readonly`) under `skills/`. The hooks are shared: a profile changes what the hook
+executes, not the hook itself.
 
 SDD is the `spec-driven-development` skill. ODD is always-on `AGENTS.md`/`SOUL.md` text; it
 is not a skill. RDD is the `gentle-ai review` binary; it is not a skill. rsc-harness skills
@@ -64,14 +64,7 @@ missing config is exit 2, not green.
 
 ## Evaluation
 
-The core harness is shared:
-
-```bash
-python3 /path/to/dev-agent-kit/evals/harness.py \
-  --case-dir evals/cases/<case> \
-  --rubric evals/rubric.<name>.json \
-  --agent build --model <approved> --judge-model <approved-different> --k 3
-```
-
-K=3, threshold 8.5, judge different from the executor. A case with no rubric or no
-`context.json` is not a real eval.
+The core harness is shared, but the runner is still OpenCode-only; the neutral runner is a
+pending change. Run K=3 with a judge different from the executor and threshold 8.5. A case
+without a rubric or without `context.json` is not a real eval. Record the result in
+`docs/EVAL-BASELINE.md`.

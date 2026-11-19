@@ -15,9 +15,10 @@ This kit is for the development base, not production. Production receives only c
 
 ```text
 AGENTS.md                     generic rules the agent reads first
-.opencode/skills/             five core skills: dev-verify, repro-first, review-diff, correct, query-readonly
-.opencode/commands/           /verify /guard /repro /correct /eval
-.opencode/agent/judge.md      read-only eval judge, strict JSON contract
+skills/                       five core skills: dev-verify, repro-first, review-diff, correct, query-readonly
+commands/                     neutral prompt templates; adapters install them per agent
+agents/                       eval judge prompt; adapters install it for OpenCode
+scripts/install-agent-adapters.sh  generates .opencode/.claude adapters from the neutral source
 verify/run.sh                 boot, smoke, tests, evidence/
 guard/guard.sh                generic checks plus the active profile checks
 guard/comment_lint.py         blocks new comments in staged code
@@ -42,7 +43,8 @@ tests/test_comment_lint.py    unit tests for the comment gate
 docs/                         install, operations, architecture, profiles, coverage
 docs/CREAR-PERFIL.md          how to build a new profile
 docs/DIAGRAMA-SISTEMA.md      Mermaid map of the whole system
-docs/diagrams/sistema.html    visual map of the flow and the layers
+docs/diagrams/sistema.html    visual overview of the flow and the layers
+docs/diagrams/flujo-detallado.html  detailed flow with decisions, loops and artifacts
 CHANGELOG.md
 ```
 
@@ -58,7 +60,7 @@ bash scripts/bootstrap.sh /path/to/development-repo --with-verify
 bash scripts/bootstrap.sh /path/to/development-repo --with-gga
 ```
 
-The bootstrap copies `AGENTS.md`, `.opencode/`, `verify/`, `guard/`, `evals/`, `scripts/`, `docs/` and `profiles/_template/`; backs up anything it replaces as `.bak-<timestamp>`; creates `verify/config.env` from the example; and installs the pre-commit hook. `--with-verify` adds the pre-push gate and `.dev-agent/verify.env`; `--with-gga` adds the optional GGA files. It does not touch production, git history or a profile registry.
+The bootstrap copies `AGENTS.md`, `skills/`, `commands/`, `agents/`, `verify/`, `guard/`, `evals/`, `scripts/`, `docs/` and `profiles/_template/`; backs up anything it replaces as `.bak-<timestamp>`; creates `verify/config.env` from the example; and installs the pre-commit hook. `--with-verify` adds the pre-push gate and `.dev-agent/verify.env`; `--with-gga` adds the optional GGA files. It does not touch production, git history or a profile registry.
 
 The full profile installer (`dev-agent init --profile ... --all`) is designed but not wired yet; `scripts/bootstrap.sh` is the current automated core path.
 
@@ -84,7 +86,7 @@ python3 scripts/validate-profile.py /home/scalpers/dev-agent-profiles/profiles/p
 
 The generator copies the template, backs up an existing profile as `.bak-<timestamp>` and fills the name and language. The validator checks the contract, `profile.env` and every path. A profile that does not validate is not installable.
 
-The visual map of the system is in `docs/diagrams/sistema.html`; the Mermaid version and the status table are in `docs/DIAGRAMA-SISTEMA.md`.
+The visual map of the system is in `docs/diagrams/sistema.html`; the detailed flow with decisions, loops and artifacts is in `docs/diagrams/flujo-detallado.html`. The Mermaid version and the status table are in `docs/DIAGRAMA-SISTEMA.md`.
 
 ## Status
 
@@ -96,6 +98,8 @@ The visual map of the system is in `docs/diagrams/sistema.html`; the Mermaid ver
 | `dev-agent init` and the profile lock | designed; not implemented |
 | profile template, `new-profile.sh` and `validate-profile.py` | implemented and tested |
 | visual system map | `docs/diagrams/sistema.html` and `docs/DIAGRAMA-SISTEMA.md` |
+| detailed flow | `docs/diagrams/flujo-detallado.html` and the Mermaid section in `docs/DIAGRAMA-SISTEMA.md` |
+| eval runner agent-neutral | pending: `evals/harness.py` and `evals/loop.sh` still use OpenCode |
 | GGA advisory review | added; installation tested; no real review run |
 | `comment_lint` for PHP | pending; the generic checker does not scan `.php` yet |
 | `gentle-ai`, `rsc-harness`, `rsc-brain`, `engram` | documented boundaries; rsc-harness is not replaced by gentle-ai |
@@ -103,7 +107,7 @@ The visual map of the system is in `docs/diagrams/sistema.html`; the Mermaid ver
 
 ## Agents and shared rules
 
-The gates are plain bash/Python 3.8+ and git hooks, so Hermes, OpenCode, Claude Code, Codex and pi run the same commands. Skills are `SKILL.md` files installed under each agent's skills directory; the shared rule is `~/.agents/AGENTS.md`, linked from `SOUL.md`, OpenCode's `AGENTS.md` and Claude's `CLAUDE.md`. `gentle-ai sync` distributes skills and MCP; it does not replace `guard` or `verify`.
+The gates are plain bash/Python 3.8+ and git hooks, so Hermes, OpenCode, Claude Code, Codex and pi run the same commands. Skills are `SKILL.md` files under `skills/`; `scripts/install-agent-adapters.sh <repo> --agents opencode,claude` generates the project-level copies, and `gentle-ai sync` handles the global ones. The eval harness is the exception: it still runs through OpenCode, and that is a known gap. The shared rule is `~/.agents/AGENTS.md`, linked from `SOUL.md`, OpenCode's `AGENTS.md` and Claude's `CLAUDE.md`.
 
 ## GGA (optional)
 
@@ -112,12 +116,12 @@ The gates are plain bash/Python 3.8+ and git hooks, so Hermes, OpenCode, Claude 
 ## Manual install (fallback)
 
 1. Copy `AGENTS.md` (merge it with the existing one, do not overwrite).
-2. Copy `.opencode/`, `verify/`, `guard/`, `evals/`, `scripts/`, `docs/`.
+2. Copy `skills/`, `commands/`, `agents/`, `verify/`, `guard/`, `evals/`, `scripts/`, `docs/`.
 3. Run `bash scripts/scan_env.sh` and complete `docs/agent-quality/ENVIRONMENT.md` with the real commands.
 4. Fill `verify/config.env` with the boot, health and test commands.
 5. Run `bash guard/guard.sh`. Fix or disable each check explicitly, never by deleting it silently.
 6. Run `bash verify/run.sh` on a clean checkout. It must pass before you trust any agent.
-7. Install the hooks: `bash scripts/install-hooks.sh .` for the pre-commit guard; add `--with-verify` for the pre-push runtime gate and edit `.dev-agent/verify.env`.
+7. Install the hooks: `bash scripts/install-hooks.sh .` for the pre-commit guard; add `--with-verify` for the pre-push runtime gate and edit `.dev-agent/verify.env`. For OpenCode or Claude, run `bash scripts/install-agent-adapters.sh . --agents opencode,claude`; the generated directories are gitignored.
 8. Copy one eval case, run `python3 evals/harness.py --case-dir evals/cases/dev-verify/01-fix-failing-test --rubric evals/rubric.dev-verify.json --dry-run`, then a real run with the approved model.
 
 ## What it does not do

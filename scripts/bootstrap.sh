@@ -36,7 +36,7 @@ backup() {
   fi
 }
 
-for item in AGENTS.md .opencode verify guard evals scripts docs profiles; do
+for item in AGENTS.md skills commands agents verify guard evals scripts docs profiles; do
   backup "$REPO/$item"
   if [ -d "$KIT/$item" ]; then
     mkdir -p "$REPO/$item"

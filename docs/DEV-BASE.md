@@ -10,7 +10,7 @@ skeleton is `dev-agent-profiles/profiles/php`. The core does not import Odoo, PH
 - `verify/run.sh`: boot, health, smoke, tests and evidence.
 - `evals/harness.py`: K runs, artifacts, judge and score.
 - `hooks/`: pre-commit and pre-push with backups.
-- `.opencode/skills/`: five generic skills.
+- `skills/`: five generic skills.
 - `profiles/_template/`: the contract for a new environment.
 
 ## The gate

@@ -37,7 +37,7 @@ HEAVY = {
     ".mypy_cache",
     ".pytest_cache",
 }
-SUPPORT_PREFIXES = (".opencode/", "AGENTS.md", "verify/", "guard/", "scripts/", "docs/")
+SUPPORT_PREFIXES = ("skills/", "commands/", "agents/", ".opencode/", "AGENTS.md", "verify/", "guard/", "scripts/", "docs/")
 ARTIFACT_SUFFIXES = {".json", ".md", ".txt", ".log", ".xml", ".csv", ".yaml", ".yml", ".html", ".py", ".rst", ".po", ".js", ".diff", ".patch"}
 MAX_ARTIFACT_FILES = 20
 MAX_ARTIFACT_FILE_CHARS = 20000
@@ -75,7 +75,7 @@ def copy_support(repo: Path, sandbox: Path) -> None:
     wins over the committed one. These paths are filtered out of the artifact
     report later, so they do not look like agent changes.
     """
-    for rel in (".opencode", "AGENTS.md", "verify", "guard", "scripts", "docs"):
+    for rel in ("skills", "commands", "agents", ".opencode", "AGENTS.md", "verify", "guard", "scripts", "docs"):
         source = repo / rel
         if not source.exists():
             continue
@@ -305,6 +305,9 @@ def collect_artifacts(sandbox: Path, baseline: set[str]) -> dict:
                 "--unified=3",
                 "--",
                 ".",
+                ":(exclude)skills",
+                ":(exclude)commands",
+                ":(exclude)agents",
                 ":(exclude).opencode",
                 ":(exclude)AGENTS.md",
                 ":(exclude)verify",

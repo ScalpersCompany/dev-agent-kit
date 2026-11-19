@@ -177,7 +177,8 @@ python3 /ruta/dev-agent-kit/evals/harness.py \
 ```
 
 K=3, umbral 8,5, juez distinto del ejecutor. `--dry-run` valida el caso sin gastar modelo.
-Un caso sin rúbrica o sin `context.json` no es una eval real.
+Un caso sin rúbrica o sin `context.json` no es una eval real. El harness y `evals/loop.sh`
+todavía ejecutan OpenCode; el runner neutral es una deuda conocida, no un gate neutral.
 
 ## 7. Tests y CI
 

@@ -82,7 +82,7 @@ PROFILE_EVALS=profiles/odoo11/evals/cases
 PROFILE_AGENTS=profiles/odoo11/AGENTS.fragment.md
 ```
 
-`scripts/init-profile.sh <perfil> <repo>` copia la plantilla, escribe
+`scripts/new-profile.sh <perfil> <repo>` copia la plantilla, escribe
 `.dev-agent/config` con `DEV_AGENT_PROFILE=<perfil>` y no toca el código. `guard.sh` carga
 el perfil y ejecuta, en este orden:
 
@@ -197,7 +197,7 @@ convenciones por proyecto. Vive como MCP en cada agente; el repo lleva su
 `gentle-ai` es el **instalador y la paridad entre agentes**: skills, `AGENTS.md`, MCP
 (codegraph, engram, rsc-brain) y persona. No es un gate.
 
-- La fuente de skills es una sola: `core/skills` y `profiles/<perfil>/skills`;
+- La fuente de skills es una sola: `skills/` y `profiles/<perfil>/skills`;
   `gentle-ai sync` las lleva a OpenCode, Claude, Codex, pi y Hermes.
 - `gentle-ai sync --dry-run` antes de escribir; no se cambian cinco configuraciones a
   ciegas.
