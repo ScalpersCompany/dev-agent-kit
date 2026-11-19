@@ -89,9 +89,8 @@ cree el instalador `dev-agent init`, copiará el perfil a `.dev-agent/profiles/o
 escribirá `.dev-agent/config`.
 
 ```text
-profile skills/       repro-first, review-diff, dev-verify, odoo-safe-change,
-                      odoo-11-code-review, factorlibre-mr-preflight, correct,
-                      query-readonly
+profile skills/       odoo-safe-change, odoo-11-code-review, factorlibre-mr-preflight
+core skills/          dev-verify, repro-first, review-diff, correct, query-readonly
 global agent skill    spec-driven-development (SDD); doubt-driven-development si se quiere
 repo-local            .rsc/skills/ (asdd, sdd-init, harness, specify, plan, tasks,
                       implement, verify, review, ship...) si el repo tiene rsc-harness
