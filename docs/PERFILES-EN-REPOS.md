@@ -70,6 +70,36 @@ El núcleo rechaza un perfil con `api` distinta de la suya, sin `profile.json`, 
 `profile.env` o con rutas que se salgan del repo. La API empieza en 1 y solo cambia con una
 migración documentada.
 
+## Skills del perfil Odoo
+
+No todo lo que se nombra como metodología es una skill. La comprobación en el entorno es:
+
+| Nombre | Qué es | Dónde vive |
+|---|---|---|
+| SDD (Spec-Driven Development) | skill real | `agent-skills/spec-driven-development`; se carga por nombre o por descripción |
+| ODD (Organic Driven Development) | texto siempre activo, no una skill | `AGENTS.md`/`SOUL.md` del orquestador; no tiene `SKILL.md` y no se invoca |
+| RDD (Receipt-Driven Development) | binario, no una skill | `gentle-ai review mode status/enable/disable` y `review assess/start`; se lanza desde terminal |
+| rsc-harness `asdd`, `sdd-init`, `harness`, `specify`, `plan`, `tasks`, `implement`, `verify`, `review`, `ship`... | skills reales, locales al repo | `.rsc/skills/` del repo donde se instala rsc-harness; no se copian al perfil |
+| `rsc-harness-brain` | skill de instalación, no de tarea diaria | skills globales del agente |
+
+El perfil `odoo11` se creará en `dev-agent-profiles`; hoy no está activo y Odoo sigue en
+la raíz del kit. Cuando se cree, declara estas fuentes:
+
+```text
+profile skills/       repro-first, review-diff, dev-verify, odoo-safe-change,
+                      odoo-11-code-review, factorlibre-mr-preflight, correct,
+                      query-readonly
+global agent skill    spec-driven-development (SDD); doubt-driven-development si se quiere
+repo-local            .rsc/skills/ (asdd, sdd-init, harness, specify, plan, tasks,
+                      implement, verify, review, ship...) si el repo tiene rsc-harness
+AGENTS.fragment       ODD siempre activo; no es una skill
+command               RDD: gentle-ai review; no es una skill
+```
+
+No se debe declarar ODD ni RDD como skills: sería una etiqueta falsa y el agente no las
+encontraría al cargar por nombre. SDD sí se declara como skill; las de rsc-harness se
+declaran como repo-local, no se duplican en `dev-agent-profiles`.
+
 ## Hooks y perfiles
 
 El hook es **uno y del núcleo**. No se duplica un `pre-commit` por lenguaje: el mismo

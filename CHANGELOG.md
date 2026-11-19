@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.0] - 2026-11-19
+
+### Added
+
+- The profile design documents which names are real skills: SDD is `spec-driven-development`; ODD is always-on AGENTS/SOUL text; RDD is the `gentle-ai review` binary; rsc-harness skills are repo-local under `.rsc/skills/`.
+- The Odoo profile skill sources are listed: profile skills, the global SDD skill, repo-local rsc-harness skills and the AGENTS fragment; ODD and RDD are not declared as skills.
+
 ## [1.9.0] - 2026-11-19
 
 ### Added

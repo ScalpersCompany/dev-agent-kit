@@ -33,6 +33,11 @@ guard checks, verify config, skills, eval cases and the AGENTS fragment. Today O
 lives at the core root and `profiles/php` is a skeleton; the migration is in
 `docs/PERFILES-EN-REPOS.md`.
 
+SDD is the `spec-driven-development` skill. ODD is always-on text in `AGENTS.md`/`SOUL.md`,
+not a skill. RDD is the `gentle-ai review` binary, not a skill. The rsc-harness skills
+(`asdd`, `sdd-init`, `harness`, `verify`...) are repo-local in `.rsc/skills/` and are not
+copied into the profile.
+
 ## Status
 
 | Area | State |
