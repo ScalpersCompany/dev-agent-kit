@@ -37,6 +37,18 @@ def run_lint(root: Path, *extra: str) -> subprocess.CompletedProcess:
 
 
 class OdooLintTest(unittest.TestCase):
+    def test_parameterized_sql_is_not_interpolation(self):
+        with tempfile.TemporaryDirectory() as name:
+            root = Path(name)
+            write_module(
+                root,
+                "safe",
+                "def f(self):\n"
+                "    self.env.cr.execute('SELECT id FROM res_partner WHERE id = %s', (1,))\n",
+            )
+            result = run_lint(root)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
     def test_full_scan_blocks_business_code(self):
         with tempfile.TemporaryDirectory() as name:
             root = Path(name)

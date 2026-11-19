@@ -40,10 +40,18 @@ def call_name(node: ast.AST) -> str:
     return ""
 
 
+def has_py_interpolation(sql: str) -> bool:
+    """True only for real string interpolation, not for DB-API placeholders."""
+    import re
+
+    without_placeholders = re.sub(r"%\([^)]+\)s|%s|%%", "", sql)
+    return "%" in without_placeholders
+
+
 def literal_sql(node: ast.AST) -> tuple[str, bool]:
     """Return the SQL text and whether it is interpolated."""
     if isinstance(node, ast.Constant) and isinstance(node.value, str):
-        return node.value, "%" in node.value
+        return node.value, has_py_interpolation(node.value)
     if (
         isinstance(node, ast.BinOp)
         and isinstance(node.left, ast.Constant)
