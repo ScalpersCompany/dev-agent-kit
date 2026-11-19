@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.4.0] - 2026-11-19
+
+### Added
+
+- `install-agent-adapters.sh --profile <profile>` merges the profile domain skills into the generated OpenCode and Claude adapters.
+- Adapter tests for profile-skill merging and unknown agents.
+- The eval harness isolates the judge in a temporary directory, copies `agents/judge.md` there, marks timed-out executors and judge failures invalid, and supports `.claude`/`.codex` as support paths.
+
+### Changed
+
+- The template, README and profile design use one relative profile path, the correct `python3` validator command and a portable profiles path.
+
 ## [2.3.0] - 2026-11-19
 
 ### Changed
