@@ -116,7 +116,7 @@ The visual map of the system is in `docs/diagrams/sistema.html`; the detailed fl
 | eval runner agent-neutral | pending: `evals/harness.py` and `evals/loop.sh` still use OpenCode |
 | GGA advisory review | added; installation tested; no real review run |
 | `comment_lint` for PHP | pending; the generic checker does not scan `.php` yet |
-| `gentle-ai`, `rsc-harness`, `rsc-brain`, `engram` | documented boundaries; rsc-harness is not replaced by gentle-ai |
+| `gentle-ai`, `rsc-harness`, `engram` | documented boundaries; `engram` stays local until the AWS infrastructure exists |
 | Scalpers CI | not touched; local gates are the current hard check |
 
 ## Agents and shared rules

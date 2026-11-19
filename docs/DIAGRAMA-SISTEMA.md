@@ -48,8 +48,7 @@ flowchart TB
 
   subgraph Capas
     M[gentle-ai: instala y sincroniza]
-    N[engram: memoria]
-    O[rsc-brain: conocimiento]
+    N[engram: memoria local]
     P[scalpers-tech-doc: norma de empresa]
   end
 
@@ -67,7 +66,6 @@ flowchart TB
   J --> K --> L
   M -.-> C
   N -.-> C
-  O -.-> C
   P -.-> C
 ```
 
@@ -111,7 +109,7 @@ flowchart TD
   Q -->|sí| R[merge humano]
   R --> S[producción: autorización humana]
 
-  F -.-> T[engram / rsc-brain / CHANGELOG]
+  F -.-> T[engram / CHANGELOG]
   G -.-> U[guard-report.json]
   I -.-> V[evidence/summary.json]
   M -.-> W[score.json]
@@ -135,8 +133,8 @@ neutral de guard/verify no depende de OpenCode.
   evaluación se ejecuta cuando cambia una skill, un prompt, una regla o una rúbrica. El
   harness de eval todavía ejecuta OpenCode; el runner neutral está pendiente.
 - **Salida**: la revisión, el merge y el despliegue son humanos. El kit no toca producción.
-- **Capas**: `gentle-ai` distribuye; `engram` recuerda; `rsc-brain` conserva conocimiento
-  curado.
+- **Capas**: `gentle-ai` distribuye; `engram` recuerda en local hasta que exista la
+  infraestructura AWS.
 
 ## Estado
 

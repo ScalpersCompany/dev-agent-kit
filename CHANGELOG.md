@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.7.0] - 2026-11-19
+
+### Changed
+
+- Removed `rsc-brain` from this project; the curated-knowledge/wiki layer is deferred until the AWS infrastructure exists.
+- `engram` stays local as MCP until that infrastructure exists; docs, diagrams and status now say so.
+- The Odoo profile no longer references the knowledge layer or evaluates its installer skill.
+
 ## [2.6.0] - 2026-11-19
 
 ### Changed

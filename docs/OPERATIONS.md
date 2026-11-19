@@ -55,8 +55,8 @@ provider or no `.gga`, the script says so; it is not green.
 - `dev-agent-kit`: the deterministic gate and the hooks.
 - `gentle-ai`: installs and synchronises agents, skills and MCP; it does not replace
   rsc-harness.
-- `rsc-brain`: curated knowledge.
-- `engram`: project memory.
+- Knowledge/wiki layer: deferred until there is AWS infrastructure.
+- `engram`: project memory; local until the AWS infrastructure exists.
 
 The agent is interchangeable; the gate is a command.
 

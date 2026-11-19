@@ -198,7 +198,7 @@ Diseño o migración pendiente:
 - lock de perfiles;
 - PHP como perfil real (hoy esqueleto);
 - `comment_lint` para `.php`;
-- cableado de `gentle-ai sync`, `rsc-harness`, `rsc-brain` y `engram` en el flujo diario;
+- cableado de `gentle-ai sync`, `rsc-harness` y `engram` en el flujo diario; `engram` en local hasta que exista la infraestructura AWS;
 - instalación automática del perfil desde el bootstrap.
 
 ## 9. Seguridad

@@ -84,7 +84,6 @@ No todo lo que se nombra como metodología es una skill. La comprobación en el 
 | ODD (Organic Driven Development) | texto siempre activo, no una skill | `AGENTS.md`/`SOUL.md` del orquestador; no tiene `SKILL.md` y no se invoca |
 | RDD (Receipt-Driven Development) | binario, no una skill | `gentle-ai review mode status/enable/disable` y `review assess/start`; se lanza desde terminal |
 | rsc-harness `asdd`, `sdd-init`, `harness`, `specify`, `plan`, `tasks`, `implement`, `verify`, `review`, `ship`... | skills reales, locales al repo | `.rsc/skills/` del repo donde se instala rsc-harness; no se copian al perfil |
-| `rsc-harness-brain` | skill de instalación, no de tarea diaria | skills globales del agente |
 
 El perfil `odoo11` está extraído en
 `ScalpersCompany/dev-agent-profiles/profiles/odoo11`; su remoto público está creado. El
@@ -243,8 +242,8 @@ El repo de destino queda así:
   skills son `SKILL.md`; `gentle-ai` las distribuye.
 - GGA es opcional y se instala por repo; el perfil solo aporta patrones de fichero y reglas
   adicionales.
-- rsc-harness, rsc-brain y engram no entran en el perfil: son capas del flujo, no comandos
-  del lenguaje.
+- rsc-harness y engram no entran en el perfil: son capas del flujo, no comandos
+  de un lenguaje. `engram` queda en local hasta la infraestructura AWS.
 
 ## Migración
 
@@ -254,8 +253,8 @@ El repo de destino queda así:
 3. Implementar `dev-agent init/use/profiles/doctor` y el lock; probar con el perfil PHP en
    un repo vacío y con el perfil Odoo en `scalpers-v11`.
 4. El núcleo ya no contiene Odoo; su CI no lo necesita. El perfil Odoo conserva sus tests.
-5. Conectar `gentle-ai sync`, rsc-harness, rsc-brain y engram en el flujo; no dentro del
-   perfil.
+5. Conectar `gentle-ai sync`, rsc-harness y engram en el flujo; no dentro del
+   perfil. `engram` en local hasta la infraestructura AWS.
 
 Criterio de aceptación: un repo PHP instala `--profile php` y pasa `guard`/`verify` sin
 Odoo; un repo Odoo instala `--profile odoo11` y conserva el comportamiento actual; el
