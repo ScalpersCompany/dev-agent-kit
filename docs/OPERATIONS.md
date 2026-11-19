@@ -58,7 +58,7 @@ provider or no `.gga`, the script says so; it is not green.
 | `ScalpersCompany/dev-agent-kit` | deterministic gate and hooks |
 | `ScalpersCompany/dev-agent-profiles` | Odoo 11 and PHP profiles |
 | `ScalpersCompany/scalpers-tech-doc` | company norm and documentation; canonical `AGENTS.md`, linked at `~/.agents/AGENTS.md`; checked by `scripts/check-techdoc.sh` |
-| `scalpers-v11` | product code in GitLab; never deployed by the kit |
+| The repository where development happens | product code (Odoo, PHP, any stack); install the kit and the active profile at its root |
 
 They are separate repositories, not submodules. The company norm wins; the kit and the
 profile only reference it.

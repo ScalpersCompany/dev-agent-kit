@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.9.0] - 2026-11-19
+
+### Changed
+
+- Removed the fixed `scalpers-v11` product row from README, architecture, install, operations, profiles, integration and diagrams. The target is the repository where development happens (Odoo, PHP or any stack), with the kit and the active profile installed at its root; there is no fixed product repository.
+
 ## [2.8.0] - 2026-11-19
 
 ### Added

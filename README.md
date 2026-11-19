@@ -13,7 +13,7 @@ Start here: `docs/INSTALACION-Y-FUNCIONAMIENTO.md` (Spanish) — install, daily 
 | `ScalpersCompany/dev-agent-kit` | Deterministic gate, hooks, skills and evals | This repository; public |
 | `ScalpersCompany/dev-agent-profiles` | Odoo 11 and PHP profiles | Separate public repository; installed by the active profile |
 | `ScalpersCompany/scalpers-tech-doc` | Company norm and documentation | Separate company repository; its `AGENTS.md` is canonical and is linked at `~/.agents/AGENTS.md`; verified by `scripts/check-techdoc.sh` |
-| `scalpers-v11` | Product code | Private GitLab repository; receives only code that passed the gate |
+| Your development repository | The repository where the work happens (Odoo, PHP, any stack) | Install the kit and the active profile at its root; there is no fixed product repository |
 
 They are separate repositories, not submodules. `scalpers-tech-doc` is the canonical source
 of the company norm; the kit, the profiles and the product code consume it without copying

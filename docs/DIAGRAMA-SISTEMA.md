@@ -9,7 +9,7 @@ previsualizar desde el chat. Este documento deja la versión Mermaid para el rep
 flowchart LR
   T["scalpers-tech-doc<br/>norma y documentación"] -->|AGENTS.md canónico + check-techdoc| K["dev-agent-kit<br/>puerta determinista"]
   K -->|contrato y hooks| P["dev-agent-profiles<br/>perfiles Odoo 11 / PHP"]
-  P -->|perfil activo y skills| V["scalpers-v11<br/>producto en GitLab"]
+  P -->|perfil activo y skills| V["repo de desarrollo<br/>Odoo / PHP / cualquier stack"]
   T -.->|propuestas y decisiones| V
 ```
 

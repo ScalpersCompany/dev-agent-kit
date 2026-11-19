@@ -35,7 +35,7 @@ El agente es intercambiable; la puerta es un comando.
 | `ScalpersCompany/dev-agent-kit` | Puerta, hooks, skills, evals | Se clona; es el núcleo |
 | `ScalpersCompany/dev-agent-profiles` | Perfiles Odoo 11 y PHP | Se clona aparte; se instala el perfil activo |
 | `ScalpersCompany/scalpers-tech-doc` | Norma y documentación de empresa | Se clona aparte; su `AGENTS.md` se enlaza en `~/.agents/AGENTS.md` |
-| `scalpers-v11` | Código de producto | GitLab privado; no se clona desde el kit |
+| El repo donde se desarrolla | Código de producto (Odoo, PHP, cualquier stack) | Se instala el kit y el perfil activo en su raíz; no se clona desde el kit |
 
 No se usa un submódulo. Antes de instalar un perfil o dar una norma por buena, comprueba
 tech-doc:

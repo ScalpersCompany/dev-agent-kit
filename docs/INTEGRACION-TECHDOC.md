@@ -10,7 +10,7 @@ uno tiene su remoto, sus permisos y su dueño.
 ScalpersCompany/scalpers-tech-doc   norma, procesos, decisiones, propuestas, wiki
 ScalpersCompany/dev-agent-kit        puerta de calidad, hooks, guard, verify, evals
 ScalpersCompany/dev-agent-profiles  perfiles Odoo 11 y PHP
-odoo-11/scalpers-v11                código de producto en GitLab
+repos de producto                  código de la base de desarrollo (GitLab); no hay un repo único
 ```
 
 El código no se copia en la documentación y la documentación no se copia en el kit. Se

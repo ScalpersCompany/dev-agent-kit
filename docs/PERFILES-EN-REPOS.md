@@ -11,7 +11,7 @@ La plantilla base está en `profiles/_template`; la guía paso a paso es
 | `ScalpersCompany/dev-agent-kit` | Núcleo, contrato, hooks y puerta |
 | `ScalpersCompany/dev-agent-profiles` | Este repo: perfiles `odoo11` y `php` |
 | `ScalpersCompany/scalpers-tech-doc` | Norma y documentación de empresa; `AGENTS.md` canónico enlazado en `~/.agents/AGENTS.md`; se comprueba con `scripts/check-techdoc.sh` |
-| `scalpers-v11` | Código de producto; recibe el perfil activo, no la norma copiada |
+| El repo donde se desarrolla | Código de producto (Odoo, PHP, cualquier stack); recibe el kit y el perfil activo en su raíz, no una norma copiada |
 
 Son repos separados, no submódulos. El perfil declara `PROFILE_NORM_REPO` y
 `PROFILE_NORM_PATH`; no copia la norma.
@@ -263,7 +263,7 @@ El repo de destino queda así:
    remoto público está creado.
 2. El perfil PHP es un esqueleto; añadir PHPStan, PHPCS, PHPUnit y un caso de eval.
 3. Implementar `dev-agent init/use/profiles/doctor` y el lock; probar con el perfil PHP en
-   un repo vacío y con el perfil Odoo en `scalpers-v11`.
+   un repo vacío y con el perfil Odoo en un repo Odoo de prueba.
 4. El núcleo ya no contiene Odoo; su CI no lo necesita. El perfil Odoo conserva sus tests.
 5. Conectar `gentle-ai sync`, rsc-harness y engram en el flujo; no dentro del
    perfil. `engram` en local hasta la infraestructura AWS.

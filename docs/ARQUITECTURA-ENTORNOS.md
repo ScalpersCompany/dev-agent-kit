@@ -18,7 +18,7 @@ del flujo.
 | `ScalpersCompany/dev-agent-kit` | Puerta determinista, hooks, skills y evals | Este repo; público |
 | `ScalpersCompany/dev-agent-profiles` | Perfiles Odoo 11 y PHP | Repo público separado; se instala el perfil activo |
 | `ScalpersCompany/scalpers-tech-doc` | Norma y documentación de empresa | Repo separado de la company; su `AGENTS.md` es canónico y se enlaza en `~/.agents/AGENTS.md`; `check-techdoc.sh` comprueba remoto, rama y limpieza |
-| `scalpers-v11` | Código de producto | Repo privado de GitLab; solo recibe lo que pasó la puerta |
+| El repo donde se desarrolla | Código de producto (Odoo, PHP, cualquier stack) | Se instala el kit y el perfil activo en su raíz; no hay un repo de producto fijo |
 
 No se fusionan ni se añaden como submódulos. La norma vive en `scalpers-tech-doc`; el kit
 la consume por el enlace canónico y el perfil solo la referencia con `PROFILE_NORM_REPO` y
