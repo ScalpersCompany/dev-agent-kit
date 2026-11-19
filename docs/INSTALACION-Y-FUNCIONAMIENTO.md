@@ -40,11 +40,11 @@ bash scripts/bootstrap.sh /ruta/al/repo --with-verify
 bash scripts/bootstrap.sh /ruta/al/repo --with-gga
 ```
 
-Copia `AGENTS.md`, `.opencode/`, `verify/`, `guard/`, `evals/`, `scripts/` y `docs/`;
-respalda lo que reemplaza como `.bak-<fecha>`; crea `verify/config.env` desde el ejemplo e
-instala el `pre-commit`. `--with-verify` añade el `pre-push` y `.dev-agent/verify.env`;
-`--with-gga` añade los ficheros de GGA. No toca producción, el historial de git ni un
-registro de perfiles.
+Copia `AGENTS.md`, `.opencode/`, `verify/`, `guard/`, `evals/`, `scripts/`, `docs/` y
+`profiles/_template/`; respalda lo que reemplaza como `.bak-<fecha>`; crea
+`verify/config.env` desde el ejemplo e instala el `pre-commit`. `--with-verify` añade el
+`pre-push` y `.dev-agent/verify.env`; `--with-gga` añade los ficheros de GGA. No toca
+producción, el historial de git ni un registro de perfiles.
 
 ### 3.2 Manual (respaldo)
 
@@ -172,6 +172,11 @@ Para usarlo, copia el perfil a `.dev-agent/profiles/odoo11` (o `profiles/odoo11`
 `.dev-agent/config` con `DEV_AGENT_PROFILE=odoo11`. El `guard.sh` del núcleo ejecutará
 `guard/odoo.sh`. El instalador `dev-agent init` que hará esto automáticamente está
 diseñado, no implementado.
+
+Para crear otro perfil: `profiles/_template`, `scripts/new-profile.sh <nombre> --language
+<lenguaje> --repo <repo-de-perfiles>` y `scripts/validate-profile.py <perfil>`; la guía
+completa está en `docs/CREAR-PERFIL.md`. El mapa visual del sistema está en
+`docs/diagrams/sistema.html` y `docs/DIAGRAMA-SISTEMA.md`.
 
 ## 8. Qué está implementado y qué es diseño
 

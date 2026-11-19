@@ -1,5 +1,9 @@
 # Perfiles en repositorios separados
 
+La plantilla base está en `profiles/_template`; la guía paso a paso es
+`docs/CREAR-PERFIL.md`. El generador es `scripts/new-profile.sh` y el validador
+`scripts/validate-profile.py`.
+
 ## Decisión
 
 Los perfiles viven en **repositorios propios**, no dentro del núcleo. El núcleo

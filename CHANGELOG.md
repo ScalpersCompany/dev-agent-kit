@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.1.0] - 2026-11-19
+
+### Added
+
+- Complete profile template: `profile.json`, `profile.env`, `profile.schema.json`, `AGENTS.fragment.md`, guard, verify, skills, evals, tests, docs and `CHANGELOG`.
+- `scripts/new-profile.sh`: generates a profile from the template with a backup and fills name and language.
+- `scripts/validate-profile.py`: validates the profile contract, `profile.env` and every path; tested in CI.
+- `docs/CREAR-PERFIL.md`: step-by-step guide, guard/verify/skills/evals contracts, checklist and anti-patterns.
+- `docs/DIAGRAMA-SISTEMA.md` and `docs/diagrams/sistema.html`: Mermaid and visual map of the flow and the layers.
+- README, operations and install guide point to the template, generator, validator and map.
+
 ## [2.0.0] - 2026-11-19
 
 ### Changed

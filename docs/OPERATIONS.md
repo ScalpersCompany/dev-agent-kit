@@ -29,6 +29,7 @@ The core is language-agnostic. A profile supplies `profile.json`, `profile.env`,
 - PHP: `dev-agent-profiles/profiles/php`, skeleton.
 - Template: `profiles/_template`.
 - Design: `docs/PERFILES-EN-REPOS.md`.
+- New profile: `docs/CREAR-PERFIL.md`; generate with `scripts/new-profile.sh` and validate with `scripts/validate-profile.py`.
 
 The git hooks are shared. The profile changes what the hook executes, not the hook itself.
 

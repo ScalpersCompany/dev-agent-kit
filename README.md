@@ -25,17 +25,24 @@ evals/harness.py              k runs per case in a disposable worktree or copy, 
 evals/cases/                  dev-verify, repro-first, review-diff
 evals/rubric.*.json           rubrics for those cases
 evals/loop.sh                 hill climb until the score passes
-profiles/_template/           contract for a new profile; no language
+profiles/_template/           contract, env, guard, verify, skills, evals and docs for a new profile
+scripts/new-profile.sh        creates a profile from the template with a backup
+scripts/validate-profile.py  validates profile.json, profile.env and the profile paths
 gga/                          optional AI review: .gga example and rules
 scripts/install-gga.sh        installs .gga and .gga-rules.md with backups
 scripts/review-gga.sh         runs gga on staged files, optional or blocking
 scripts/bootstrap.sh          copies the core into a repo, creates verify config and installs hooks
+scripts/new-profile.sh        creates a profile from profiles/_template with a backup
+scripts/validate-profile.py   validates the profile contract and paths
 scripts/install-hooks.sh      installs the hooks and backs up the existing ones
 hooks/pre-commit              local pre-commit: guard --staged
 hooks/pre-push                local pre-push: verify/run.sh
 tests/test_comment_lint.py    unit tests for the comment gate
 .github/workflows/quality.yml unit tests, syntax and eval dry-run in CI
 docs/                         install, operations, architecture, profiles, coverage
+docs/CREAR-PERFIL.md          how to build a new profile
+docs/DIAGRAMA-SISTEMA.md      Mermaid map of the whole system
+docs/diagrams/sistema.html    visual map of the flow and the layers
 CHANGELOG.md
 ```
 
@@ -51,7 +58,7 @@ bash scripts/bootstrap.sh /path/to/development-repo --with-verify
 bash scripts/bootstrap.sh /path/to/development-repo --with-gga
 ```
 
-The bootstrap copies `AGENTS.md`, `.opencode/`, `verify/`, `guard/`, `evals/`, `scripts/` and `docs/`; backs up anything it replaces as `.bak-<timestamp>`; creates `verify/config.env` from the example; and installs the pre-commit hook. `--with-verify` adds the pre-push gate and `.dev-agent/verify.env`; `--with-gga` adds the optional GGA files. It does not touch production, git history or a profile registry.
+The bootstrap copies `AGENTS.md`, `.opencode/`, `verify/`, `guard/`, `evals/`, `scripts/`, `docs/` and `profiles/_template/`; backs up anything it replaces as `.bak-<timestamp>`; creates `verify/config.env` from the example; and installs the pre-commit hook. `--with-verify` adds the pre-push gate and `.dev-agent/verify.env`; `--with-gga` adds the optional GGA files. It does not touch production, git history or a profile registry.
 
 The full profile installer (`dev-agent init --profile ... --all`) is designed but not wired yet; `scripts/bootstrap.sh` is the current automated core path.
 
@@ -63,6 +70,22 @@ The git hooks are **not** different per profile: the same core `pre-commit` and 
 
 SDD is the `spec-driven-development` skill. ODD is always-on text in `AGENTS.md`/`SOUL.md`, not a skill. RDD is the `gentle-ai review` binary, not a skill. The rsc-harness skills (`asdd`, `sdd-init`, `harness`, `verify`...) are repo-local in `.rsc/skills/`; gentle-ai installs and synchronises agents and does not replace rsc-harness.
 
+## Create a profile
+
+The base template is `profiles/_template`; the guide is `docs/CREAR-PERFIL.md`.
+
+```bash
+bash scripts/new-profile.sh php-nuevo \
+  --language php \
+  --repo /home/scalpers/dev-agent-profiles \
+  --description "PHP 8 with PHPStan, PHPCS and PHPUnit"
+python3 scripts/validate-profile.py /home/scalpers/dev-agent-profiles/profiles/php-nuevo
+```
+
+The generator copies the template, backs up an existing profile as `.bak-<timestamp>` and fills the name and language. The validator checks the contract, `profile.env` and every path. A profile that does not validate is not installable.
+
+The visual map of the system is in `docs/diagrams/sistema.html`; the Mermaid version and the status table are in `docs/DIAGRAMA-SISTEMA.md`.
+
 ## Status
 
 | Area | State |
@@ -71,6 +94,8 @@ SDD is the `spec-driven-development` skill. ODD is always-on text in `AGENTS.md`
 | Odoo 11 profile | extracted to `dev-agent-profiles/profiles/odoo11`; local; remote pending |
 | PHP profile | skeleton moved to the profiles repository; PHPStan/PHPCS/PHPUnit not wired |
 | `dev-agent init` and the profile lock | designed; not implemented |
+| profile template, `new-profile.sh` and `validate-profile.py` | implemented and tested |
+| visual system map | `docs/diagrams/sistema.html` and `docs/DIAGRAMA-SISTEMA.md` |
 | GGA advisory review | added; installation tested; no real review run |
 | `comment_lint` for PHP | pending; the generic checker does not scan `.php` yet |
 | `gentle-ai`, `rsc-harness`, `rsc-brain`, `engram` | documented boundaries; rsc-harness is not replaced by gentle-ai |

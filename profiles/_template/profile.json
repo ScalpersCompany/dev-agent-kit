@@ -1,0 +1,12 @@
+{
+  "name": "_template",
+  "version": "0.1.0",
+  "api": 1,
+  "language": "",
+  "description": "Replace this description with the environment this profile covers",
+  "guard": [],
+  "verify": "verify/config.env.example",
+  "skills": "skills",
+  "evals": "evals/cases",
+  "agents": "AGENTS.fragment.md"
+}

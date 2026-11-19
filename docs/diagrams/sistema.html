@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sistema de desarrollo asistido por agentes</title>
+<style>
+:root { color-scheme: light dark; }
+* { box-sizing: border-box; }
+body { margin: 0; color: var(--foreground); }
+.board { width: min(1180px, 100%); display: flex; flex-direction: column; gap: 16px; font-size: 14px; line-height: 1.45; }
+.eyebrow { text-transform: uppercase; letter-spacing: .14em; font-size: 10px; color: var(--muted-foreground); }
+h1 { font-size: clamp(22px, 3vw, 32px); line-height: 1.1; letter-spacing: -.02em; margin: 4px 0 6px; }
+.lede { margin: 0; max-width: 92ch; color: var(--muted-foreground); font-size: 13px; }
+.badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.badge { border: 1px solid var(--border); border-radius: 999px; padding: 3px 9px; font-size: 10px; color: var(--muted-foreground); }
+.badge.ok { border-color: var(--accent); color: var(--accent); }
+.badge.pending { border-style: dashed; }
+.badge.human { border-color: #c2410c; color: #c2410c; }
+.pipeline { display: flex; align-items: stretch; gap: 0; }
+.step { flex: 1 1 0; min-width: 0; border: 1px solid var(--border); background: var(--card); border-radius: 14px; padding: 13px; display: flex; flex-direction: column; gap: 7px; }
+.step .num { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border: 1px solid var(--accent); border-radius: 7px; color: var(--accent); font-size: 11px; font-weight: 700; }
+.step h2 { font-size: 13px; margin: 0; letter-spacing: -.01em; }
+.step p { margin: 0; color: var(--muted-foreground); font-size: 11px; }
+.step .tag { margin-top: auto; font-size: 10px; color: var(--muted-foreground); border-top: 1px solid var(--border); padding-top: 7px; }
+.arrow { flex: 0 0 26px; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 20px; }
+.section-title { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 2px 0 0; }
+.section-title h2 { font-size: 14px; margin: 0; }
+.section-title span { font-size: 11px; color: var(--muted-foreground); }
+.layers { border: 1px solid var(--border); border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; }
+.layer { display: grid; grid-template-columns: 120px 1fr; gap: 12px; padding: 9px 0; }
+.layer + .layer { border-top: 1px solid var(--border); }
+.layer-label { font-size: 11px; font-weight: 700; color: var(--accent); padding-top: 3px; }
+.layer-content { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { border: 1px solid var(--border); border-radius: 8px; padding: 4px 8px; font-size: 11px; color: var(--muted-foreground); background: var(--card); }
+.chip strong { color: var(--foreground); font-weight: 600; }
+.factory { border: 1px dashed var(--border); border-radius: 16px; padding: 13px 14px; display: grid; grid-template-columns: 150px 1fr; gap: 14px; }
+.factory h2 { font-size: 13px; margin: 0 0 4px; }
+.factory p { margin: 0; color: var(--muted-foreground); font-size: 11px; }
+.factory .flow-inline { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 11px; color: var(--muted-foreground); }
+.factory .flow-inline b { color: var(--foreground); font-weight: 600; }
+.legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 10px; color: var(--muted-foreground); }
+.legend b { color: var(--foreground); font-weight: 600; }
+.footer { border-top: 1px solid var(--border); padding-top: 10px; color: var(--muted-foreground); font-size: 10px; display: flex; flex-wrap: wrap; gap: 8px 16px; }
+@media (max-width: 860px) {
+  .pipeline { flex-direction: column; }
+  .arrow { flex: 0 0 22px; transform: rotate(90deg); }
+  .layer { grid-template-columns: 1fr; gap: 4px; }
+  .factory { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<main class="board">
+  <header>
+    <div class="eyebrow">dev-nicolas · mapa operativo · 19 nov 2026</div>
+    <h1>Sistema de desarrollo asistido por agentes</h1>
+    <p class="lede">El agente propone y ejecuta; el proceso ordena; el perfil aporta el lenguaje; la puerta decide. El kit no despliega: produce evidencia para que una persona decida.</p>
+    <div class="badges">
+      <span class="badge ok">guard + verify implementados</span>
+      <span class="badge ok">perfil Odoo 11 extraído local</span>
+      <span class="badge pending">dev-agent init pendiente</span>
+      <span class="badge pending">remoto de perfiles pendiente</span>
+      <span class="badge">GGA opcional</span>
+      <span class="badge human">producción: decisión humana</span>
+    </div>
+  </header>
+
+  <section aria-label="Flujo de una tarea">
+    <div class="pipeline">
+      <article class="step">
+        <span class="num">1</span>
+        <h2>Entrada</h2>
+        <p>Jira SIS, ticket, bug o idea. La prioridad y el alcance los decide una persona.</p>
+        <span class="tag">fuente de verdad del negocio</span>
+      </article>
+      <div class="arrow" aria-hidden="true">→</div>
+      <article class="step">
+        <span class="num">2</span>
+        <h2>Agente + contexto</h2>
+        <p>Hermes, OpenCode, Claude Code, Codex o pi. Lee AGENTS.md, las skills y el AGENTS.fragment del perfil.</p>
+        <span class="tag">engram: memoria · rsc-brain: conocimiento</span>
+      </article>
+      <div class="arrow" aria-hidden="true">→</div>
+      <article class="step">
+        <span class="num">3</span>
+        <h2>Proceso</h2>
+        <p>SDD como skill; ODD siempre activo; RDD como binario; rsc-harness ASDD si el repo lo usa.</p>
+        <span class="tag">spec, reproducción y decisiones</span>
+      </article>
+      <div class="arrow" aria-hidden="true">→</div>
+      <article class="step">
+        <span class="num">4</span>
+        <h2>Perfil</h2>
+        <p>Odoo 11: guard/odoo.sh, verify, tres skills y dos casos. PHP: esqueleto. Un perfil activo por repo.</p>
+        <span class="tag">el core no conoce el lenguaje</span>
+      </article>
+      <div class="arrow" aria-hidden="true">→</div>
+      <article class="step">
+        <span class="num">5</span>
+        <h2>Puerta</h2>
+        <p>pre-commit: guard genérico + perfil. pre-push: verify con base desechable. Eval K=3 si cambia una skill o regla.</p>
+        <span class="tag">evidencia en summary.json</span>
+      </article>
+      <div class="arrow" aria-hidden="true">→</div>
+      <article class="step">
+        <span class="num">6</span>
+        <h2>Salida</h2>
+        <p>Revisión humana, GGA opcional, rama, MR y CI. El merge y el despliegue son humanos.</p>
+        <span class="tag">el kit nunca toca producción</span>
+      </article>
+    </div>
+  </section>
+
+  <section class="layers" aria-label="Capas del sistema">
+    <div class="section-title">
+      <h2>Capas que sostienen el flujo</h2>
+      <span>cada capa tiene un trabajo; ninguna sustituye a la puerta</span>
+    </div>
+    <div class="layer">
+      <div class="layer-label">Distribución</div>
+      <div class="layer-content">
+        <span class="chip"><strong>gentle-ai</strong> instala y sincroniza agentes, skills y MCP</span>
+        <span class="chip"><strong>install-hooks.sh</strong> git hooks con backup</span>
+        <span class="chip">no es un gate</span>
+      </div>
+    </div>
+    <div class="layer">
+      <div class="layer-label">Proceso</div>
+      <div class="layer-content">
+        <span class="chip"><strong>rsc-harness</strong> spec / ASDD · .rsc/skills repo-local</span>
+        <span class="chip"><strong>ODD</strong> texto siempre activo en AGENTS/SOUL</span>
+        <span class="chip"><strong>RDD</strong> gentle-ai review (binario)</span>
+        <span class="chip"><strong>SDD</strong> spec-driven-development (skill)</span>
+      </div>
+    </div>
+    <div class="layer">
+      <div class="layer-label">Puerta</div>
+      <div class="layer-content">
+        <span class="chip"><strong>dev-agent-kit core</strong> hooks · guard · verify · evals</span>
+        <span class="chip"><strong>profiles/odoo11</strong> odoo_lint · allowlist · verify · skills · casos</span>
+        <span class="chip"><strong>profiles/php</strong> esqueleto</span>
+      </div>
+    </div>
+    <div class="layer">
+      <div class="layer-label">Conocimiento</div>
+      <div class="layer-content">
+        <span class="chip"><strong>rsc-brain</strong> wiki curada con fuentes</span>
+        <span class="chip"><strong>engram</strong> memoria de proyecto y decisiones</span>
+        <span class="chip"><strong>docs/</strong> repo y guías</span>
+      </div>
+    </div>
+    <div class="layer">
+      <div class="layer-label">Entrega</div>
+      <div class="layer-content">
+        <span class="chip"><strong>GitLab / GitHub</strong> rama, MR, CI</span>
+        <span class="chip"><strong>revisión humana</strong> lee el diff y decide</span>
+        <span class="chip"><strong>producción</strong> solo tras autorización explícita</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="factory" aria-label="Fábrica de perfiles">
+    <div>
+      <h2>Fábrica de perfiles</h2>
+      <p>Un repo privado, un directorio por entorno. El core presta el contrato, la puerta y el instalador; el perfil presta el lenguaje.</p>
+    </div>
+    <div class="flow-inline">
+      <b>profiles/_template</b><span>→</span><b>new-profile.sh</b><span>→</span><b>validate-profile.py</b><span>→</span><b>dev-agent-profiles/profiles/&lt;name&gt;</b>
+    </div>
+  </section>
+
+  <section class="legend" aria-label="Leyenda">
+    <span><b>Implementado</b> borde sólido</span>
+    <span><b>Pendiente u opcional</b> borde discontinuo</span>
+    <span><b>Humano</b> rojo: merge, producción y permisos</span>
+    <span><b>Perfil activo</b> uno por repo; los hooks son compartidos</span>
+  </section>
+
+  <footer>
+    <span>Fuente: dev-agent-kit · dev-agent-profiles · docs/CREAR-PERFIL.md · docs/DIAGRAMA-SISTEMA.md</span>
+    <span>Odoo 11 y PHP no viven en el core.</span>
+  </footer>
+</main>
+</body>
+</html>
