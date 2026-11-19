@@ -29,6 +29,13 @@ is not a skill. RDD is the `gentle-ai review` binary; it is not a skill. rsc-har
 are repo-local in `.rsc/skills`; do not copy them here. `gentle-ai` installs and synchronises
 agents, skills and MCP; it does not replace rsc-harness.
 
+## Company norm
+
+If the environment belongs to Scalpers, fill `PROFILE_NORM_REPO` and `PROFILE_NORM_PATH`
+with the company `scalpers-tech-doc` repository and check it with
+`scripts/check-techdoc.sh`. Do not copy `AGENTS.md` into the profile; link it and let the
+company norm win.
+
 ## Steps
 
 1. Generate the directory:

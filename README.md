@@ -7,6 +7,16 @@ Start here: `docs/INSTALACION-Y-FUNCIONAMIENTO.md` (Spanish) — install, daily 
 The Odoo 11 profile now lives in the separate profiles repository, at
 `<profiles-repo>/profiles/odoo11` locally. Its remote is pending.
 
+## Company norm
+
+The company norm lives in the separate repository `ScalpersCompany/scalpers-tech-doc`; its
+`AGENTS.md` is linked at `~/.agents/AGENTS.md`. The kit does not copy it: `AGENTS.md` here
+is the local contract, and the Odoo profile's `AGENTS.fragment.md` only adds Odoo rules.
+`scripts/check-techdoc.sh` verifies the remote, the branch/commit, a clean tree and the
+link. The full integration is in `docs/INTEGRACION-TECHDOC.md`; the local clone is
+currently on a dirty feature branch, so the check fails closed until that company change is
+closed.
+
 ## Scope
 
 This kit is for the development base, not production. Production receives only changes that pass `guard/guard.sh`, `verify/run.sh`, the applicable eval and the evidence gate. The kit is the filter; it is not deployed to production.
@@ -29,6 +39,7 @@ evals/loop.sh                 hill climb until the score passes
 profiles/_template/           contract, env, guard, verify, skills, evals and docs for a new profile
 scripts/new-profile.sh        creates a profile from the template with a backup
 scripts/validate-profile.py  validates profile.json, profile.env and the profile paths
+scripts/check-techdoc.sh      verifies the company norm clone, remote, branch/commit and link
 gga/                          optional AI review: .gga example and rules
 scripts/install-gga.sh        installs .gga and .gga-rules.md with backups
 scripts/review-gga.sh         runs gga on staged files, optional or blocking
@@ -42,6 +53,7 @@ tests/test_comment_lint.py    unit tests for the comment gate
 .github/workflows/quality.yml unit tests, syntax and eval dry-run in CI
 docs/                         install, operations, architecture, profiles, coverage
 docs/CREAR-PERFIL.md          how to build a new profile
+docs/INTEGRACION-TECHDOC.md   how the company norm repository connects to the kit
 docs/DIAGRAMA-SISTEMA.md      Mermaid map of the whole system
 docs/diagrams/sistema.html    visual overview of the flow and the layers
 docs/diagrams/flujo-detallado.html  detailed flow with decisions, loops and artifacts

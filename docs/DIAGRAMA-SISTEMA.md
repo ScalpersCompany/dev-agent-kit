@@ -50,6 +50,7 @@ flowchart TB
     M[gentle-ai: instala y sincroniza]
     N[engram: memoria]
     O[rsc-brain: conocimiento]
+    P[scalpers-tech-doc: norma de empresa]
   end
 
   A --> A2 --> B
@@ -67,6 +68,7 @@ flowchart TB
   M -.-> C
   N -.-> C
   O -.-> C
+  P -.-> C
 ```
 
 ## Flujo detallado
@@ -78,7 +80,8 @@ El mapa visual con los bucles y las decisiones está en
 flowchart TD
   N0[skills/ + commands/ + agents/] --> N1[adapters .opencode/.claude]
   N0 --> N2[gentle-ai global]
-  N1 --> A[Entrada: Jira SIS / ticket / bug / idea]
+  N3[scalpers-tech-doc/AGENTS.md] --> A[Entrada: Jira SIS / ticket / bug / idea]
+  N1 --> A
   N2 --> A
 
   A --> B{¿Bug reproducible?}

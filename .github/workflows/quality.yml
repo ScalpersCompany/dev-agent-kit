@@ -15,7 +15,7 @@ jobs:
       - name: Unit tests
         run: python3 -m unittest discover -s tests -v
       - name: Shell syntax
-        run: bash -n guard/guard.sh verify/run.sh hooks/pre-commit hooks/pre-push scripts/install-hooks.sh scripts/install-gga.sh scripts/review-gga.sh scripts/bootstrap.sh scripts/new-profile.sh scripts/install-agent-adapters.sh
+        run: bash -n guard/guard.sh verify/run.sh hooks/pre-commit hooks/pre-push scripts/install-hooks.sh scripts/install-gga.sh scripts/review-gga.sh scripts/bootstrap.sh scripts/new-profile.sh scripts/install-agent-adapters.sh scripts/check-techdoc.sh
       - name: Python syntax
         run: python3 -m py_compile guard/comment_lint.py evals/harness.py scripts/validate-profile.py
       - name: Validate profile template

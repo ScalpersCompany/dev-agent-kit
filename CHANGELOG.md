@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.5.0] - 2026-11-19
+
+### Added
+
+- `scripts/check-techdoc.sh`: verifies the company `scalpers-tech-doc` clone, remote, `AGENTS.md`, branch/commit, clean tree and `~/.agents/AGENTS.md` link; no network and no writes.
+- `tests/test_check_techdoc.py`: clean, dirty, allow-dirty and wrong-remote cases.
+- `docs/INTEGRACION-TECHDOC.md`: separate-repo integration, canonical norm, workspace layout, no submodule, local-only CI and current dirty-clone status.
+- The core `AGENTS.md`, README and Odoo profile state that the company norm wins and the profile only adds Odoo rules; `PROFILE_NORM_REPO`/`PROFILE_NORM_PATH` are declared.
+
 ## [2.4.0] - 2026-11-19
 
 ### Added

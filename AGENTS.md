@@ -2,6 +2,10 @@
 
 These rules apply to every agent and every session in this repo. The repo is the source of truth; a rule that only lives in a chat does not exist.
 
+## Company norm
+
+The canonical company norm is `ScalpersCompany/scalpers-tech-doc/AGENTS.md`; on this machine it is linked at `~/.agents/AGENTS.md`. This repository's `AGENTS.md` is the local contract. If the two conflict, the company norm wins.
+
 ## The seven non-negotiables
 
 1. **Evidence before done.** A change is done only after `bash verify/run.sh` has run on the change and left artifacts in `evidence/<run-id>/`. "It compiles" and "it should work" are not evidence.
