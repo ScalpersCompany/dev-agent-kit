@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.7.0] - 2026-11-18
+
+### Added
+
+- `docs/PERFILES-EN-REPOS.md`: profiles in separate private repositories, a registry plus clone (no submodules), a lock by commit, and `dev-agent init/use/profiles/doctor` with `--profile`, `--all`, `--select` and `--source`.
+- The README and operations guide point to the profile-repository design.
+
+### Changed
+
+- Profiles are no longer described as directories inside the core; the core keeps the contract, registry and installer, and each language keeps its own repository.
+
 ## [1.6.0] - 2026-11-18
 
 ### Added

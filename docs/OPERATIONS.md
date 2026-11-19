@@ -60,7 +60,9 @@ language. The full design, the layer boundaries for rsc-harness, rsc-brain, engr
 gentle-ai, and the migration phases are in `docs/ARQUITECTURA-ENTORNOS.md`.
 
 The current Odoo files remain at the root until phase 1 moves them to `profiles/odoo11`;
-the PHP directory is the target shape, not a second runtime.
+the PHP directory is the target shape, not a second runtime. Profiles will live in separate
+private repositories, resolved through `profiles.index.json`; the install/use/update flow
+and the lock file are specified in `docs/PERFILES-EN-REPOS.md`.
 
 ## GGA optional review
 

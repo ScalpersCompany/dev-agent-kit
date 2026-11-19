@@ -61,6 +61,7 @@ docs/FEATURE_MAP.template.md  map of the app from the user's point of view
 docs/AGENT-QUALITY.md         the method in one page
 docs/DEV-BASE.md              what the kit covers in the development base
 docs/ARQUITECTURA-ENTORNOS.md core plus profiles, and how rsc-harness, rsc-brain, engram and gentle-ai fit
+docs/PERFILES-EN-REPOS.md how profiles live in private repos, the registry and the install/use flow
 docs/EVAL-BASELINE.md         first eval score and what it observed
 docs/SKILL-EVAL-COVERAGE.md   all global skills, priority and eval status
 docs/OPERATIONS.md            how a change moves through the kit
