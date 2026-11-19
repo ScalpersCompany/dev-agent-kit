@@ -87,7 +87,7 @@ No todo lo que se nombra como metodología es una skill. La comprobación en el 
 | `rsc-harness-brain` | skill de instalación, no de tarea diaria | skills globales del agente |
 
 El perfil `odoo11` está extraído localmente en
-`/home/scalpers/dev-agent-profiles/profiles/odoo11`; su remoto privado está pendiente. El
+`<profiles-repo>/profiles/odoo11`; su remoto privado está pendiente. El
 núcleo ya no contiene Odoo: `guard.sh` carga el perfil y ejecuta `guard/odoo.sh`. Cuando se
 cree el instalador `dev-agent init`, copiará el perfil a `.dev-agent/profiles/odoo11` y
 escribirá `.dev-agent/config`.

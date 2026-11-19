@@ -64,7 +64,7 @@ cp -a ~/dev-agent-kit/docs .
 
 No copies `verify/config.env`, `evidence/`, `guard-report.json` ni `evals/runs/`. Si el
 repo ya tiene `AGENTS.md`, fusiónalo. Los adaptadores `.opencode/` o `.claude/` se generan
-con `bash scripts/install-agent-adapters.sh . --agents opencode,claude`; no se versionan.
+con `bash scripts/install-agent-adapters.sh . --agents opencode,claude --profile /ruta/dev-agent-profiles/profiles/odoo11`; no se versionan.
 
 ### 3.3 Configurar verify
 

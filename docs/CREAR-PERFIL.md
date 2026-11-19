@@ -65,7 +65,7 @@ La plantilla está en `profiles/_template`. No la edites para un perfil real.
 ```bash
 bash scripts/new-profile.sh php-nuevo \
   --language php \
-  --repo /home/scalpers/dev-agent-profiles \
+  --repo /path/to/dev-agent-profiles \
   --description "PHP 8 con PHPStan, PHPCS y PHPUnit"
 ```
 
@@ -73,7 +73,7 @@ El generador copia la plantilla, respalda un perfil existente como `.bak-<fecha>
 el nombre y el lenguaje en `profile.json`, `profile.env` y el README. Después:
 
 ```bash
-python3 scripts/validate-profile.py /home/scalpers/dev-agent-profiles/profiles/php-nuevo
+python3 scripts/validate-profile.py /path/to/dev-agent-profiles/profiles/php-nuevo
 ```
 
 El validador comprueba el contrato, las rutas, `profile.env` y que los ficheros existan. Si

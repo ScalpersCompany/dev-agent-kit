@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.3.0] - 2026-11-19
+
+### Changed
+
+- `scripts/install-agent-adapters.sh --profile <profile>` merges the profile's domain skills into the OpenCode and Claude adapters.
+- The eval harness copies `.claude/` and `.codex/` support paths and no longer reports them as agent changes.
+- The judge runs in a fresh temporary directory with only `agents/judge.md`; it no longer has the executor's sandbox. A timed-out executor and a judge that returns no JSON are marked invalid instead of being scored as zero.
+- The profile template and README remove the duplicated validator step and the hard-coded home path.
+- The adapter tests cover profile-skill merging and unknown agents.
+
 ## [2.2.0] - 2026-11-19
 
 ### Added

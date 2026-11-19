@@ -40,8 +40,7 @@ agents, skills and MCP; it does not replace rsc-harness.
 6. Fill `verify/config.env.example`; never use a shared or production database.
 7. Add domain skills to `skills/`; add an eval case and rubric if the skill or rule changes.
 8. Add tests for the guard and any script; run `python3 scripts/validate-profile.py <profile>`.
-9. Run `bash scripts/validate-profile.py` from the core and commit the profile with its
-   `CHANGELOG.md` entry.
+9. Commit the profile with its `CHANGELOG.md` entry; the core validator is the source of truth.
 10. Install it in a target repo by copying it to `.dev-agent/profiles/<name>` and writing
     `.dev-agent/config` with `DEV_AGENT_PROFILE=<name>`; the core `guard.sh` then runs it.
 

@@ -5,7 +5,7 @@ A repo-local kit to make agents trustworthy on a development codebase. It implem
 Start here: `docs/INSTALACION-Y-FUNCIONAMIENTO.md` (Spanish) — install, daily flow, guard, verify, evals, GGA, profiles, security and the implemented-versus-pending status.
 
 The Odoo 11 profile now lives in the separate profiles repository, at
-`/home/scalpers/dev-agent-profiles/profiles/odoo11` locally. Its remote is pending.
+`<profiles-repo>/profiles/odoo11` locally. Its remote is pending.
 
 ## Scope
 
@@ -18,7 +18,7 @@ AGENTS.md                     generic rules the agent reads first
 skills/                       five core skills: dev-verify, repro-first, review-diff, correct, query-readonly
 commands/                     neutral prompt templates; adapters install them per agent
 agents/                       eval judge prompt; adapters install it for OpenCode
-scripts/install-agent-adapters.sh  generates .opencode/.claude adapters from the neutral source
+scripts/install-agent-adapters.sh  generates .opencode/.claude adapters from the neutral source; --profile also merges the profile skills
 verify/run.sh                 boot, smoke, tests, evidence/
 guard/guard.sh                generic checks plus the active profile checks
 guard/comment_lint.py         blocks new comments in staged code
@@ -79,9 +79,9 @@ The base template is `profiles/_template`; the guide is `docs/CREAR-PERFIL.md`.
 ```bash
 bash scripts/new-profile.sh php-nuevo \
   --language php \
-  --repo /home/scalpers/dev-agent-profiles \
+  --repo /path/to/dev-agent-profiles \
   --description "PHP 8 with PHPStan, PHPCS and PHPUnit"
-python3 scripts/validate-profile.py /home/scalpers/dev-agent-profiles/profiles/php-nuevo
+python3 scripts/validate-profile.py /path/to/dev-agent-profiles/profiles/php-nuevo
 ```
 
 The generator copies the template, backs up an existing profile as `.bak-<timestamp>` and fills the name and language. The validator checks the contract, `profile.env` and every path. A profile that does not validate is not installable.
@@ -121,7 +121,7 @@ The gates are plain bash/Python 3.8+ and git hooks, so Hermes, OpenCode, Claude 
 4. Fill `verify/config.env` with the boot, health and test commands.
 5. Run `bash guard/guard.sh`. Fix or disable each check explicitly, never by deleting it silently.
 6. Run `bash verify/run.sh` on a clean checkout. It must pass before you trust any agent.
-7. Install the hooks: `bash scripts/install-hooks.sh .` for the pre-commit guard; add `--with-verify` for the pre-push runtime gate and edit `.dev-agent/verify.env`. For OpenCode or Claude, run `bash scripts/install-agent-adapters.sh . --agents opencode,claude`; the generated directories are gitignored.
+7. Install the hooks: `bash scripts/install-hooks.sh .` for the pre-commit guard; add `--with-verify` for the pre-push runtime gate and edit `.dev-agent/verify.env`. For OpenCode or Claude, run `bash scripts/install-agent-adapters.sh . --agents opencode,claude --profile /path/to/dev-agent-profiles/profiles/odoo11`; the generated directories are gitignored.
 8. Copy one eval case, run `python3 evals/harness.py --case-dir evals/cases/dev-verify/01-fix-failing-test --rubric evals/rubric.dev-verify.json --dry-run`, then a real run with the approved model.
 
 ## What it does not do

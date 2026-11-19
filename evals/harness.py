@@ -37,7 +37,7 @@ HEAVY = {
     ".mypy_cache",
     ".pytest_cache",
 }
-SUPPORT_PREFIXES = ("skills/", "commands/", "agents/", ".opencode/", "AGENTS.md", "verify/", "guard/", "scripts/", "docs/")
+SUPPORT_PREFIXES = ("skills/", "commands/", "agents/", ".opencode/", ".claude/", ".codex/", "AGENTS.md", "verify/", "guard/", "scripts/", "docs/")
 ARTIFACT_SUFFIXES = {".json", ".md", ".txt", ".log", ".xml", ".csv", ".yaml", ".yml", ".html", ".py", ".rst", ".po", ".js", ".diff", ".patch"}
 MAX_ARTIFACT_FILES = 20
 MAX_ARTIFACT_FILE_CHARS = 20000
@@ -75,7 +75,7 @@ def copy_support(repo: Path, sandbox: Path) -> None:
     wins over the committed one. These paths are filtered out of the artifact
     report later, so they do not look like agent changes.
     """
-    for rel in ("skills", "commands", "agents", ".opencode", "AGENTS.md", "verify", "guard", "scripts", "docs"):
+    for rel in ("skills", "commands", "agents", ".opencode", ".claude", ".codex", "AGENTS.md", "verify", "guard", "scripts", "docs"):
         source = repo / rel
         if not source.exists():
             continue
@@ -309,6 +309,8 @@ def collect_artifacts(sandbox: Path, baseline: set[str]) -> dict:
                 ":(exclude)commands",
                 ":(exclude)agents",
                 ":(exclude).opencode",
+                ":(exclude).claude",
+                ":(exclude).codex",
                 ":(exclude)AGENTS.md",
                 ":(exclude)verify",
                 ":(exclude)guard",
@@ -368,12 +370,18 @@ def judge(
         + "Return only the JSON object described in your instructions. "
         + "Do not compute the weighted average; the harness does it."
     )
-    events, text, meta = run_opencode(judge_prompt, cwd, judge_agent, judge_model, timeout)
+    judge_source = Path(__file__).resolve().parents[1] / "agents" / "judge.md"
+    with tempfile.TemporaryDirectory(prefix="eval-judge-") as tmp:
+        judge_root = Path(tmp)
+        (judge_root / ".opencode" / "agent").mkdir(parents=True, exist_ok=True)
+        shutil.copy2(judge_source, judge_root / ".opencode" / "agent" / "judge.md")
+        events, text, meta = run_opencode(judge_prompt, judge_root, judge_agent, judge_model, timeout)
     data = extract_json(text)
     if not data:
         return {
             "scores": {},
             "pass": False,
+            "invalid": True,
             "reasons": ["judge did not return JSON"],
             "missing": [],
             "judge_text": text[:500],
@@ -493,16 +501,25 @@ def main() -> int:
             else:
                 events, output, meta = run_opencode(prompt, sandbox, args.agent, model, args.timeout)
                 artifacts = collect_artifacts(sandbox, baseline)
-                judged = judge(
-                    prompt,
-                    output,
-                    artifacts,
-                    rubric,
-                    sandbox,
-                    args.judge_agent,
-                    judge_model,
-                    args.timeout,
-                )
+                if meta.get("timed_out"):
+                    judged = {
+                        "scores": {},
+                        "pass": False,
+                        "invalid": True,
+                        "reasons": ["executor timed out"],
+                        "missing": [],
+                    }
+                else:
+                    judged = judge(
+                        prompt,
+                        output,
+                        artifacts,
+                        rubric,
+                        sandbox,
+                        args.judge_agent,
+                        judge_model,
+                        args.timeout,
+                    )
 
             (run_dir / "events.jsonl").write_text(
                 "\n".join(json.dumps(event, ensure_ascii=False) for event in events),

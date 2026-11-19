@@ -22,6 +22,23 @@ class AgentAdaptersTest(unittest.TestCase):
             self.assertTrue((target / ".claude" / "skills" / "dev-verify" / "SKILL.md").is_file())
             self.assertTrue((target / ".claude" / "commands" / "verify.md").is_file())
 
+    def test_profile_skills_are_merged_into_adapters(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            profile = Path(tmp) / "profile"
+            (profile / "skills" / "odoo-demo").mkdir(parents=True)
+            (profile / "skills" / "odoo-demo" / "SKILL.md").write_text("# demo\n", encoding="utf-8")
+            target = Path(tmp) / "target"
+            target.mkdir()
+            result = subprocess.run(
+                ["bash", str(SCRIPT), str(target), "--agents", "opencode,claude", "--profile", str(profile)],
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertTrue((target / ".opencode" / "skills" / "odoo-demo" / "SKILL.md").is_file())
+            self.assertTrue((target / ".claude" / "skills" / "odoo-demo" / "SKILL.md").is_file())
+            self.assertTrue((target / ".opencode" / "skills" / "dev-verify" / "SKILL.md").is_file())
+
     def test_unknown_agent_fails(self):
         with tempfile.TemporaryDirectory() as tmp:
             result = subprocess.run(

@@ -77,9 +77,9 @@ PROFILE_NAME=odoo11
 PROFILE_LANGUAGE=python
 PROFILE_GUARD_CHECKS=guard/odoo.sh
 PROFILE_VERIFY_CONFIG=verify/config.env
-PROFILE_SKILLS=profiles/odoo11/skills
-PROFILE_EVALS=profiles/odoo11/evals/cases
-PROFILE_AGENTS=profiles/odoo11/AGENTS.fragment.md
+PROFILE_SKILLS=skills
+PROFILE_EVALS=evals/cases
+PROFILE_AGENTS=AGENTS.fragment.md
 ```
 
 `scripts/new-profile.sh <perfil> <repo>` copia la plantilla, escribe
