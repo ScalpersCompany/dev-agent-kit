@@ -2,6 +2,8 @@
 
 A repo-local kit to make OpenCode trustworthy on the development codebase. It implements the method from Lauren Tan's talks: executable verification, skills built from observed failures, agent evals, and deterministic guardrails before prose.
 
+Start here: `docs/INSTALACION-Y-FUNCIONAMIENTO.md` (Spanish) — installation, daily flow, guard, verify, evals, GGA, profiles, security and the current-versus-planned status.
+
 Copy the folders into the repository root of a development repo. Nothing here depends on a personal machine, a home NAS, or a personal model subscription.
 
 ## Scope

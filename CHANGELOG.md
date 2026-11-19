@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0] - 2026-11-18
+
+### Added
+
+- `docs/INSTALACION-Y-FUNCIONAMIENTO.md`: the install and operation guide, in Spanish, with the current manual install, hooks, verify, guard, evals, GGA, agent skills, security, troubleshooting and the implemented-versus-planned status.
+- The README starts with a link to that guide.
+
 ## [1.7.0] - 2026-11-18
 
 ### Added
