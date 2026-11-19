@@ -52,6 +52,16 @@ human sends it to the company repository.
 tool caches are git-ignored. Never commit a real test database, a token or a customer
 file.
 
+## Environment profiles
+
+The kit is being split into a language-agnostic core and thin profiles. `profiles/php`
+is the first non-Odoo adapter; `profiles/_template` is the starting point for another
+language. The full design, the layer boundaries for rsc-harness, rsc-brain, engram and
+gentle-ai, and the migration phases are in `docs/ARQUITECTURA-ENTORNOS.md`.
+
+The current Odoo files remain at the root until phase 1 moves them to `profiles/odoo11`;
+the PHP directory is the target shape, not a second runtime.
+
 ## Global skills in dev-nicolas
 
 The kit's seven skills are installed globally in both agents on this host:

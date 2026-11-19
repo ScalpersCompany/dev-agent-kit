@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.5.0] - 2026-11-18
+
+### Added
+
+- `docs/ARQUITECTURA-ENTORNOS.md`: core plus environment profiles, with the boundaries for rsc-harness, rsc-brain, engram and gentle-ai.
+- `profiles/_template/` and `profiles/php/`: the profile contract and the first non-Odoo adapter, with PHPStan/PHPCS/PHPUnit and a verify example.
+- The README and operations guide point to the profile design and state that the Odoo files move to `profiles/odoo11` in phase 1.
+
+### Changed
+
+- The kit is no longer described as Odoo-only; the core is language-agnostic and the Odoo checks become a profile.
+
 ## [1.4.1] - 2026-11-18
 
 ### Changed

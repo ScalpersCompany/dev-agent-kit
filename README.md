@@ -47,6 +47,7 @@ evals/cases/dev-verify/01-fix-failing-test/  failing-test fixture for dev-verify
 evals/cases/repro-first/01-discount-bug/  failing-test fixture for repro-first
 evals/cases/review-diff/01-unsafe-handler/  unsafe diff fixture for review-diff
 evals/loop.sh                 hill climb until the score passes
+profiles/                     environment adapters: template, PHP and the Odoo migration target
 hooks/pre-commit              local pre-commit: guard --staged
 hooks/pre-push                local pre-push: verify/run.sh
 scripts/install-hooks.sh      installs the hooks and backs up the existing ones
@@ -56,6 +57,7 @@ scripts/scan_env.sh           discovery: stack, tests, CI, DB env var names
 docs/FEATURE_MAP.template.md  map of the app from the user's point of view
 docs/AGENT-QUALITY.md         the method in one page
 docs/DEV-BASE.md              what the kit covers in the development base
+docs/ARQUITECTURA-ENTORNOS.md core plus profiles, and how rsc-harness, rsc-brain, engram and gentle-ai fit
 docs/EVAL-BASELINE.md         first eval score and what it observed
 docs/SKILL-EVAL-COVERAGE.md   all global skills, priority and eval status
 docs/OPERATIONS.md            how a change moves through the kit
