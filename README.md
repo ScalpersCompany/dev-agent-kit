@@ -4,7 +4,72 @@ A repo-local kit to make OpenCode trustworthy on the development codebase. It im
 
 Start here: `docs/INSTALACION-Y-FUNCIONAMIENTO.md` (Spanish) — installation, daily flow, guard, verify, evals, GGA, profiles, security and the current-versus-planned status.
 
-Copy the folders into the repository root of a development repo. Nothing here depends on a personal machine, a home NAS, or a personal model subscription.
+Copy the folders into the repository root of a development repo, or run the bootstrap installer (`scripts/bootstrap.sh`) to copy them and install the hooks. Nothing here depends on a personal machine, a home NAS, or a personal model subscription.
+
+## Install (automated, current)
+
+From this kit:
+
+```bash
+bash scripts/bootstrap.sh /path/to/development-repo
+bash scripts/bootstrap.sh /path/to/development-repo --with-verify
+bash scripts/bootstrap.sh /path/to/development-repo --with-gga
+```
+
+The bootstrap copies `AGENTS.md`, `.opencode/`, `verify/`, `guard/`, `evals/`, `scripts/` and `docs/`; backs up anything it replaces as `.bak-<timestamp>`; creates `verify/config.env` from the example; and installs the pre-commit hook. `--with-verify` adds the pre-push gate and `.dev-agent/verify.env`; `--with-gga` adds the optional GGA files. It does not touch production, git history or the profile registry.
+
+The full profile installer (`dev-agent init --profile ... --all`) is designed but not wired yet; `scripts/bootstrap.sh` is the current automated path.
+
+## Profiles
+
+All profiles can live in **one private repository**, `dev-agent-profiles`, with one
+directory per profile (`profiles/odoo11`, `profiles/php`). The core keeps the contract, the
+registry and the installer; the profile keeps its `profile.json`, `profile.env`, `guard/`,
+`verify/`, `skills/`, `evals/` and `AGENTS.fragment.md`.
+
+The git hooks are **not** different per profile: the same core `pre-commit` and `pre-push`
+read the active profile and run its checks. What differs is the content the hook executes:
+guard checks, verify config, skills, eval cases and the AGENTS fragment. Today Odoo still
+lives at the core root and `profiles/php` is a skeleton; the migration is in
+`docs/PERFILES-EN-REPOS.md`.
+
+## Status
+
+| Area | State |
+|---|---|
+| `guard`, `verify`, evals, pre-commit/pre-push | implemented and covered by tests |
+| GGA advisory review | added; installation tested; no real review run |
+| one profile repository and `dev-agent init` | designed; not implemented; Odoo still at the core root |
+| PHP profile | skeleton; PHPStan/PHPCS/PHPUnit not wired |
+| `comment_lint` for PHP | pending; the generic checker does not scan `.php` yet |
+| `gentle-ai`, `rsc-harness`, `rsc-brain`, `engram` | documented boundaries; not wired into the daily flow |
+| Scalpers CI | not touched; local gates are the current hard check |
+
+## Agents and shared rules
+
+The gates are plain bash/Python 3.8+ and git hooks, so Hermes, OpenCode, Claude Code, Codex
+and pi run the same commands. Skills are `SKILL.md` files installed under each agent's
+skills directory; the shared rule is `~/.agents/AGENTS.md`, linked from `SOUL.md`,
+OpenCode's `AGENTS.md` and Claude's `CLAUDE.md`. `gentle-ai sync` distributes skills and MCP;
+it does not replace `guard` or `verify`.
+
+## GGA (optional)
+
+`scripts/install-gga.sh <repo>` copies `.gga` and `.gga-rules.md` with backups;
+`scripts/review-gga.sh <repo>` runs `gga` on staged files, `--ci` on the last commit, and
+`GGA_ADVISORY=1` reports without blocking. Do not run `gga install`: it would replace the
+kit's pre-commit. GGA is advice; `guard` and `verify` remain the hard gate.
+
+## Manual install (fallback)
+
+1. Copy `AGENTS.md` (merge it with the existing one, do not overwrite).
+2. Copy `.opencode/`, `verify/`, `guard/`, `evals/`, `scripts/`, `docs/`.
+3. Run `bash scripts/scan_env.sh` and complete `docs/agent-quality/ENVIRONMENT.md` with the real commands.
+4. Fill `verify/config.env` with the boot, health and test commands.
+5. Run `bash guard/guard.sh`. Fix or disable each check explicitly, never by deleting it silently.
+6. Run `bash verify/run.sh` on a clean checkout. It must pass before you trust any agent.
+7. Install the hooks: `bash scripts/install-hooks.sh .` for the pre-commit guard; add `--with-verify` for the pre-push runtime gate and edit `.dev-agent/verify.env`.
+8. Copy one eval case, run `python3 evals/harness.py --case-dir evals/cases/dev-verify/01-fix-failing-test --rubric evals/rubric.dev-verify.json --dry-run`, then a real run with the approved model.
 
 ## Scope
 
@@ -49,13 +114,14 @@ evals/cases/dev-verify/01-fix-failing-test/  failing-test fixture for dev-verify
 evals/cases/repro-first/01-discount-bug/  failing-test fixture for repro-first
 evals/cases/review-diff/01-unsafe-handler/  unsafe diff fixture for review-diff
 evals/loop.sh                 hill climb until the score passes
-profiles/                     environment adapters: template, PHP and the Odoo migration target
+profiles/                     core template and the PHP skeleton; real profiles move to dev-agent-profiles
 gga/                          optional AI review: .gga example and review rules
 scripts/install-gga.sh        installs .gga and .gga-rules.md with backups
 scripts/review-gga.sh         runs gga on staged files, optional or blocking
 hooks/pre-commit              local pre-commit: guard --staged
 hooks/pre-push                local pre-push: verify/run.sh
 scripts/install-hooks.sh      installs the hooks and backs up the existing ones
+scripts/bootstrap.sh          copies the kit into a repo, creates verify config and installs hooks
 tests/test_odoo_lint.py       unit tests for the staged/full linter modes
 .github/workflows/quality.yml unit tests, syntax and eval dry-run in CI
 scripts/scan_env.sh           discovery: stack, tests, CI, DB env var names
@@ -71,16 +137,15 @@ docs/use-cases/               how to replicate it in a company repo
 CHANGELOG.md                  what changed in each version
 ```
 
-## Install in a development repo
+## Post-install checklist
 
-1. Copy `AGENTS.md` (merge it with the existing one, do not overwrite).
-2. Copy `.opencode/`, `verify/`, `guard/`, `evals/`, `scripts/`, `docs/`.
-3. Run `bash scripts/scan_env.sh` and complete `docs/agent-quality/ENVIRONMENT.md` with the real commands.
-4. Fill `verify/config.env` with the boot, health and test commands.
-5. Run `bash guard/guard.sh`. Fix or disable each check explicitly, never by deleting it silently.
-6. Run `bash verify/run.sh` on a clean checkout. It must pass before you trust any agent.
-7. Install the hooks: `bash scripts/install-hooks.sh .` for the pre-commit guard; add `--with-verify` for the pre-push runtime gate and edit `.dev-agent/verify.env`.
-8. Copy one eval case, run `python3 evals/harness.py --case-dir evals/cases/dev-verify/01-fix-failing-test --rubric evals/rubric.dev-verify.json --dry-run`, then a real run with the approved model.
+1. Run `bash scripts/bootstrap.sh <repo>` (add `--with-verify` and `--with-gga` as needed).
+2. Complete `docs/agent-quality/ENVIRONMENT.md` with the real commands.
+3. Fill `verify/config.env` with the boot, health and test commands.
+4. Run `bash guard/guard.sh`. Fix or disable each check explicitly, never by deleting it silently.
+5. Run `bash verify/run.sh` on a clean checkout. It must pass before you trust any agent.
+6. The hooks are installed by the bootstrap; check with `git config --get core.hooksPath` and `.git/hooks/pre-commit`.
+7. Copy one eval case, run `python3 evals/harness.py --case-dir evals/cases/dev-verify/01-fix-failing-test --rubric evals/rubric.dev-verify.json --dry-run`, then a real run with the approved model.
 
 ## What it does not do
 

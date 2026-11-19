@@ -34,7 +34,7 @@ dev-agent-kit/
     AGENTS.md
     verify/run.sh                  # BOOT_CMD, HEALTH_URL, SMOKE_CMD, TEST_CMD
     guard/guard.sh                # ejecuta checks core + perfil
-    guard/checks/comment_lint.py  # genérico: Python, PHP, JS/TS, XML, shell, SQL, YAML
+    guard/checks/comment_lint.py  # genérico: Python, JS/TS, XML, shell, SQL, YAML (PHP pendiente)
     guard/checks/secrets.sh
     evals/harness.py              # k runs, artifacts, judge, score.json
     hooks/                        # pre-commit y pre-push

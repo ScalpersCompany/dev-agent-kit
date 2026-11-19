@@ -18,18 +18,23 @@ Se usa **registro + clonado**, no submódulos:
 ## Repositorios
 
 ```text
-nramosscalpers/dev-agent-kit                 # núcleo, contrato, instalador, documentación
-nramosscalpers/dev-agent-profile-odoo11      # perfil Odoo 11
-nramosscalpers/dev-agent-profile-php         # perfil PHP
+nramosscalpers/dev-agent-kit         # núcleo, contrato, instalador, documentación
+nramosscalpers/dev-agent-profiles    # perfiles: odoo11/, php/ (un solo repo privado)
 ```
 
-Los dos perfiles son privados, como el kit. El perfil Odoo se extrae del kit actual en la
-fase 1; el perfil PHP nace del esqueleto `profiles/php`. El núcleo conserva
-`profiles/_template` como plantilla, no como perfil instalable.
+Un solo repo de perfiles es suficiente y se recomienda para un equipo pequeño: una sola
+credencial, un solo `CHANGELOG` por perfil, `CODEOWNERS` por directorio y una matriz de CI.
+Cada perfil conserva su `version` y su `profile.json`; el lock fija el commit del repo y el
+subdirectorio. Si en el futuro un perfil necesita otro ciclo de acceso, se puede separar sin
+cambiar el contrato.
+
+El perfil Odoo se extrae del kit actual en la fase 1; el perfil PHP nace del esqueleto
+`profiles/php`. El núcleo conserva `profiles/_template` como plantilla, no como perfil
+instalable.
 
 ## Contrato de un perfil
 
-Cada repositorio de perfil contiene:
+Cada perfil es un subdirectorio del repo `dev-agent-profiles`:
 
 ```text
 profile.json                 # nombre, versión, API, lenguaje, checks, rutas
@@ -64,6 +69,23 @@ CHANGELOG.md
 El núcleo rechaza un perfil con `api` distinta de la suya, sin `profile.json`, sin
 `profile.env` o con rutas que se salgan del repo. La API empieza en 1 y solo cambia con una
 migración documentada.
+
+## Hooks y perfiles
+
+El hook es **uno y del núcleo**. No se duplica un `pre-commit` por lenguaje: el mismo
+`hooks/pre-commit` lee `.dev-agent/config` y llama a `guard/guard.sh`; el mismo
+`hooks/pre-push` llama a `verify/run.sh`. Lo que cambia por perfil es lo que el hook
+ejecuta:
+
+- `guard/` del perfil: checks propios (Odoo, PHPStan, PHPCS...);
+- `verify/config.env`: los comandos de arranque y test;
+- `skills/`: las skills de dominio;
+- `evals/cases/`: los casos del perfil;
+- `AGENTS.fragment.md`: las reglas del lenguaje.
+
+Las skills genéricas y el checker de comentarios viven en el núcleo. Un perfil que
+necesite un hook extra lo declara en su `profile.json`; el núcleo lo ejecuta después de los
+suyos, sin reemplazarlos.
 
 ## Instalador
 
@@ -100,26 +122,33 @@ El comando del núcleo se llama `dev-agent`:
   "profiles": [
     {
       "name": "odoo11",
-      "repo": "git@github.com:nramosscalpers/dev-agent-profile-odoo11.git",
+      "repo": "git@github.com:nramosscalpers/dev-agent-profiles.git",
+      "path": "profiles/odoo11",
       "ref": "v1.0.0"
     },
     {
       "name": "php",
-      "repo": "git@github.com:nramosscalpers/dev-agent-profile-php.git",
+      "repo": "git@github.com:nramosscalpers/dev-agent-profiles.git",
+      "path": "profiles/php",
       "ref": "v0.1.0"
     }
   ]
 }
 ```
 
-El repo de destino guarda lo que se instaló:
+El lock del repo de destino fija el commit del repo de perfiles y el `path`:
 
 ```json
 {
   "api": 1,
   "active": "php",
   "profiles": {
-    "php": {"repo": "git@github.com:nramosscalpers/dev-agent-profile-php.git", "ref": "v0.1.0", "commit": "<sha>"}
+    "php": {
+      "repo": "git@github.com:nramosscalpers/dev-agent-profiles.git",
+      "path": "profiles/php",
+      "ref": "v0.1.0",
+      "commit": "<sha>"
+    }
   }
 }
 ```
@@ -183,10 +212,10 @@ El repo de destino queda así:
 
 ## Migración
 
-1. Crear `dev-agent-profile-odoo11` y mover `guard/odoo_lint.py`, las skills de Odoo, los
-   casos y el verify de Odoo; el núcleo se queda con lo genérico.
-2. Crear `dev-agent-profile-php` desde `profiles/php`; añadir PHPStan, PHPCS, PHPUnit y un
-   caso de eval.
+1. Crear `dev-agent-profiles` y mover `guard/odoo_lint.py`, las skills de Odoo, los casos
+   y el verify de Odoo a `profiles/odoo11`; el núcleo se queda con lo genérico.
+2. Crear `profiles/php` desde el esqueleto; añadir PHPStan, PHPCS, PHPUnit y un caso de
+   eval.
 3. Implementar `dev-agent init/use/profiles/doctor` y el lock; probar con el perfil PHP en
    un repo vacío y con el perfil Odoo en `scalpers-v11`.
 4. Retirar del núcleo los ficheros de Odoo que se hayan movido; el CI del núcleo no debe

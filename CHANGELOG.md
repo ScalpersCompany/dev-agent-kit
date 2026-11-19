@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.9.0] - 2026-11-19
+
+### Added
+
+- `scripts/bootstrap.sh`: automated current install into a git repo, with backups, verify config from the example, pre-commit and optional `--with-verify` and `--with-gga`.
+- The README now covers automated install, profiles, status, agents and GGA; the install guide uses the bootstrap and keeps the manual path as a fallback.
+- The profile design now recommends one private `dev-agent-profiles` repository with one directory per profile, and states that the git hooks are shared while guard, verify, skills, evals and the AGENTS fragment are per profile.
+
+### Changed
+
+- The README status table separates what is implemented from what is designed or pending.
+
 ## [1.8.0] - 2026-11-18
 
 ### Added

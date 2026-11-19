@@ -33,11 +33,25 @@ alcance de una tarea. El agente es intercambiable; la puerta es un comando.
 
 ## 3. Instalación del kit en un repo
 
-### 3.1 Estado actual: copia de directorios
+### 3.1 Automatizada (recomendada)
 
-El kit todavía se instala copiando su estructura en el repo de desarrollo. El instalador
-`dev-agent init` con perfiles separados está diseñado en `docs/PERFILES-EN-REPOS.md`, pero
-no está implementado; no se debe presentar como si lo estuviera.
+Desde el kit:
+
+```bash
+bash scripts/bootstrap.sh /ruta/al/repo
+bash scripts/bootstrap.sh /ruta/al/repo --with-verify
+bash scripts/bootstrap.sh /ruta/al/repo --with-gga
+```
+
+Copia `AGENTS.md`, `.opencode/`, `verify/`, `guard/`, `evals/`, `scripts/` y `docs/`;
+respalda lo que reemplaza como `.bak-<fecha>`; crea `verify/config.env` desde el ejemplo e
+instala el `pre-commit`. `--with-verify` añade el `pre-push` y `.dev-agent/verify.env`;
+`--with-gga` añade los ficheros de GGA. No toca producción, el historial de git ni el
+registro de perfiles.
+
+### 3.2 Manual (respaldo)
+
+Si no quieres usar el bootstrap:
 
 ```bash
 git clone git@github.com:nramosscalpers/dev-agent-kit.git ~/dev-agent-kit
@@ -56,7 +70,7 @@ No copies `verify/config.env`, `evidence/`, `guard-report.json` ni `evals/runs/`
 salidas locales. Si el repo ya tiene `AGENTS.md` o `.opencode`, fusiona; no sobrescribas
 reglas existentes.
 
-### 3.2 Configurar verify
+### 3.3 Configurar verify
 
 ```bash
 cp verify/config.env.example verify/config.env
@@ -83,7 +97,7 @@ El `verify/config.env` que viene en el kit es un ejemplo de Odoo 11 con base des
 prueba `scalpers_partner_vat_unique` y sirve para comprobar el runner, no para dar por
 probado otro módulo. Para un cambio real, `TEST_CMD` debe ejecutar los tests de ese cambio.
 
-### 3.3 Instalar hooks
+### 3.4 Instalar hooks
 
 ```bash
 bash scripts/install-hooks.sh .
@@ -106,7 +120,7 @@ que ese fichero tenga un `TEST_CMD` real. La evidencia va a
 
 Los hooks son de git: funcionan con Hermes, OpenCode, Claude Code y cualquier editor.
 
-### 3.4 Instalar GGA (opcional)
+### 3.5 Instalar GGA (opcional)
 
 GGA es un revisor con IA, no un gate. Requiere un proveedor y un fichero de reglas.
 
@@ -120,7 +134,7 @@ bash scripts/review-gga.sh . --ci
 ejecutes `gga install`: instalaría su propio pre-commit y pisaría el del kit. Si no hay
 proveedor o no hay `.gga`, el script lo dice; no se declara verde.
 
-### 3.5 Skills en los agentes
+### 3.6 Skills en los agentes
 
 Los gates viven en el repo; las skills se instalan en el agente:
 
@@ -159,10 +173,11 @@ dupliques el contenido de una skill en tres sitios sin dueño.
 - `eslint`, `tsc` si hay `package.json`/`tsconfig.json` y los binarios locales;
 - `gitleaks` si está instalado;
 - `odoo_lint` sobre módulos Odoo;
-- `comment_lint` sobre las líneas añadidas: bloquea comentarios de prosa en Python, PHP,
-  JS/TS, XML, shell, SQL y YAML. Las cabeceras legales, las directivas de herramienta
+- `comment_lint` sobre las líneas añadidas: bloquea comentarios de prosa en Python, JS/TS,
+  XML, shell, SQL y YAML. Las cabeceras legales, las directivas de herramienta
   (`noqa`, `type: ignore`, `pylint`, `eslint-disable`, `shellcheck`) y los docstrings no
-  cuentan.
+  cuentan. `.php` todavía no está en el checker genérico; la regla existe en el perfil PHP,
+  pero no se aplica como gate hasta que se añada.
 
 En `--staged` solo mira lo que entra en el commit. En modo completo, `comment_lint` se
 omite con motivo para no bloquear por comentarios antiguos. El informe
@@ -206,9 +221,9 @@ Implementado:
 
 Diseño o migración pendiente:
 
-- `core` + `profiles` separados; hoy Odoo sigue en la raíz y `profiles/php` es un
+- `core` + un repo de perfiles; hoy Odoo sigue en la raíz y `profiles/php` es un
   esqueleto;
-- repositorios privados de perfil y el instalador `dev-agent init/use/profiles/doctor`;
+- el repo privado `dev-agent-profiles` y el instalador `dev-agent init/use/profiles/doctor`;
 - `profiles.lock.json` y actualización reproducible;
 - wire de `gentle-ai sync` con el perfil activo;
 - integración de `rsc-harness`, `rsc-brain` y `engram` en el flujo diario, más allá de la
@@ -252,7 +267,7 @@ No se debe presentar ninguna de estas pendientes como terminada.
 
 - `docs/ARQUITECTURA-ENTORNOS.md`: capas y límites con rsc-harness, rsc-brain, engram y
   gentle-ai.
-- `docs/PERFILES-EN-REPOS.md`: perfiles en repos privados, registro, instalador y lock.
+- `docs/PERFILES-EN-REPOS.md`: un repo privado de perfiles, registro, instalador y lock.
 - `docs/OPERATIONS.md`: flujo, hooks, GGA y skills globales.
 - `docs/DEV-BASE.md`: qué cubre el kit en la base de desarrollo.
 - `docs/EVAL-BASELINE.md`: línea base de evals.
