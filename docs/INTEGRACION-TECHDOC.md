@@ -8,8 +8,8 @@ uno tiene su remoto, sus permisos y su dueño.
 
 ```text
 ScalpersCompany/scalpers-tech-doc   norma, procesos, decisiones, propuestas, wiki
-nramosscalpers/dev-agent-kit        puerta de calidad, hooks, guard, verify, evals
-nramosscalpers/dev-agent-profiles  perfiles Odoo 11 y PHP
+ScalpersCompany/dev-agent-kit        puerta de calidad, hooks, guard, verify, evals
+ScalpersCompany/dev-agent-profiles  perfiles Odoo 11 y PHP
 odoo-11/scalpers-v11                código de producto en GitLab
 ```
 
@@ -42,8 +42,8 @@ mkdir -p ~/.agents
 ln -sfn ~/odoo-doodba-template/scalpers-tech-doc/AGENTS.md ~/.agents/AGENTS.md
 
 # 3. Clonar el kit y los perfiles
-git clone git@github.com:nramosscalpers/dev-agent-kit.git ~/dev-agent-kit
-git clone git@github.com:nramosscalpers/dev-agent-profiles.git ~/dev-agent-profiles
+git clone git@github.com:ScalpersCompany/dev-agent-kit.git ~/dev-agent-kit
+git clone git@github.com:ScalpersCompany/dev-agent-profiles.git ~/dev-agent-profiles
 
 # 4. Comprobar que la norma es la correcta y está limpia
 bash ~/dev-agent-kit/scripts/check-techdoc.sh \
@@ -64,8 +64,8 @@ por buena con la norma sucia.
 
 ## Qué no se hace
 
-- **No se añade tech-doc como submódulo del kit.** Ataría un repo privado de empresa a un
-  repo privado personal, con dos credenciales y dos ciclos de vida; un clon del kit
+- **No se añade tech-doc como submódulo del kit.** Ataría el repo de empresa a los repos de
+  herramientas, con dos credenciales y dos ciclos de vida; un clon del kit
   arrastraría la base documental. El workspace los mantiene hermanos y el check verifica
   la ruta.
 - **No se copia `AGENTS.md` dentro del kit.** La copia se desincroniza y crea dos fuentes
@@ -75,10 +75,10 @@ por buena con la norma sucia.
   proceso de la empresa y la autorización de Nico.
 - **No se guarda un token de empresa en el kit.** El check es local y no hace red.
 
-## CI y repos privados
+## CI y repo de empresa
 
-El CI del kit no puede leer `ScalpersCompany/scalpers-tech-doc` sin una credencial de
-empresa. No se mete un token en el kit. Si en el futuro se quiere una comprobación en CI,
+El CI de los repos públicos no puede leer `ScalpersCompany/scalpers-tech-doc` sin una
+credencial de empresa. No se mete un token en el kit. Si en el futuro se quiere una comprobación en CI,
 se usa un deploy key o un token de solo lectura en los secrets del repositorio, nunca en
 el árbol. Mientras no exista esa autorización, la comprobación es local y el CI del kit
 solo valida su propio contrato.

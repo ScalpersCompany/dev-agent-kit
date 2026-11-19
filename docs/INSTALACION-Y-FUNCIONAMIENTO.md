@@ -49,7 +49,7 @@ producción, el historial de git ni un registro de perfiles.
 ### 3.2 Manual (respaldo)
 
 ```bash
-git clone git@github.com:nramosscalpers/dev-agent-kit.git ~/dev-agent-kit
+git clone git@github.com:ScalpersCompany/dev-agent-kit.git ~/dev-agent-kit
 cd /ruta/al/repo-de-desarrollo
 cp -a ~/dev-agent-kit/AGENTS.md .
 cp -a ~/dev-agent-kit/skills .
@@ -194,7 +194,7 @@ Implementado:
 
 Diseño o migración pendiente:
 
-- repo remoto privado de perfiles y `dev-agent init/use/profiles/doctor`;
+- repo de perfiles y `dev-agent init/use/profiles/doctor`;
 - lock de perfiles;
 - PHP como perfil real (hoy esqueleto);
 - `comment_lint` para `.php`;

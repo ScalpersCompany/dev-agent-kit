@@ -143,7 +143,7 @@ neutral de guard/verify no depende de OpenCode.
 | Pieza | Estado |
 |---|---|
 | core `guard`, `verify`, evals, hooks | implementado y probado |
-| perfil Odoo 11 | extraído localmente; remoto pendiente |
+| perfil Odoo 11 | extraído; repo público `ScalpersCompany/dev-agent-profiles` |
 | perfil PHP | esqueleto |
 | `dev-agent init` y lock | pendiente |
 | plantilla y generador | implementados |

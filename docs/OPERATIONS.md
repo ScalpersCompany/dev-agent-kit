@@ -26,8 +26,8 @@ The core is language-agnostic. A profile supplies `profile.json`, `profile.env`,
 `verify/`, `skills/`, `evals/` and `AGENTS.fragment.md`. The core `guard.sh` reads
 `.dev-agent/config` (`DEV_AGENT_PROFILE=<name>`) and runs the profile's guard scripts.
 
-- Odoo 11: `dev-agent-profiles/profiles/odoo11`, local repo; remote pending.
-- PHP: `dev-agent-profiles/profiles/php`, skeleton.
+- Odoo 11: `ScalpersCompany/dev-agent-profiles/profiles/odoo11`, public repo.
+- PHP: `ScalpersCompany/dev-agent-profiles/profiles/php`, skeleton.
 - Template: `profiles/_template`.
 - Design: `docs/PERFILES-EN-REPOS.md`.
 - New profile: `docs/CREAR-PERFIL.md`; generate with `scripts/new-profile.sh` and validate with `scripts/validate-profile.py`.
@@ -65,7 +65,7 @@ The agent is interchangeable; the gate is a command.
 | Area | State |
 |---|---|
 | core guard, verify, evals, hooks | implemented and tested |
-| Odoo 11 profile | extracted locally; remote pending |
+| Odoo 11 profile | extracted to `ScalpersCompany/dev-agent-profiles`; public |
 | PHP profile | skeleton; no runtime yet |
 | `dev-agent init` and the lock | designed; not implemented |
 | GGA | optional; installation tested; no real review run |

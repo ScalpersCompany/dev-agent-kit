@@ -22,8 +22,8 @@ Se usa **registro + clonado**, no submódulos:
 ## Repositorios
 
 ```text
-nramosscalpers/dev-agent-kit         # núcleo, contrato, instalador, documentación
-nramosscalpers/dev-agent-profiles    # perfiles: odoo11/, php/ (un solo repo privado)
+ScalpersCompany/dev-agent-kit         # núcleo, contrato, instalador, documentación
+ScalpersCompany/dev-agent-profiles    # perfiles: odoo11/, php/ (un solo repo de la company)
 ```
 
 Un solo repo de perfiles es suficiente y se recomienda para un equipo pequeño: una sola
@@ -86,8 +86,8 @@ No todo lo que se nombra como metodología es una skill. La comprobación en el 
 | rsc-harness `asdd`, `sdd-init`, `harness`, `specify`, `plan`, `tasks`, `implement`, `verify`, `review`, `ship`... | skills reales, locales al repo | `.rsc/skills/` del repo donde se instala rsc-harness; no se copian al perfil |
 | `rsc-harness-brain` | skill de instalación, no de tarea diaria | skills globales del agente |
 
-El perfil `odoo11` está extraído localmente en
-`<profiles-repo>/profiles/odoo11`; su remoto privado está pendiente. El
+El perfil `odoo11` está extraído en
+`ScalpersCompany/dev-agent-profiles/profiles/odoo11`; su remoto público está creado. El
 núcleo ya no contiene Odoo: `guard.sh` carga el perfil y ejecuta `guard/odoo.sh`. Cuando se
 cree el instalador `dev-agent init`, copiará el perfil a `.dev-agent/profiles/odoo11` y
 escribirá `.dev-agent/config`.
@@ -158,13 +158,13 @@ El comando del núcleo se llama `dev-agent`:
   "profiles": [
     {
       "name": "odoo11",
-      "repo": "git@github.com:nramosscalpers/dev-agent-profiles.git",
+      "repo": "git@github.com:ScalpersCompany/dev-agent-profiles.git",
       "path": "profiles/odoo11",
       "ref": "v1.0.0"
     },
     {
       "name": "php",
-      "repo": "git@github.com:nramosscalpers/dev-agent-profiles.git",
+      "repo": "git@github.com:ScalpersCompany/dev-agent-profiles.git",
       "path": "profiles/php",
       "ref": "v0.1.0"
     }
@@ -180,7 +180,7 @@ El lock del repo de destino fija el commit del repo de perfiles y el `path`:
   "active": "php",
   "profiles": {
     "php": {
-      "repo": "git@github.com:nramosscalpers/dev-agent-profiles.git",
+      "repo": "git@github.com:ScalpersCompany/dev-agent-profiles.git",
       "path": "profiles/php",
       "ref": "v0.1.0",
       "commit": "<sha>"
@@ -235,7 +235,7 @@ El repo de destino queda así:
 
 ## Seguridad y compatibilidad
 
-- Los perfiles son privados; se clonan por SSH o HTTPS con la credencial del usuario. El
+- Los perfiles son de la company; se clonan por SSH o HTTPS con la credencial del usuario. El
   lock no guarda el token.
 - El perfil no puede ejecutar `git push` ni tocar producción; solo declara comandos de
   guard y verify.
@@ -249,7 +249,7 @@ El repo de destino queda así:
 ## Migración
 
 1. El repo local `dev-agent-profiles` ya existe con `profiles/odoo11` y `profiles/php`; el
-   remoto privado está pendiente.
+   remoto público está creado.
 2. El perfil PHP es un esqueleto; añadir PHPStan, PHPCS, PHPUnit y un caso de eval.
 3. Implementar `dev-agent init/use/profiles/doctor` y el lock; probar con el perfil PHP en
    un repo vacío y con el perfil Odoo en `scalpers-v11`.

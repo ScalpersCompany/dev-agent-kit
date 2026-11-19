@@ -1,11 +1,13 @@
 # Dev agent kit
 
+Repository: https://github.com/ScalpersCompany/dev-agent-kit
+
 A repo-local kit to make agents trustworthy on a development codebase. It implements executable verification, skills built from observed failures, agent evals and deterministic guardrails before prose. The core is language-agnostic; Odoo, PHP and other environments live in profiles.
 
 Start here: `docs/INSTALACION-Y-FUNCIONAMIENTO.md` (Spanish) — install, daily flow, guard, verify, evals, GGA, profiles, security and the implemented-versus-pending status.
 
 The Odoo 11 profile now lives in the separate profiles repository, at
-`<profiles-repo>/profiles/odoo11` locally. Its remote is pending.
+`ScalpersCompany/dev-agent-profiles/profiles/odoo11`.
 
 ## Company norm
 
@@ -78,7 +80,7 @@ The full profile installer (`dev-agent init --profile ... --all`) is designed bu
 
 ## Profiles
 
-All profiles can live in one private repository, `dev-agent-profiles`, with one directory per profile (`profiles/odoo11`, `profiles/php`). The core keeps the contract, the registry and the installer; the profile keeps its `profile.json`, `profile.env`, `guard/`, `verify/`, `skills/`, `evals/` and `AGENTS.fragment.md`.
+All profiles can live in one company repository, `dev-agent-profiles`, with one directory per profile (`profiles/odoo11`, `profiles/php`). The core keeps the contract, the registry and the installer; the profile keeps its `profile.json`, `profile.env`, `guard/`, `verify/`, `skills/`, `evals/` and `AGENTS.fragment.md`.
 
 The git hooks are **not** different per profile: the same core `pre-commit` and `pre-push` read the active profile and run its checks. What differs is the content the hook executes: guard checks, verify config, skills, eval cases and the AGENTS fragment.
 
@@ -105,7 +107,7 @@ The visual map of the system is in `docs/diagrams/sistema.html`; the detailed fl
 | Area | State |
 |---|---|
 | core `guard`, `verify`, evals, pre-commit/pre-push | implemented and covered by tests |
-| Odoo 11 profile | extracted to `dev-agent-profiles/profiles/odoo11`; local; remote pending |
+| Odoo 11 profile | extracted to `ScalpersCompany/dev-agent-profiles/profiles/odoo11`; public |
 | PHP profile | skeleton moved to the profiles repository; PHPStan/PHPCS/PHPUnit not wired |
 | `dev-agent init` and the profile lock | designed; not implemented |
 | profile template, `new-profile.sh` and `validate-profile.py` | implemented and tested |

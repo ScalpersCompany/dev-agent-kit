@@ -234,7 +234,7 @@ hooks son los mismos para todos los perfiles.
 - Plantilla: `profiles/_template`.
 - Generador: `scripts/new-profile.sh`.
 - Validador: `scripts/validate-profile.py`.
-- Odoo 11: `dev-agent-profiles/profiles/odoo11`, local; remoto pendiente.
-- PHP: `dev-agent-profiles/profiles/php`, esqueleto.
+- Odoo 11: `ScalpersCompany/dev-agent-profiles/profiles/odoo11`, público.
+- PHP: `ScalpersCompany/dev-agent-profiles/profiles/php`, esqueleto.
 - Instalador `dev-agent init`: pendiente.
 - Mapa visual: `docs/DIAGRAMA-SISTEMA.md` y `docs/diagrams/sistema.html`.

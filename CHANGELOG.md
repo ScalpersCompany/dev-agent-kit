@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.0] - 2026-11-19
+
+### Changed
+
+- Published as `ScalpersCompany/dev-agent-kit` (public); clone commands and status docs now use the company URLs.
+- The Odoo 11 profile points to `ScalpersCompany/dev-agent-profiles` (public); no private remote remains in the docs.
+
 ## [2.5.0] - 2026-11-19
 
 ### Added
