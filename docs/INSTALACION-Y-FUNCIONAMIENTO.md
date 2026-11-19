@@ -28,6 +28,28 @@ El agente es intercambiable; la puerta es un comando.
 - Un proveedor de modelo aprobado para evals y GGA. No se usa un endpoint personal ni se
   guardan claves en el repo.
 
+### 2.1 Repos que se usan juntos
+
+| Repo | Papel | Cómo se usa |
+|---|---|---|
+| `ScalpersCompany/dev-agent-kit` | Puerta, hooks, skills, evals | Se clona; es el núcleo |
+| `ScalpersCompany/dev-agent-profiles` | Perfiles Odoo 11 y PHP | Se clona aparte; se instala el perfil activo |
+| `ScalpersCompany/scalpers-tech-doc` | Norma y documentación de empresa | Se clona aparte; su `AGENTS.md` se enlaza en `~/.agents/AGENTS.md` |
+| `scalpers-v11` | Código de producto | GitLab privado; no se clona desde el kit |
+
+No se usa un submódulo. Antes de instalar un perfil o dar una norma por buena, comprueba
+tech-doc:
+
+```bash
+bash scripts/check-techdoc.sh \
+  --path ~/odoo-doodba-template/scalpers-tech-doc \
+  --branch main --require-link
+```
+
+Si el check falla por árbol sucio, la norma no es reproducible: se cierra el cambio en el
+repo de empresa. `--allow-dirty` solo sirve para una revisión local. La integración
+completa está en `docs/INTEGRACION-TECHDOC.md`.
+
 ## 3. Instalación del núcleo
 
 ### 3.1 Automatizada (recomendada)

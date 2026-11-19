@@ -65,9 +65,10 @@ h1 { font-size: clamp(22px, 3vw, 31px); line-height: 1.1; letter-spacing: -.02em
   <section class="step">
     <div class="lane"><b>Fuente</b><span>neutral</span></div>
     <div>
-      <h2>0. Contexto y adaptadores</h2>
-      <p>El repo guarda una sola fuente: <b>skills/</b>, <b>commands/</b> y <b>agents/</b>. <b>install-agent-adapters.sh</b> genera .opencode/ y .claude/ para el agente que los use; gentle-ai sincroniza los globales de Hermes, Codex y pi. <b>AGENTS.md</b> enlaza la norma de empresa de <b>scalpers-tech-doc</b>; el AGENTS.fragment del perfil solo añade Odoo.</p>
+      <h2>0. Repos, norma y adaptadores</h2>
+      <p>Cuatro repos separados: <b>dev-agent-kit</b> (puerta), <b>dev-agent-profiles</b> (lenguaje), <b>scalpers-tech-doc</b> (norma y documentación de empresa) y <b>scalpers-v11</b> (producto). techdoc no es submódulo: <b>~/.agents/AGENTS.md</b> enlaza su AGENTS.md y <b>check-techdoc.sh</b> comprueba remoto, rama, commit y limpieza. El repo guarda una sola fuente: <b>skills/</b>, <b>commands/</b> y <b>agents/</b>; los adaptadores se generan y gentle-ai sincroniza los globales.</p>
       <div class="art"><b>Artefactos:</b> skills/*/SKILL.md, AGENTS.md, AGENTS.fragment.md, techdoc/AGENTS.md, adapters gitignored</div>
+      <div class="loop">Si check-techdoc falla por remoto, rama o árbol sucio, no se instala perfil ni se da la norma por buena: se cierra en el repo de empresa.</div>
     </div>
   </section>
   <div class="arrow" aria-hidden="true">↓</div>

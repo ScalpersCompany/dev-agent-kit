@@ -2,7 +2,10 @@
 
 Un perfil es un adaptador de entorno. El núcleo `dev-agent-kit` pone la puerta, los hooks,
 el harness de eval y las cinco skills genéricas; el perfil pone lo que solo sabe ese
-lenguaje: checks, comandos, skills de dominio, casos y reglas.
+lenguaje: checks, comandos, skills de dominio, casos y reglas. La norma de empresa vive en
+`ScalpersCompany/scalpers-tech-doc/AGENTS.md`, enlazada en `~/.agents/AGENTS.md` y comprobada
+por `scripts/check-techdoc.sh`; el perfil solo declara `PROFILE_NORM_REPO` y
+`PROFILE_NORM_PATH`, nunca la copia.
 
 El perfil **no** es un segundo kit, **no** duplica los hooks y **no** sustituye a `guard` ni
 a `verify`.

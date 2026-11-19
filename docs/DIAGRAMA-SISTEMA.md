@@ -3,6 +3,20 @@
 El mapa visual está en `docs/diagrams/sistema.html`; se puede abrir en el navegador o
 previsualizar desde el chat. Este documento deja la versión Mermaid para el repositorio.
 
+## Repos
+
+```mermaid
+flowchart LR
+  T["scalpers-tech-doc<br/>norma y documentación"] -->|AGENTS.md canónico + check-techdoc| K["dev-agent-kit<br/>puerta determinista"]
+  K -->|contrato y hooks| P["dev-agent-profiles<br/>perfiles Odoo 11 / PHP"]
+  P -->|perfil activo y skills| V["scalpers-v11<br/>producto en GitLab"]
+  T -.->|propuestas y decisiones| V
+```
+
+Son repos separados: `scalpers-tech-doc` no es submódulo. La norma se enlaza en
+`~/.agents/AGENTS.md` y `scripts/check-techdoc.sh` comprueba el remoto, la rama, el commit
+y que el árbol esté limpio. El kit y los perfiles no copian la norma.
+
 ## Flujo
 
 ```mermaid

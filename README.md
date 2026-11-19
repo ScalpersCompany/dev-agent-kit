@@ -6,8 +6,18 @@ A repo-local kit to make agents trustworthy on a development codebase. It implem
 
 Start here: `docs/INSTALACION-Y-FUNCIONAMIENTO.md` (Spanish) — install, daily flow, guard, verify, evals, GGA, profiles, security and the implemented-versus-pending status.
 
-The Odoo 11 profile now lives in the separate profiles repository, at
-`ScalpersCompany/dev-agent-profiles/profiles/odoo11`.
+## Repositories that work together
+
+| Repository | Role | Relation |
+|---|---|---|
+| `ScalpersCompany/dev-agent-kit` | Deterministic gate, hooks, skills and evals | This repository; public |
+| `ScalpersCompany/dev-agent-profiles` | Odoo 11 and PHP profiles | Separate public repository; installed by the active profile |
+| `ScalpersCompany/scalpers-tech-doc` | Company norm and documentation | Separate company repository; its `AGENTS.md` is canonical and is linked at `~/.agents/AGENTS.md`; verified by `scripts/check-techdoc.sh` |
+| `scalpers-v11` | Product code | Private GitLab repository; receives only code that passed the gate |
+
+They are separate repositories, not submodules. `scalpers-tech-doc` is the canonical source
+of the company norm; the kit, the profiles and the product code consume it without copying
+it. The integration contract is `docs/INTEGRACION-TECHDOC.md`.
 
 ## Company norm
 
@@ -17,7 +27,8 @@ is the local contract, and the Odoo profile's `AGENTS.fragment.md` only adds Odo
 `scripts/check-techdoc.sh` verifies the remote, the branch/commit, a clean tree and the
 link. The full integration is in `docs/INTEGRACION-TECHDOC.md`; the local clone is
 currently on a dirty feature branch, so the check fails closed until that company change is
-closed.
+closed. This is deliberate: the company repo is the source of the norm, not a copy inside
+the kit.
 
 ## Scope
 

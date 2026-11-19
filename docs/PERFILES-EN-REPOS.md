@@ -4,6 +4,18 @@ La plantilla base está en `profiles/_template`; la guía paso a paso es
 `docs/CREAR-PERFIL.md`. El generador es `scripts/new-profile.sh` y el validador
 `scripts/validate-profile.py`.
 
+## Repos
+
+| Repo | Papel |
+|---|---|
+| `ScalpersCompany/dev-agent-kit` | Núcleo, contrato, hooks y puerta |
+| `ScalpersCompany/dev-agent-profiles` | Este repo: perfiles `odoo11` y `php` |
+| `ScalpersCompany/scalpers-tech-doc` | Norma y documentación de empresa; `AGENTS.md` canónico enlazado en `~/.agents/AGENTS.md`; se comprueba con `scripts/check-techdoc.sh` |
+| `scalpers-v11` | Código de producto; recibe el perfil activo, no la norma copiada |
+
+Son repos separados, no submódulos. El perfil declara `PROFILE_NORM_REPO` y
+`PROFILE_NORM_PATH`; no copia la norma.
+
 ## Decisión
 
 Los perfiles viven en **repositorios propios**, no dentro del núcleo. El núcleo

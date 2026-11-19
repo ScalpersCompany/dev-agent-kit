@@ -51,6 +51,18 @@ provider or no `.gga`, the script says so; it is not green.
 
 ## Layers
 
+### Repositories
+
+| Repository | Role |
+|---|---|
+| `ScalpersCompany/dev-agent-kit` | deterministic gate and hooks |
+| `ScalpersCompany/dev-agent-profiles` | Odoo 11 and PHP profiles |
+| `ScalpersCompany/scalpers-tech-doc` | company norm and documentation; canonical `AGENTS.md`, linked at `~/.agents/AGENTS.md`; checked by `scripts/check-techdoc.sh` |
+| `scalpers-v11` | product code in GitLab; never deployed by the kit |
+
+They are separate repositories, not submodules. The company norm wins; the kit and the
+profile only reference it.
+
 - `rsc-harness`: process, spec and ASDD; skills are repo-local in `.rsc/skills`.
 - `dev-agent-kit`: the deterministic gate and the hooks.
 - `gentle-ai`: installs and synchronises agents, skills and MCP; it does not replace

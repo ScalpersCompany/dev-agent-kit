@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.8.0] - 2026-11-19
+
+### Added
+
+- `scalpers-tech-doc` is now a first-class repository in the README, architecture, install, operations and profiles docs, the Mermaid map and both HTML diagrams: four separate repos (kit, profiles, techdoc, product), the canonical `AGENTS.md` link and the `check-techdoc.sh` gate.
+- The detailed flow starts with the four repositories and stops when techdoc is not clean.
+
 ## [2.7.0] - 2026-11-19
 
 ### Changed

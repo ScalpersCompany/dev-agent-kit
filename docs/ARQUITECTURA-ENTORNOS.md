@@ -11,6 +11,19 @@ La regla de diseño es: **el agente es intercambiable; la puerta es un comando**
 OpenCode y Claude Code ejecutan los mismos scripts y los mismos hooks; ninguno es dueño
 del flujo.
 
+## Repos del sistema
+
+| Repo | Función | Relación |
+|---|---|---|
+| `ScalpersCompany/dev-agent-kit` | Puerta determinista, hooks, skills y evals | Este repo; público |
+| `ScalpersCompany/dev-agent-profiles` | Perfiles Odoo 11 y PHP | Repo público separado; se instala el perfil activo |
+| `ScalpersCompany/scalpers-tech-doc` | Norma y documentación de empresa | Repo separado de la company; su `AGENTS.md` es canónico y se enlaza en `~/.agents/AGENTS.md`; `check-techdoc.sh` comprueba remoto, rama y limpieza |
+| `scalpers-v11` | Código de producto | Repo privado de GitLab; solo recibe lo que pasó la puerta |
+
+No se fusionan ni se añaden como submódulos. La norma vive en `scalpers-tech-doc`; el kit
+la consume por el enlace canónico y el perfil solo la referencia con `PROFILE_NORM_REPO` y
+`PROFILE_NORM_PATH`. La integración completa está en `docs/INTEGRACION-TECHDOC.md`.
+
 ## Capas
 
 | Capa | Herramienta | Responsabilidad | No es |
