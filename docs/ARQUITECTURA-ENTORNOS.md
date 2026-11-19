@@ -204,6 +204,28 @@ convenciones por proyecto. Vive como MCP en cada agente; el repo lleva su
 - El kit sigue instalando los hooks del repo; gentle-ai no instala hooks de git.
 - La norma global se queda en `~/.agents/AGENTS.md`; gentle-ai no la duplica.
 
+## GGA (revisión opcional)
+
+`gga` (Gentleman Guardian Angel) es un revisor de código con IA, instalado por
+`gentle-ai`. No sustituye a `guard` ni a `verify`: es un segundo par de ojos, no
+determinista, que necesita un proveedor y tarda. Se añade como paso opcional, nunca
+como puerta dura.
+
+- `scripts/install-gga.sh <repo>` copia `.gga` y `.gga-rules.md`, con backup si ya
+  existen. **No** ejecuta `gga install`: ese comando instalaría su propio pre-commit y
+  pisaría el del kit.
+- `scripts/review-gga.sh <repo>` ejecuta `gga run` sobre lo staged. Con
+  `GGA_ADVISORY=1` informa y no bloquea; sin esa variable devuelve el código de GGA.
+  Para revisar un commit: `scripts/review-gga.sh <repo> --ci`.
+- El `.gga` de ejemplo usa `PROVIDER=claude`; se puede cambiar a `opencode`, `codex`,
+  `ollama:<modelo>`, `gemini` o el proveedor aprobado. Hermes y OpenCode lanzan el
+  script como un comando; no hay API de agente.
+- `.gga-rules.md` es el contrato de revisión: sin comentarios de prosa, tests de
+  comportamiento, UdM correcta, retry terminal, `depends` directo, sin secretos. El
+  perfil puede añadir patrones de fichero, pero no duplicar las reglas del núcleo.
+- Si no hay proveedor o no hay `.gga`, el script lo dice y no se declara verde. El
+  `guard` determinista sigue siendo la garantía; GGA es consejo.
+
 ## Flujo de una tarea
 
 1. **Spec**: rsc-harness crea o actualiza la tarea y los criterios de aceptación.

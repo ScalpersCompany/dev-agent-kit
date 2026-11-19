@@ -48,6 +48,9 @@ evals/cases/repro-first/01-discount-bug/  failing-test fixture for repro-first
 evals/cases/review-diff/01-unsafe-handler/  unsafe diff fixture for review-diff
 evals/loop.sh                 hill climb until the score passes
 profiles/                     environment adapters: template, PHP and the Odoo migration target
+gga/                          optional AI review: .gga example and review rules
+scripts/install-gga.sh        installs .gga and .gga-rules.md with backups
+scripts/review-gga.sh         runs gga on staged files, optional or blocking
 hooks/pre-commit              local pre-commit: guard --staged
 hooks/pre-push                local pre-push: verify/run.sh
 scripts/install-hooks.sh      installs the hooks and backs up the existing ones

@@ -62,6 +62,20 @@ gentle-ai, and the migration phases are in `docs/ARQUITECTURA-ENTORNOS.md`.
 The current Odoo files remain at the root until phase 1 moves them to `profiles/odoo11`;
 the PHP directory is the target shape, not a second runtime.
 
+## GGA optional review
+
+`gga` is an AI reviewer, not a gate. It needs a provider and a rules file; it is slower
+and non-deterministic than `guard`.
+
+- `bash scripts/install-gga.sh <repo>` copies `.gga` and `.gga-rules.md`, with backups.
+- `bash scripts/review-gga.sh <repo>` reviews staged files; `GGA_ADVISORY=1` reports
+  without blocking; `--ci` reviews the last commit.
+- Do not run `gga install`: it would replace the kit's pre-commit hook.
+- `PROVIDER` can be `claude`, `opencode`, `codex`, `ollama:<model>` or another approved
+  CLI; Hermes invokes the script as a command.
+- If there is no provider or no `.gga`, the script reports it; it is not green.
+- The GGA rules mirror the review checklist; `guard` and `verify` remain the hard gate.
+
 ## Global skills in dev-nicolas
 
 The kit's seven skills are installed globally in both agents on this host:

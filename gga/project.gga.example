@@ -1,0 +1,6 @@
+PROVIDER=claude
+FILE_PATTERNS=*.py,*.xml,*.js,*.ts,*.tsx,*.php,*.sh,*.sql,*.yml,*.yaml
+EXCLUDE_PATTERNS=*.test.ts,*.spec.ts,*.test.js,*.spec.js,node_modules/*,dist/*,build/*,vendor/*,__pycache__/*
+RULES_FILE=.gga-rules.md
+STRICT_MODE=true
+TIMEOUT=300

@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.6.0] - 2026-11-18
+
+### Added
+
+- `gga/project.gga.example` and `gga/REVIEW-RULES.md`: optional GGA AI review, with the no-comments and review-checklist rules.
+- `scripts/install-gga.sh`: copies `.gga` and `.gga-rules.md` with backups; it does not run `gga install`, so the kit pre-commit is preserved.
+- `scripts/review-gga.sh`: runs GGA on staged files; `GGA_ADVISORY=1` reports without blocking; `--ci` reviews the last commit.
+- `docs/ARQUITECTURA-ENTORNOS.md` and `docs/OPERATIONS.md` explain that GGA is advisory, provider-dependent and not a hard gate.
+
 ## [1.5.0] - 2026-11-18
 
 ### Added
