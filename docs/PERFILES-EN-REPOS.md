@@ -28,9 +28,9 @@ Cada perfil conserva su `version` y su `profile.json`; el lock fija el commit de
 subdirectorio. Si en el futuro un perfil necesita otro ciclo de acceso, se puede separar sin
 cambiar el contrato.
 
-El perfil Odoo se extrae del kit actual en la fase 1; el perfil PHP nace del esqueleto
-`profiles/php`. El núcleo conserva `profiles/_template` como plantilla, no como perfil
-instalable.
+El perfil Odoo está extraído localmente en `dev-agent-profiles/profiles/odoo11`; el perfil
+PHP nace del esqueleto `profiles/php` del repo de perfiles. El núcleo conserva
+`profiles/_template` como plantilla, no como perfil instalable.
 
 ## Contrato de un perfil
 
@@ -82,8 +82,11 @@ No todo lo que se nombra como metodología es una skill. La comprobación en el 
 | rsc-harness `asdd`, `sdd-init`, `harness`, `specify`, `plan`, `tasks`, `implement`, `verify`, `review`, `ship`... | skills reales, locales al repo | `.rsc/skills/` del repo donde se instala rsc-harness; no se copian al perfil |
 | `rsc-harness-brain` | skill de instalación, no de tarea diaria | skills globales del agente |
 
-El perfil `odoo11` se creará en `dev-agent-profiles`; hoy no está activo y Odoo sigue en
-la raíz del kit. Cuando se cree, declara estas fuentes:
+El perfil `odoo11` está extraído localmente en
+`/home/scalpers/dev-agent-profiles/profiles/odoo11`; su remoto privado está pendiente. El
+núcleo ya no contiene Odoo: `guard.sh` carga el perfil y ejecuta `guard/odoo.sh`. Cuando se
+cree el instalador `dev-agent init`, copiará el perfil a `.dev-agent/profiles/odoo11` y
+escribirá `.dev-agent/config`.
 
 ```text
 profile skills/       repro-first, review-diff, dev-verify, odoo-safe-change,
@@ -242,14 +245,12 @@ El repo de destino queda así:
 
 ## Migración
 
-1. Crear `dev-agent-profiles` y mover `guard/odoo_lint.py`, las skills de Odoo, los casos
-   y el verify de Odoo a `profiles/odoo11`; el núcleo se queda con lo genérico.
-2. Crear `profiles/php` desde el esqueleto; añadir PHPStan, PHPCS, PHPUnit y un caso de
-   eval.
+1. El repo local `dev-agent-profiles` ya existe con `profiles/odoo11` y `profiles/php`; el
+   remoto privado está pendiente.
+2. El perfil PHP es un esqueleto; añadir PHPStan, PHPCS, PHPUnit y un caso de eval.
 3. Implementar `dev-agent init/use/profiles/doctor` y el lock; probar con el perfil PHP en
    un repo vacío y con el perfil Odoo en `scalpers-v11`.
-4. Retirar del núcleo los ficheros de Odoo que se hayan movido; el CI del núcleo no debe
-   necesitar Odoo.
+4. El núcleo ya no contiene Odoo; su CI no lo necesita. El perfil Odoo conserva sus tests.
 5. Conectar `gentle-ai sync`, rsc-harness, rsc-brain y engram en el flujo; no dentro del
    perfil.
 

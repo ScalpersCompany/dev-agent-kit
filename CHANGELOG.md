@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.0.0] - 2026-11-19
+
+### Changed
+
+- The Odoo 11 profile is extracted to the separate local repository `dev-agent-profiles/profiles/odoo11`: linter, allowlist, verify example, Odoo skills, eval cases, rubrics, tests and Odoo docs.
+- The core no longer contains Odoo: `guard/guard.sh` loads the active profile from `.dev-agent/profiles/<name>` or `profiles/<name>` and runs its `guard/*.sh`.
+- The core keeps five generic skills; the Odoo skills live in the profile.
+- Core docs, install guide, operations, baseline and coverage are language-agnostic; Odoo details live in the profile docs.
+- The PHP skeleton is moved to the profiles repository.
+
+### Removed
+
+- `guard/odoo_lint.py`, `guard/odoo_allowlist.txt`, `tests/test_odoo_lint.py`, the Odoo and FactorLibre eval cases and rubrics, and the Odoo skills from the core.
+
 ## [1.10.0] - 2026-11-19
 
 ### Added

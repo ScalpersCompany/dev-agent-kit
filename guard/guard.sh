@@ -8,6 +8,7 @@ set -uo pipefail
 KIT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ROOT="${GUARD_ROOT:-$KIT_ROOT}"
 ROOT="$(cd "$ROOT" && pwd)" || exit 2
+export GUARD_ROOT="$ROOT"
 cd "$ROOT" || exit 2
 
 STAGED=0
@@ -31,6 +32,21 @@ PY
 }
 
 have() { command -v "$1" >/dev/null 2>&1; }
+
+PROFILE_NAME="${DEV_AGENT_PROFILE:-}"
+if [ -z "$PROFILE_NAME" ] && [ -f "$ROOT/.dev-agent/config" ]; then
+  . "$ROOT/.dev-agent/config"
+  PROFILE_NAME="${DEV_AGENT_PROFILE:-}"
+fi
+PROFILE_DIR=""
+if [ -n "$PROFILE_NAME" ]; then
+  for candidate in "$ROOT/.dev-agent/profiles/$PROFILE_NAME" "$ROOT/profiles/$PROFILE_NAME"; do
+    if [ -d "$candidate/guard" ]; then
+      PROFILE_DIR="$candidate"
+      break
+    fi
+  done
+fi
 
 PY_FILES=()
 JS_FILES=()
@@ -149,25 +165,6 @@ else
   record gitleaks skipped "not installed"
 fi
 
-if have python3 && [ -f "$KIT_ROOT/guard/odoo_lint.py" ]; then
-  LINT_ARGS=(--root "$ROOT" --allowlist "$KIT_ROOT/guard/odoo_allowlist.txt")
-  if [ "$STAGED" = "1" ]; then
-    if [ ${#PY_FILES[@]} -eq 0 ]; then
-      record odoo_lint skipped "no staged Python files"
-    elif python3 "$KIT_ROOT/guard/odoo_lint.py" "${LINT_ARGS[@]}" --files "${PY_FILES[@]}" >/tmp/guard-odoo.log 2>&1; then
-      record odoo_lint pass
-    else
-      record odoo_lint fail "$(tail -5 /tmp/guard-odoo.log | tr '\n' ' ')"
-    fi
-  elif python3 "$KIT_ROOT/guard/odoo_lint.py" "${LINT_ARGS[@]}" >/tmp/guard-odoo.log 2>&1; then
-    record odoo_lint pass
-  else
-    record odoo_lint fail "$(tail -5 /tmp/guard-odoo.log | tr '\n' ' ')"
-  fi
-else
-  record odoo_lint skipped "python3 or script missing"
-fi
-
 if have python3 && [ -f "$KIT_ROOT/guard/comment_lint.py" ]; then
   if [ "$STAGED" = "1" ]; then
     if python3 "$KIT_ROOT/guard/comment_lint.py" --root "$ROOT" --staged >/tmp/guard-comments.log 2>&1; then
@@ -180,6 +177,28 @@ if have python3 && [ -f "$KIT_ROOT/guard/comment_lint.py" ]; then
   fi
 else
   record comments skipped "python3 or script missing"
+fi
+
+if [ -n "$PROFILE_DIR" ]; then
+  for check in "$PROFILE_DIR"/guard/*.sh; do
+    [ -f "$check" ] || continue
+    pname="profile:$(basename "$check" .sh)"
+    if [ "$STAGED" = "1" ]; then
+      if bash "$check" --staged >/tmp/guard-profile.log 2>&1; then
+        record "$pname" pass
+      else
+        record "$pname" fail "$(tail -5 /tmp/guard-profile.log | tr '\n' ' ')"
+      fi
+    else
+      if bash "$check" >/tmp/guard-profile.log 2>&1; then
+        record "$pname" pass
+      else
+        record "$pname" fail "$(tail -5 /tmp/guard-profile.log | tr '\n' ' ')"
+      fi
+    fi
+  done
+else
+  record profile skipped "no active profile"
 fi
 
 echo

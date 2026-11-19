@@ -63,9 +63,10 @@ dev-agent-kit/
   README.md
 ```
 
-El repo actual se migra sin cambiar el comportamiento: los ficheros de Odoo se mueven a
-`profiles/odoo11`; el núcleo se queda con lo que ya es genérico (`verify/run.sh`,
-`comment_lint.py`, el harness de eval y los hooks).
+El repo actual se migra sin cambiar el comportamiento: los ficheros de Odoo se han movido
+a `dev-agent-profiles/profiles/odoo11`; el núcleo se queda con lo que ya es genérico
+(`verify/run.sh`, `guard/guard.sh`, `guard/comment_lint.py`, el harness de eval y los
+hooks). El perfil Odoo conserva su linter, allowlist, verify, skills, casos y tests.
 
 ## Contrato de perfil
 
@@ -74,8 +75,8 @@ El repo actual se migra sin cambiar el comportamiento: los ficheros de Odoo se m
 ```sh
 PROFILE_NAME=odoo11
 PROFILE_LANGUAGE=python
-PROFILE_GUARD_CHECKS=odoo_lint
-PROFILE_VERIFY_CONFIG=profiles/odoo11/verify/config.env
+PROFILE_GUARD_CHECKS=guard/odoo.sh
+PROFILE_VERIFY_CONFIG=verify/config.env
 PROFILE_SKILLS=profiles/odoo11/skills
 PROFILE_EVALS=profiles/odoo11/evals/cases
 PROFILE_AGENTS=profiles/odoo11/AGENTS.fragment.md
@@ -105,10 +106,10 @@ El perfil PHP no necesita nada del núcleo de Odoo:
 PROFILE_NAME=php
 PROFILE_LANGUAGE=php
 PROFILE_GUARD_CHECKS=phpstan,phpcs,phpunit
-PROFILE_VERIFY_CONFIG=profiles/php/verify/config.env
-PROFILE_SKILLS=profiles/php/skills
-PROFILE_EVALS=profiles/php/evals/cases
-PROFILE_AGENTS=profiles/php/AGENTS.fragment.md
+PROFILE_VERIFY_CONFIG=verify/config.env
+PROFILE_SKILLS=skills
+PROFILE_EVALS=evals/cases
+PROFILE_AGENTS=AGENTS.fragment.md
 ```
 
 Comandos de ejemplo:
@@ -241,9 +242,10 @@ como puerta dura.
 ## CI
 
 - `core`: unit tests, sintaxis, dry-run de eval, sin servicios.
-- `profiles/php`: `composer install`, PHPStan, PHPCS, PHPUnit; el runner es barato.
-- `profiles/odoo11`: base desechable y servicios; se ejecuta en el runner que ya tiene el
-  stack o en el pre-push local, no en cada push de cualquier repo.
+- `dev-agent-profiles/profiles/php`: `composer install`, PHPStan, PHPCS, PHPUnit; el runner
+  es barato.
+- `dev-agent-profiles/profiles/odoo11`: base desechable y servicios; se ejecuta en el runner
+  que ya tiene el stack o en el pre-push local, no en cada push de cualquier repo.
 - Los hooks locales se pueden saltar con `--no-verify`; el CI es la garantía dura. El CI
   de Scalpers no se toca; el del kit y el de cada repo son los que se configuran.
 
@@ -260,10 +262,11 @@ como puerta dura.
 
 1. **Fase 0** (este documento y el esqueleto `profiles/`): decide el contrato, sin mover
    código.
-2. **Fase 1**: extraer `core/` y `profiles/odoo11`; mover `odoo_lint`, skills y casos de
-   Odoo; los tests del kit y el perfil Odoo deben seguir verdes.
-3. **Fase 2**: añadir `profiles/php` con un caso real; `.php` en `comment_lint`; verificar
-   `guard` y `verify` en un repo PHP de prueba.
+2. **Fase 1 (hecha localmente)**: extraer `core/` y `dev-agent-profiles/profiles/odoo11`;
+   mover `odoo_lint`, skills y casos de Odoo; el núcleo ya no contiene Odoo y el perfil
+   Odoo conserva sus tests. El repo de perfiles es local; el remoto está pendiente.
+3. **Fase 2 (pendiente)**: completar `dev-agent-profiles/profiles/php` con un caso real;
+   `.php` en `comment_lint`; verificar `guard` y `verify` en un repo PHP de prueba.
 4. **Fase 3**: integrar rsc-harness y gentle-ai; el spec y las skills se enlazan; no se
    duplican.
 5. **Fase 4**: rsc-brain y engram por repo; páginas con fuentes y memoria de decisiones.

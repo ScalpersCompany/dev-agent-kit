@@ -1,28 +1,33 @@
 # The development base
 
-This kit lives in the development base (`dev-nicolas`). It is not deployed to production.
+The core `dev-agent-kit` covers any development repository. The Odoo 11 specifics live in
+the separate profiles repository, at `dev-agent-profiles/profiles/odoo11`; the PHP
+skeleton is `dev-agent-profiles/profiles/php`. The core does not import Odoo, PHP or Node.
 
 ## What it covers
 
-- **Code repos**: the Odoo doodba tree and any other repo in the base. `verify/run.sh`, `guard/guard.sh` and `guard/odoo_lint.py` run there.
-- **Skills**: Hermes and OpenCode `SKILL.md` files. The eval harness copies a skill into a disposable sandbox and scores it against a rubric.
-- **EVA and Multica**: the evidence gate decides whether a ticket may move; the kit gives the agent the evidence and the guardrails it needs before asking for that move.
+- `guard/guard.sh`: generic checks and the active profile checks.
+- `verify/run.sh`: boot, health, smoke, tests and evidence.
+- `evals/harness.py`: K runs, artifacts, judge and score.
+- `hooks/`: pre-commit and pre-push with backups.
+- `.opencode/skills/`: five generic skills.
+- `profiles/_template/`: the contract for a new environment.
 
 ## The gate
 
-A change reaches production only after:
-
-1. `verify/run.sh` has run on the change and left evidence.
-2. `guard/guard.sh` is green, or every skipped check has a written reason.
-3. The applicable eval has passed its threshold.
-4. The evidence gate has a `pass` row for the current commit.
-
-The production deploy itself keeps a human signature. The kit never deploys.
+A change is done only after `guard` and `verify` have run on it and left evidence. The
+profile's `guard/` and `verify/config.env` supply the language commands; the core supplies
+the mechanism.
 
 ## Isolation
 
-Every verification and every eval runs in a disposable worktree or copy, with a disposable database when the test needs one. The live tree, the restored databases and the running containers are not touched.
+Evals run in a disposable worktree or copy; Odoo verify uses a disposable database. The
+shared `scalpers` database is never a test target.
 
 ## The order
 
-Verification, guardrails, evals, autonomy. Automating the outer loop before the inner loop is green only produces faster noise.
+1. Spec or reproduction.
+2. Guard.
+3. Verify.
+4. Eval when a skill, prompt, rule or rubric changes.
+5. Human review and repository policy.
