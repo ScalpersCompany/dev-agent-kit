@@ -6,8 +6,9 @@
    spec with acceptance criteria.
 2. **Guard.** `bash guard/guard.sh --staged` in the pre-commit hook. It runs the generic
    checks and, if a profile is active, the profile's `guard/*.sh`.
-3. **Verify.** `bash verify/run.sh` boots, checks health, runs smoke and tests, and writes
-   `evidence/<run-id>/summary.json`.
+3. **Verify.** `bash verify/run.sh` boots, checks health, runs smoke, tests and the complete
+   E2E suite, and writes `evidence/<run-id>/summary.json` plus `evidence/<run-id>/e2e/`
+   with the Playwright HTML report, JUnit/JSON, traces and screenshots.
 4. **Eval.** Only when a skill, prompt, rule or rubric changes. K=3, a judge different from
    the executor, threshold 8.5. `evals/agent_runner.py` runs OpenCode, Claude, Codex, pi or
    Hermes; the judge receives the same rubric and artifacts.
@@ -17,8 +18,9 @@
 
 `guard` and `verify` are mandatory; the eval is not a per-commit ceremony. The pre-commit
 hook catches staged defects; the pre-push hook runs verify and fails closed when
-`.dev-agent/verify.env` has no `TEST_CMD`. Both can be bypassed with `--no-verify`; the CI
-is the hard gate and can only be bypassed with a human decision recorded in the repo.
+`.dev-agent/verify.env` has no `TEST_CMD` or `E2E_CMD`. Both can be bypassed with
+`--no-verify`; the CI is the hard gate and can only be bypassed with a human decision
+recorded in the repo.
 
 ## Profiles
 
@@ -27,7 +29,8 @@ The core is language-agnostic. A profile supplies `profile.json`, `profile.env`,
 `.dev-agent/config` (`DEV_AGENT_PROFILE=<name>`) and runs the profile's guard scripts.
 
 - Odoo 11: `ScalpersCompany/dev-agent-profiles/profiles/odoo11`, public repo.
-- PHP: `ScalpersCompany/dev-agent-profiles/profiles/php`, skeleton.
+- PHP: `ScalpersCompany/dev-agent-profiles/profiles/php`.
+- Hexagonal microservices: `ScalpersCompany/dev-agent-profiles/profiles/hexagonal`.
 - Template: `profiles/_template`.
 - Design: `docs/PERFILES-EN-REPOS.md`.
 - New profile: `docs/CREAR-PERFIL.md`; generate with `scripts/new-profile.sh` and validate with `scripts/validate-profile.py`.

@@ -52,7 +52,7 @@ if [ "$WITH_VERIFY" = "1" ]; then
   mkdir -p "$REPO/.dev-agent"
   if [ ! -f "$REPO/.dev-agent/verify.env" ]; then
     cp "$KIT/verify/config.env.example" "$REPO/.dev-agent/verify.env"
-    echo "created: $REPO/.dev-agent/verify.env (edit TEST_CMD before pushing)"
+    echo "created: $REPO/.dev-agent/verify.env (edit TEST_CMD or E2E_CMD before pushing)"
   else
     echo "kept: $REPO/.dev-agent/verify.env"
   fi
@@ -63,7 +63,7 @@ if [ "$WITH_VERIFY" = "1" ]; then
     echo "excluded locally: .dev-agent/"
   fi
   echo "pre-push runs: verify/run.sh, evidence in $GIT_DIR/dev-agent-evidence"
-  echo "It fails closed until .dev-agent/verify.env has a real TEST_CMD."
+  echo "It fails closed until .dev-agent/verify.env has a real TEST_CMD or E2E_CMD."
 fi
 
 echo "done; git --no-verify bypasses either hook, so CI remains the hard gate"

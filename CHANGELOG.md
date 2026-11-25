@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.6.0] - 2026-11-25
+
+### Added
+
+- `e2e/`: Playwright baseline with `playwright.config.ts`, `package.json`, a real health spec and flow-spec guidance.
+- `scripts/install-e2e.sh`: copies the harness with a backup; `--install` installs npm dependencies and never runs implicitly.
+- `verify/run.sh`: `E2E_CMD` runs after smoke and tests, sets `E2E_BASE_URL`, `PLAYWRIGHT_OUTPUT_DIR` and `PLAYWRIGHT_REPORT_DIR`, and records `e2e` in `summary.json`.
+- `tests/test_verify_e2e.py` and `tests/test_install_e2e.py`.
+
+### Changed
+
+- `verify/config.env.example` and the profile examples include `E2E_CMD`, `E2E_BASE_URL` and `E2E_HEALTH_PATH`; the evidence keeps the HTML report, JUnit/JSON, traces and screenshots.
+- `scripts/bootstrap.sh` copies `e2e/`; README, operations, install, use and training docs describe the E2E lane.
+- GGA core and the Odoo, PHP and hexagonal rules require complete E2E evidence for UI and user flows, not a smoke probe.
+
 ## [3.5.0] - 2026-11-25
 
 ### Changed

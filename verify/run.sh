@@ -17,10 +17,12 @@ BOOT_CMD="${BOOT_CMD:-}"
 HEALTH_URL="${HEALTH_URL:-}"
 SMOKE_CMD="${SMOKE_CMD:-}"
 TEST_CMD="${TEST_CMD:-}"
+E2E_CMD="${E2E_CMD:-}"
+E2E_BASE_URL="${E2E_BASE_URL:-}"
 HEALTH_TIMEOUT="${HEALTH_TIMEOUT:-60}"
 
-if [ -z "$SMOKE_CMD" ] && [ -z "$TEST_CMD" ]; then
-  echo "verify: no SMOKE_CMD or TEST_CMD configured in verify/config.env" >&2
+if [ -z "$SMOKE_CMD" ] && [ -z "$TEST_CMD" ] && [ -z "$E2E_CMD" ]; then
+  echo "verify: no SMOKE_CMD, TEST_CMD or E2E_CMD configured in verify/config.env" >&2
   exit 2
 fi
 
@@ -36,6 +38,7 @@ BOOT_STATUS="skipped"
 HEALTH_STATUS="skipped"
 SMOKE_STATUS="skipped"
 TEST_STATUS="skipped"
+E2E_STATUS="skipped"
 BOOT_PID=""
 
 cleanup() {
@@ -91,6 +94,13 @@ run_check() {
 run_check "smoke" "$SMOKE_CMD" "smoke" "SMOKE_STATUS"
 run_check "tests" "$TEST_CMD" "tests" "TEST_STATUS"
 
+export E2E_BASE_URL
+export E2E_HEALTH_PATH="${E2E_HEALTH_PATH:-/}"
+export PLAYWRIGHT_OUTPUT_DIR="$EVIDENCE/e2e/test-results"
+export PLAYWRIGHT_REPORT_DIR="$EVIDENCE/e2e/report"
+mkdir -p "$PLAYWRIGHT_OUTPUT_DIR" "$PLAYWRIGHT_REPORT_DIR"
+run_check "e2e" "$E2E_CMD" "e2e" "E2E_STATUS"
+
 cat >"$EVIDENCE/summary.json" <<JSON
 {
   "run_id": "$RUN_ID",
@@ -99,6 +109,7 @@ cat >"$EVIDENCE/summary.json" <<JSON
   "health": "$HEALTH_STATUS",
   "smoke": "$SMOKE_STATUS",
   "tests": "$TEST_STATUS",
+  "e2e": "$E2E_STATUS",
   "status": $( [ $STATUS -eq 0 ] && echo '"pass"' || echo '"fail"' )
 }
 JSON

@@ -51,9 +51,11 @@ commands/                     neutral prompt templates; adapters install them pe
 agents/                       strict eval judge prompt; the runner injects it into any agent
 evals/agent_runner.py         neutral executor/judge adapter for OpenCode, Claude, Codex, pi and Hermes
 scripts/install-agent-adapters.sh  generates .opencode/.claude adapters from the neutral source; --profile also merges the profile skills
-verify/run.sh                 boot, smoke, tests, evidence/
 guard/guard.sh                generic checks plus the active profile checks
 guard/comment_lint.py         blocks new comments in staged code
+verify/run.sh                 boots, checks health, runs smoke, tests and the complete E2E suite, writes evidence
+e2e/                          Playwright baseline: config, package and tests/ for complete user flows
+scripts/install-e2e.sh        copies the Playwright harness with a backup; --install installs npm dependencies
 evals/harness.py              k runs per case in a disposable worktree or copy, artifacts, judge, score.json
 evals/cases/                  dev-verify, repro-first, review-diff
 evals/rubric.*.json           rubrics for those cases

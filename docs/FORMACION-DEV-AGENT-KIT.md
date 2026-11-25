@@ -215,15 +215,18 @@ Ejemplo mínimo para un repo Python sin Odoo:
 ```bash
 SMOKE_CMD='python3 -c "import mi_paquete"'
 TEST_CMD='python3 -m unittest discover -v'
+E2E_CMD='npm --prefix e2e test'
+E2E_BASE_URL='http://127.0.0.1:8000'
 ```
 
 Para Odoo 11, el `TEST_CMD` depende de la base y del módulo. El `.example` del perfil es
 la misma plantilla vacía; el `config.env` real de esta máquina tiene un comando local que
 no se copia. Escribe el tuyo contra una base desechable y un módulo concreto; nunca la base
-compartida, nunca producción, nunca datos de cliente.
+compartida, nunca producción, nunca datos de cliente. El E2E de Playwright necesita
+`bash scripts/install-e2e.sh .`, `npm install` y `npx playwright install chromium` una vez.
 
-`verify` sale 2 cuando no hay `SMOKE_CMD` ni `TEST_CMD`: no es verde, es una configuración
-incompleta.
+`verify` sale 2 cuando no hay `SMOKE_CMD`, `TEST_CMD` ni `E2E_CMD`: no es verde, es una
+configuración incompleta.
 
 ### 1.6 Primera puerta
 
@@ -522,7 +525,7 @@ GGA es la segunda revisión, no la puerta determinista. `review-gga.sh` es bloqu
 defecto y exige `STATUS: PASSED`; `--advisory` o `GGA_ADVISORY=1` informa sin bloquear. Sin
 proveedor o sin `.gga`, la revisión bloqueante falla cerrada. No ejecutar `gga install`:
 pisaría el pre-commit del kit. Las reglas del núcleo son agnósticas; el perfil activo añade
-`gga/REVIEW-RULES.md` (Odoo 11 o PHP 8).
+`gga/REVIEW-RULES.md` (Odoo 11, PHP 8 o hexagonal).
 
 ```bash
 bash scripts/install-gga.sh . --profile "$HOME/dev-agent-profiles/profiles/odoo11"

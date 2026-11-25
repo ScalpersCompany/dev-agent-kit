@@ -6,7 +6,7 @@ Comandos de cada día. El wrapper funciona desde la raíz del repo de desarrollo
 |---|---|
 | `dev-agent doctor` | Ver qué está instalado, qué es opcional y qué falta. |
 | `dev-agent guard` | Pasar las comprobaciones antes del commit. |
-| `dev-agent verify` | Ejecutar el comportamiento real y dejar evidencia. |
+| `dev-agent verify` | Ejecutar comportamiento real, tests y E2E, y dejar evidencia. |
 | `dev-agent review` | Ver el diff y el prompt de la skill review-diff. |
 | `dev-agent review-gga` | Revisión GGA bloqueante; `--advisory` solo informa. |
 | `dev-agent eval --dry-run` | Validar un caso de eval sin gastar modelo. |
@@ -27,7 +27,9 @@ git commit -m "feat: ..."
 ```
 
 El pre-commit ejecuta guard sobre lo staged. El pre-push ejecuta verify con
-`.dev-agent/verify.env`; si no hay `TEST_CMD`, falla cerrado.
+`.dev-agent/verify.env`; si no hay `TEST_CMD` ni `E2E_CMD`, falla cerrado. El E2E de
+Playwright se ejecuta con `E2E_CMD="npm --prefix e2e test"` y deja el informe y las trazas
+en `evidence/<run-id>/e2e/`.
 
 ## Perfil
 
@@ -65,9 +67,9 @@ dev-agent review-gga --advisory
 ```
 
 La revisión es bloqueante por defecto: exige `STATUS: PASSED` y salida 0. Las reglas del
-núcleo son agnósticas de lenguaje; el perfil activo añade su `gga/REVIEW-RULES.md` (Odoo 11
-o PHP 8), y la norma de empresa sigue ganando. Si no hay `gga` o `.gga`, falla cerrada. Para
-instalarlo:
+núcleo son agnósticas de lenguaje; el perfil activo añade su `gga/REVIEW-RULES.md` (Odoo 11,
+PHP 8 o hexagonal), y la norma de empresa sigue ganando. Si no hay `gga` o `.gga`, falla
+cerrada. Para instalarlo:
 
 ```bash
 bash scripts/install-gga.sh . --profile "$HOME/dev-agent-profiles/profiles/odoo11"

@@ -106,8 +106,9 @@ bash scripts/bootstrap.sh /ruta/a/tu/repo --with-verify
 ```
 
 Copia `AGENTS.md`, `skills/`, `commands/`, `agents/`, `verify/`, `guard/`, `evals/`,
-`scripts/`, `docs/` y `profiles/` (plantilla); respalda lo que reemplaza como
-`.bak-<fecha>`; crea `verify/config.env` desde el ejemplo e instala el `pre-commit`.
+`scripts/`, `docs/`, `profiles/` (plantilla) y `e2e/` (Playwright); respalda lo que
+reemplaza como `.bak-<fecha>`; crea `verify/config.env` desde el ejemplo e instala el
+`pre-commit`.
 `--with-verify` añade el `pre-push` y `.dev-agent/verify.env`; `--with-gga` añade los
 ficheros de GGA; `--profile` instala el perfil activo. No toca producción, el historial de
 git ni un registro de perfiles.
@@ -126,6 +127,7 @@ cp -a ~/dev-agent-kit/guard .
 cp -a ~/dev-agent-kit/evals .
 cp -a ~/dev-agent-kit/scripts .
 cp -a ~/dev-agent-kit/docs .
+cp -a ~/dev-agent-kit/e2e .
 ```
 
 No copies `verify/config.env`, `evidence/`, `guard-report.json` ni `evals/runs/`. Si el
@@ -138,14 +140,18 @@ con `bash scripts/install-agent-adapters.sh . --agents opencode,claude --profile
 cp verify/config.env.example verify/config.env
 ```
 
-Rellena `BOOT_CMD`, `HEALTH_URL`, `SMOKE_CMD`, `TEST_CMD` y `HEALTH_TIMEOUT`. Después:
+Rellena `BOOT_CMD`, `HEALTH_URL`, `SMOKE_CMD`, `TEST_CMD`, `E2E_CMD`, `E2E_BASE_URL` y
+`HEALTH_TIMEOUT`. El E2E de Playwright se instala con `bash scripts/install-e2e.sh .` y se
+ejecuta con `E2E_CMD="npm --prefix e2e test"`; necesita `npm install` y
+`npx playwright install chromium` una vez. Después:
 
 ```bash
 bash verify/run.sh
 ```
 
-`verify` deja `evidence/<run-id>/summary.json`. Sale 0 si todo pasa, 1 si falla y 2 si no
-hay configuración. Un 2 no es verde.
+`verify` deja `evidence/<run-id>/summary.json` y `evidence/<run-id>/e2e/` con el informe
+HTML, JUnit/JSON y trazas o capturas. Sale 0 si todo pasa, 1 si falla y 2 si no hay
+configuración. Un 2 no es verde.
 
 ### 3.4 Instalar hooks
 
@@ -162,7 +168,7 @@ Para el `pre-push`:
 bash scripts/install-hooks.sh . --with-verify
 ```
 
-Copia `.dev-agent/verify.env` y falla cerrado hasta que tenga un `TEST_CMD` real.
+Copia `.dev-agent/verify.env` y falla cerrado hasta que tenga un `TEST_CMD` o un `E2E_CMD` real.
 
 ### 3.5 Instalar GGA (revisión bloqueante)
 
@@ -174,8 +180,9 @@ bash scripts/install-gga.sh . --profile "$HOME/dev-agent-profiles/profiles/odoo1
 ```
 
 Las reglas base del núcleo son agnósticas de lenguaje. El perfil activo añade su
-`gga/REVIEW-RULES.md`: las de Odoo 11 están en `profiles/odoo11/gga/REVIEW-RULES.md` y las
-de PHP en `profiles/php/gga/REVIEW-RULES.md`. La norma de empresa sigue ganando.
+`gga/REVIEW-RULES.md`: las de Odoo 11 están en `profiles/odoo11/gga/REVIEW-RULES.md`, las
+de PHP en `profiles/php/gga/REVIEW-RULES.md` y las de microservicios en
+`profiles/hexagonal/gga/REVIEW-RULES.md`. La norma de empresa sigue ganando.
 `--advisory` o `GGA_ADVISORY=1` informa sin bloquear. No ejecutes `gga install`: pisaría el
 pre-commit del kit. Sin proveedor o sin `.gga`, la revisión bloqueante falla cerrada.
 
