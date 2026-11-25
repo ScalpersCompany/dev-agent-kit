@@ -99,9 +99,9 @@ No todo lo que se nombra como metodología es una skill. La comprobación en el 
 
 El perfil `odoo11` está extraído en
 `ScalpersCompany/dev-agent-profiles/profiles/odoo11`; su remoto público está creado. El
-núcleo ya no contiene Odoo: `guard.sh` carga el perfil y ejecuta `guard/odoo.sh`. Cuando se
-cree el instalador `dev-agent init`, copiará el perfil a `.dev-agent/profiles/odoo11` y
-escribirá `.dev-agent/config`.
+núcleo ya no contiene Odoo: `guard.sh` carga el perfil y ejecuta `guard/odoo.sh`.
+`scripts/bootstrap.sh --profile odoo11` copia el perfil a `.dev-agent/profiles/odoo11` y
+escribe `.dev-agent/config`; el instalador completo `dev-agent init` sigue pendiente.
 
 ```text
 profile skills/       odoo-safe-change, odoo-11-code-review, factorlibre-mr-preflight
@@ -134,7 +134,23 @@ Las skills genéricas y el checker de comentarios viven en el núcleo. Un perfil
 necesite un hook extra lo declara en su `profile.json`; el núcleo lo ejecuta después de los
 suyos, sin reemplazarlos.
 
-## Instalador
+## Instalador actual
+
+El camino que ya funciona es el bootstrap, con perfil y, si se quiere, tech-doc:
+
+```bash
+bash "$HOME/dev-agent-kit/scripts/bootstrap.sh" /ruta/al/repo \
+  --profile odoo11 \
+  --with-verify \
+  --with-techdoc \
+  --build-techdoc-html
+```
+
+`--profile` copia el perfil a `.dev-agent/profiles/<nombre>` y escribe `.dev-agent/config`.
+`--with-techdoc` clona o enlaza tech-doc, enlaza `~/.agents/AGENTS.md` y crea
+`docs/TECHDOC.md`; `--build-techdoc-html` construye y enlaza el HTML local.
+
+## Instalador futuro
 
 El comando del núcleo se llama `dev-agent`:
 

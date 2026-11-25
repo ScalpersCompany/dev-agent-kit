@@ -79,6 +79,7 @@ The agent is interchangeable; the gate is a command.
 | core guard, verify, evals, hooks | implemented and tested |
 | Odoo 11 profile | extracted to `ScalpersCompany/dev-agent-profiles`; public |
 | PHP profile | skeleton; no runtime yet |
+| `bootstrap --profile` | implemented; copies the active profile and writes `.dev-agent/config` |
 | `dev-agent init` and the lock | designed; not implemented |
 | GGA | optional; installation tested; no real review run |
 | `comment_lint` for PHP | pending |

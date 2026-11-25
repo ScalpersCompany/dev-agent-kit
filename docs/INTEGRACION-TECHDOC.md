@@ -4,6 +4,25 @@
 los perfiles son herramientas de desarrollo. Son repos separados y siguen siéndolo: cada
 uno tiene su remoto, sus permisos y su dueño.
 
+## Instalación automática
+
+El bootstrap puede traer tech-doc, enlazar la norma y dejar la referencia al HTML:
+
+```bash
+bash "$HOME/dev-agent-kit/scripts/bootstrap.sh" /ruta/a/tu/repo \
+  --profile odoo11 \
+  --with-verify \
+  --with-techdoc \
+  --build-techdoc-html
+```
+
+- `--with-techdoc` clona `ScalpersCompany/scalpers-tech-doc` si no existe, enlaza
+  `~/.agents/AGENTS.md` y escribe `docs/TECHDOC.md`.
+- `--build-techdoc-html` ejecuta `make single-html` y enlaza el HTML en
+  `docs/techdoc.html`; el enlace es local y está en `.git/info/exclude`.
+- Si no hay acceso al repo privado, el kit sigue instalado y el bootstrap avisa.
+- El HTML no se copia en este repo: es documentación privada y un artefacto de build.
+
 ## Reparto de responsabilidades
 
 ```text

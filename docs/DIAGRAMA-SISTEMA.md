@@ -158,6 +158,8 @@ neutral de guard/verify no depende de OpenCode.
 | perfil Odoo 11 | extraído; repo público `ScalpersCompany/dev-agent-profiles` |
 | perfil PHP | esqueleto |
 | `dev-agent init` y lock | pendiente |
+| `bootstrap --profile` y `--with-techdoc` | implementados |
+| `install-techdoc` y enlace HTML | implementado; el HTML privado no se copia |
 | plantilla y generador | implementados |
 | GGA | opcional, no es puerta |
 | rsc-harness | opcional; no lo sustituye gentle-ai |

@@ -104,7 +104,11 @@ test -x "$DEV_AGENT_KIT/guard/guard.sh" && echo "kit OK"
 
 ```bash
 cd /ruta/a/tu/repo
-bash "$HOME/dev-agent-kit/scripts/bootstrap.sh" . --with-verify
+bash "$HOME/dev-agent-kit/scripts/bootstrap.sh" . \
+  --profile odoo11 \
+  --with-verify \
+  --with-techdoc \
+  --build-techdoc-html
 ```
 
 Qué hace y qué no:
@@ -115,7 +119,11 @@ Qué hace y qué no:
 - crea `verify/config.env` desde el ejemplo;
 - instala el pre-commit;
 - con `--with-verify`, instala el pre-push y crea `.dev-agent/verify.env`;
-- **no** instala un perfil de Odoo o PHP: eso se hace a mano en el paso siguiente.
+- con `--profile`, copia el perfil a `.dev-agent/profiles/<nombre>` y escribe
+  `.dev-agent/config`; el `verify/config.env` real del perfil no se copia;
+- con `--with-techdoc`, clona o enlaza tech-doc, enlaza `~/.agents/AGENTS.md` y crea
+  `docs/TECHDOC.md`; con `--build-techdoc-html`, construye y enlaza el HTML;
+- **no** crea la base de datos, no configura el modelo y no empuja.
 
 El bootstrap **sobrescribe** `AGENTS.md` y hace merge de los directorios copiados; los
 backups `.bak-<fecha>` son la red. Si el repo ya tenía reglas propias en `AGENTS.md`, hay
@@ -133,12 +141,20 @@ El bootstrap no copia un `.gitignore` al repo destino: estas reglas son locales 
 Si quieres compartir alguna, conviértela en una entrada deliberada de `.gitignore`, no en un
 efecto colateral.
 
-El instalador automático de perfiles (`dev-agent init`) está diseñado, no cableado. No se
-promete en la formación.
+El instalador automático de perfiles completo (`dev-agent init`) está diseñado, no cableado.
+`bootstrap --profile` sí instala uno; no se promete el instalador completo en la formación.
 
-### 1.4 Activar un perfil
+### 1.4 Comprobar o reparar el perfil
 
-Para Odoo 11:
+Si usaste `--profile`, el bootstrap ya copió el perfil y escribió `.dev-agent/config`.
+Comprobarlo:
+
+```bash
+cat .dev-agent/config
+ls .dev-agent/profiles/odoo11/profile.env
+```
+
+Si no lo usaste, o quieres reinstalarlo, el comando manual es:
 
 ```bash
 mkdir -p .dev-agent/profiles
@@ -146,9 +162,6 @@ rsync -a --exclude='verify/config.env' \
   "$HOME/dev-agent-profiles/profiles/odoo11/" .dev-agent/profiles/odoo11/
 printf 'DEV_AGENT_PROFILE=odoo11\n' > .dev-agent/config
 ```
-
-Para PHP, el perfil todavía es un esqueleto: se puede copiar y validar, pero no se promete
-un runtime PHP completo.
 
 `guard/guard.sh` busca el perfil en `.dev-agent/profiles/<nombre>` o `profiles/<nombre>`.
 Si no lo encuentra, la línea `profile` sale `skipped`; un `skipped` no es un `pass`.
@@ -467,6 +480,10 @@ Si el check falla por un árbol sucio, la norma no es reproducible: se cierra el
 repo de empresa. `--allow-dirty` solo sirve para una revisión local. El kit no copia la
 norma y no empuja tech-doc.
 
+El bootstrap con `--with-techdoc` hace el clonado/enlace y escribe `docs/TECHDOC.md`; con
+`--build-techdoc-html` construye el HTML y lo enlaza en `docs/techdoc.html`. Si no hay
+acceso al repo privado, el kit sigue instalado y la referencia queda pendiente.
+
 Si el compañero no tiene acceso a tech-doc, puede usar el `AGENTS.md` local del kit para
 practicar; en un repo real de la empresa, la norma de tech-doc gana.
 
@@ -543,7 +560,7 @@ aprueba. El merge y el despliegue no se delegan.
 
 ## Estado actual que hay que decir en voz alta
 
-- `bootstrap.sh` no instala perfiles; se copian a mano.
+- `bootstrap.sh` instala el kit; `--profile` instala un perfil; `dev-agent init` completo sigue pendiente.
 - `.dev-agent/` queda local y excluido; si el perfil debe ir a CI, va en `profiles/` y se commitea.
 - El `.example` del perfil Odoo es una plantilla vacía; el `config.env` real de esta máquina no se copia.
 - Los hooks tienen `/home/scalpers/dev-agent-kit` como ruta por defecto; `DEV_AGENT_KIT` debe estar en el entorno de git.

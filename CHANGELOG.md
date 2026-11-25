@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.1.0] - 2026-11-19
+
+### Added
+
+- `scripts/install-techdoc.sh`: clones or links `ScalpersCompany/scalpers-tech-doc`, links `~/.agents/AGENTS.md`, writes `docs/TECHDOC.md`, and links the generated single HTML locally when it exists; private HTML is never copied into the kit.
+- `bootstrap.sh --profile <name>`: copies the active profile to `.dev-agent/profiles/<name>`, writes `.dev-agent/config`, and excludes `.dev-agent/` locally.
+- `bootstrap.sh --with-techdoc`, `--techdoc-path` and `--build-techdoc-html`: automatic tech-doc clone/link and optional single-HTML build.
+- `tests/test_install_techdoc.py`.
+
+### Changed
+
+- Automatic install no longer requires manual profile copying; `dev-agent init` and the full lock remain pending.
+- Training guide, deck, install, profiles and integration docs describe the automatic flow and the private-HTML boundary.
+
 ## [3.0.0] - 2026-11-19
 
 ### Added

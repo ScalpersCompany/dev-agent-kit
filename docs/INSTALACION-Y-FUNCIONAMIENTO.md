@@ -54,19 +54,52 @@ completa está en `docs/INTEGRACION-TECHDOC.md`.
 
 ### 3.1 Automatizada (recomendada)
 
-Desde el kit:
+El bootstrap instala el kit, el perfil activo, los hooks y, si se pide, la referencia a
+tech-doc. El HTML de tech-doc se enlaza en local si ya está construido; no se copia en el
+repo.
 
 ```bash
-bash scripts/bootstrap.sh /ruta/al/repo
-bash scripts/bootstrap.sh /ruta/al/repo --with-verify
-bash scripts/bootstrap.sh /ruta/al/repo --with-gga
+bash scripts/bootstrap.sh /ruta/a/tu/repo \
+  --profile odoo11 \
+  --with-verify \
+  --with-techdoc \
+  --build-techdoc-html
+```
+
+- `--profile odoo11` copia el perfil desde `dev-agent-profiles` a
+  `.dev-agent/profiles/odoo11` y escribe `.dev-agent/config`. El `verify/config.env` real
+  del perfil no se copia.
+- `--with-techdoc` clona `ScalpersCompany/scalpers-tech-doc` si no existe, enlaza
+  `~/.agents/AGENTS.md` y crea `docs/TECHDOC.md` con la referencia.
+- `--build-techdoc-html` ejecuta `make single-html` en el libro de metodología. Requiere
+  Docker; si falla, deja la referencia y el comando.
+- El enlace `docs/techdoc.html` es local y está en `.git/info/exclude`; el HTML no se
+  versiona.
+
+Si no hay acceso al repo privado de tech-doc, el kit sigue instalado y el bootstrap avisa.
+Se puede pasar `--techdoc-path` con un clon existente.
+
+### 3.1.1 Sin tech-doc
+
+```bash
+bash scripts/bootstrap.sh /ruta/a/tu/repo --profile odoo11 --with-verify
+```
+
+La puerta y el perfil funcionan sin tech-doc; la norma canónica de empresa no estará
+enlazada hasta que se clone.
+
+La versión mínima, sin perfil ni tech-doc, sigue siendo:
+
+```bash
+bash scripts/bootstrap.sh /ruta/a/tu/repo --with-verify
 ```
 
 Copia `AGENTS.md`, `skills/`, `commands/`, `agents/`, `verify/`, `guard/`, `evals/`,
-`scripts/`, `docs/` y `profiles/_template/`; respalda lo que reemplaza como `.bak-<fecha>`;
-crea `verify/config.env` desde el ejemplo e instala el `pre-commit`. `--with-verify` añade
-el `pre-push` y `.dev-agent/verify.env`; `--with-gga` añade los ficheros de GGA. No toca
-producción, el historial de git ni un registro de perfiles.
+`scripts/`, `docs/` y `profiles/` (plantilla); respalda lo que reemplaza como
+`.bak-<fecha>`; crea `verify/config.env` desde el ejemplo e instala el `pre-commit`.
+`--with-verify` añade el `pre-push` y `.dev-agent/verify.env`; `--with-gga` añade los
+ficheros de GGA; `--profile` instala el perfil activo. No toca producción, el historial de
+git ni un registro de perfiles.
 
 ### 3.2 Manual (respaldo)
 
@@ -196,8 +229,8 @@ El perfil vive en `dev-agent-profiles/profiles/odoo11`:
 
 Para usarlo, copia el perfil a `.dev-agent/profiles/odoo11` (o `profiles/odoo11`) y escribe
 `.dev-agent/config` con `DEV_AGENT_PROFILE=odoo11`. El `guard.sh` del núcleo ejecutará
-`guard/odoo.sh`. El instalador `dev-agent init` que hará esto automáticamente está
-diseñado, no implementado.
+`guard/odoo.sh`. `scripts/bootstrap.sh --profile odoo11` ya copia el perfil y escribe
+`.dev-agent/config`; el instalador completo `dev-agent init` sigue pendiente.
 
 Para crear otro perfil: `profiles/_template`, `scripts/new-profile.sh <nombre> --language
 <lenguaje> --repo <repo-de-perfiles>` y `scripts/validate-profile.py <perfil>`; la guía

@@ -60,7 +60,8 @@ scripts/check-techdoc.sh      verifies the company norm clone, remote, branch/co
 gga/                          optional AI review: .gga example and rules
 scripts/install-gga.sh        installs .gga and .gga-rules.md with backups
 scripts/review-gga.sh         runs gga on staged files, optional or blocking
-scripts/bootstrap.sh          copies the core into a repo, creates verify config and installs hooks
+scripts/bootstrap.sh          copies the core into a repo, installs a profile, hooks and optional tech-doc reference
+scripts/install-techdoc.sh    clones or links tech-doc, links AGENTS.md and writes docs/TECHDOC.md
 scripts/new-profile.sh        creates a profile from profiles/_template with a backup
 scripts/validate-profile.py   validates the profile contract and paths
 scripts/install-hooks.sh      installs the hooks and backs up the existing ones
@@ -87,11 +88,24 @@ From this kit:
 bash scripts/bootstrap.sh /path/to/development-repo
 bash scripts/bootstrap.sh /path/to/development-repo --with-verify
 bash scripts/bootstrap.sh /path/to/development-repo --with-gga
+bash scripts/bootstrap.sh /path/to/development-repo \
+  --profile odoo11 --with-verify --with-techdoc --build-techdoc-html
 ```
 
-The bootstrap copies `AGENTS.md`, `skills/`, `commands/`, `agents/`, `verify/`, `guard/`, `evals/`, `scripts/`, `docs/` and `profiles/_template/`; backs up anything it replaces as `.bak-<timestamp>`; creates `verify/config.env` from the example; and installs the pre-commit hook. `--with-verify` adds the pre-push gate and `.dev-agent/verify.env`; `--with-gga` adds the optional GGA files. It does not touch production, git history or a profile registry.
+The bootstrap copies `AGENTS.md`, `skills/`, `commands/`, `agents/`, `verify/`, `guard/`,
+`evals/`, `scripts/`, `docs/` and `profiles/`; backs up anything it replaces as
+`.bak-<timestamp>`; creates `verify/config.env` from the example; and installs the
+pre-commit hook. `--with-verify` adds the pre-push gate and `.dev-agent/verify.env`;
+`--with-gga` adds the optional GGA files; `--profile` installs the active profile in
+`.dev-agent/profiles/` and writes `.dev-agent/config`; `--with-techdoc` clones or links
+tech-doc, links `~/.agents/AGENTS.md` and writes a local `docs/TECHDOC.md`; with
+`--build-techdoc-html` it also builds and links the single HTML. It does not touch
+production, git history or a profile registry.
 
-The full profile installer (`dev-agent init --profile ... --all`) is designed but not wired yet; `scripts/bootstrap.sh` is the current automated core path.
+The full profile installer (`dev-agent init --profile ... --all`) is still pending;
+`scripts/bootstrap.sh --profile` is the current automated path. If tech-doc is private and
+the machine has no access, the kit is still installed and the bootstrap reports the
+missing reference.
 
 ## Profiles
 
@@ -124,6 +138,7 @@ The visual map of the system is in `docs/diagrams/sistema.html`; the detailed fl
 | core `guard`, `verify`, evals, pre-commit/pre-push | implemented and covered by tests |
 | Odoo 11 profile | extracted to `ScalpersCompany/dev-agent-profiles/profiles/odoo11`; public |
 | PHP profile | skeleton moved to the profiles repository; PHPStan/PHPCS/PHPUnit not wired |
+| `bootstrap --profile` | implemented; copies the active profile and writes `.dev-agent/config` |
 | `dev-agent init` and the profile lock | designed; not implemented |
 | profile template, `new-profile.sh` and `validate-profile.py` | implemented and tested |
 | visual system map | `docs/diagrams/sistema.html` and `docs/DIAGRAMA-SISTEMA.md` |

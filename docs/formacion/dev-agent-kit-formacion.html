@@ -214,12 +214,14 @@ export DEV_AGENT_KIT="$HOME/dev-agent-kit"</div>
     <div class="kicker">Instalación</div>
     <h2>El bootstrap copia la puerta y los hooks.</h2>
     <div class="code">cd /ruta/a/tu/repo
-bash "$HOME/dev-agent-kit/scripts/bootstrap.sh" . --with-verify</div>
+bash "$HOME/dev-agent-kit/scripts/bootstrap.sh" . \
+  --profile odoo11 --with-verify \
+  --with-techdoc --build-techdoc-html</div>
     <div class="cols">
-      <div class="card"><h3>Hace</h3><ul><li>Copia AGENTS, skills, commands, agents, verify, guard, evals, scripts, docs y profiles/ (plantilla).</li><li>Respalda lo existente como .bak-&lt;fecha&gt;.</li><li>Crea verify/config.env.</li><li>Instala pre-commit y, con --with-verify, pre-push.</li></ul></div>
-      <div class="card"><h3>No hace</h3><ul><li>No instala el perfil Odoo o PHP.</li><li>No crea la base de datos.</li><li>No configura el modelo.</li><li>No empuja ni despliega.</li></ul></div>
+      <div class="card"><h3>Hace</h3><ul><li>Copia AGENTS, skills, commands, agents, verify, guard, evals, scripts, docs y profiles/.</li><li>Respalda lo existente como .bak-&lt;fecha&gt;.</li><li>Crea verify/config.env.</li><li>Instala perfil, pre-commit y, con --with-verify, pre-push.</li></ul></div>
+      <div class="card"><h3>No hace</h3><ul><li>No crea la base de datos.</li><li>No configura el modelo.</li><li>No empuja ni despliega.</li><li>No copia el HTML privado de tech-doc.</li></ul></div>
     </div>
-    <div class="note">El bootstrap sobrescribe AGENTS.md y hace merge de directorios; revisa los .bak. No instala el perfil.</div>
+    <div class="note">El bootstrap sobrescribe AGENTS.md y hace merge de directorios; revisa los .bak. --with-techdoc enlaza la referencia; --build-techdoc-html construye el HTML.</div>
     <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>Backups primero; nada se borra.</span></div>
   </section>
 <section class="slide" id="slide-9" data-session="Sesión 1">
@@ -233,7 +235,7 @@ printf 'DEV_AGENT_PROFILE=odoo11\n' &gt; .dev-agent/config</div>
       <div class="card"><h3>Odoo 11</h3><p>guard/odoo.sh, odoo_lint, verify, tres skills y casos.</p></div>
       <div class="card"><h3>PHP</h3><p>Esqueleto: contrato y plantilla; PHPStan/PHPCS/PHPUnit aún no cableados.</p></div>
     </div>
-    <div class="note">Si guard dice “profile skipped”, no hay config o la ruta no existe. .dev-agent es local; para CI o equipo, copia el perfil a profiles/. Skipped no es pass.</div>
+    <div class="note">Si usaste --profile, ya está; esto es el fallback. .dev-agent es local; para CI o equipo, copia el perfil a profiles/. Skipped no es pass.</div>
     <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>El perfil aporta el lenguaje; el núcleo no sabe Odoo ni PHP.</span></div>
   </section>
 <section class="slide" id="slide-10" data-session="Sesión 1">
@@ -438,7 +440,7 @@ bash "$HOME/dev-agent-kit/scripts/check-techdoc.sh" \
       </div>
       <div class="right-note"><h3>Regla</h3><ul><li>No es un submódulo.</li><li>No se copia dentro del perfil.</li><li>Si el árbol está sucio, el check falla cerrado.</li><li><span class="muted">--allow-dirty</span> solo para revisión local.</li><li>El kit no empuja tech-doc.</li></ul></div>
     </div>
-    <div class="footer"><span><b>Sesión 3</b> · jueves</span><span>Si no hay acceso a tech-doc, se practica con el AGENTS local; en empresa gana tech-doc.</span></div>
+    <div class="footer"><span><b>Sesión 3</b> · jueves</span><span>El bootstrap con --with-techdoc lo automatiza y enlaza docs/techdoc.html; si no hay acceso, se practica con el AGENTS local.</span></div>
   </section>
 <section class="slide" id="slide-24" data-session="Sesión 3">
     <div class="kicker">Laboratorio 3</div>

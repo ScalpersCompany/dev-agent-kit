@@ -193,11 +193,19 @@ todavía ejecutan OpenCode; el runner neutral es una deuda conocida, no un gate 
 
 ## 8. Instalar en un repo
 
-Mientras `dev-agent init` no exista:
+El camino automático es el bootstrap del núcleo:
+
+```bash
+bash "$HOME/dev-agent-kit/scripts/bootstrap.sh" /ruta/repo \
+  --profile php-nuevo --with-verify
+```
+
+Si necesitas el fallback manual, mientras `dev-agent init` no exista:
 
 ```bash
 mkdir -p /ruta/repo/.dev-agent/profiles
-cp -a /ruta/dev-agent-profiles/profiles/php-nuevo /ruta/repo/.dev-agent/profiles/php-nuevo
+rsync -a --exclude='verify/config.env' /ruta/dev-agent-profiles/profiles/php-nuevo/ \
+  /ruta/repo/.dev-agent/profiles/php-nuevo/
 printf 'DEV_AGENT_PROFILE=php-nuevo\n' > /ruta/repo/.dev-agent/config
 cd /ruta/repo
 cp verify/config.env.example verify/config.env
