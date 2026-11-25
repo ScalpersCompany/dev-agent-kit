@@ -45,9 +45,11 @@ RDD is a skill.
 ## GGA
 
 GGA is the second reviewer, not the deterministic gate. Install it with
-`scripts/install-gga.sh <repo>`; the rules are the FactorLibre MR preflight plus the active
-profile and company norm. `scripts/review-gga.sh <repo>` is blocking by default and requires
-`STATUS: PASSED`; `--advisory` or `GGA_ADVISORY=1` reports without blocking.
+`scripts/install-gga.sh <repo> --profile <profile-dir>`; the core rules are
+language-agnostic and the active profile appends its `gga/REVIEW-RULES.md` (Odoo 11, PHP 8,
+or the new profile's own). The company norm still wins. `scripts/review-gga.sh <repo>` is
+blocking by default and requires `STATUS: PASSED`; `--advisory` or `GGA_ADVISORY=1` reports
+without blocking.
 `install-gga.sh --with-pre-push` enables the GGA gate after verify in `.dev-agent/gga.env`.
 Do not run `gga install`: it would replace the kit's pre-commit hook. If there is no
 provider or no `.gga`, the blocking review says so; it is not green.

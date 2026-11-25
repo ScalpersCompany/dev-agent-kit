@@ -5,7 +5,9 @@ usage() {
   cat >&2 <<'EOF'
 usage: install-gga.sh <repo> [--profile <profile-dir>] [--provider <name>] [--with-pre-push]
 
-Copies the DevAgentKit GGA rules and the example config into the repository.
+Copies the DevAgentKit core GGA rules and, when --profile is given, appends that
+profile's gga/REVIEW-RULES.md. A profile with only AGENTS.fragment.md is accepted as
+a compatibility fallback and reported as such.
 Existing .gga and .gga-rules.md are backed up; nothing is deleted.
 The provider is only written to .gga; credentials stay in the agent environment.
 EOF
@@ -52,15 +54,25 @@ if [ -n "$PROFILE" ]; then
     echo "profile not found: $PROFILE" >&2
     exit 2
   }
-  if [ -f "$PROFILE/AGENTS.fragment.md" ]; then
-    printf '\n## Active profile: %s\n\n' "$(basename "$PROFILE")" >>"$REPO/.gga-rules.md"
+  PROFILE_NAME="$(basename "$PROFILE")"
+  PROFILE_RULES="$PROFILE/gga/REVIEW-RULES.md"
+  if [ -f "$PROFILE_RULES" ]; then
+    printf '\n## Active profile GGA rules: %s\n\n' "$PROFILE_NAME" >>"$REPO/.gga-rules.md"
+    cat "$PROFILE_RULES" >>"$REPO/.gga-rules.md"
+    printf '\n' >>"$REPO/.gga-rules.md"
+    echo "appended profile GGA rules: $PROFILE_RULES"
+  elif [ -f "$PROFILE/AGENTS.fragment.md" ]; then
+    echo "warning: $PROFILE_NAME has no gga/REVIEW-RULES.md; using AGENTS.fragment.md" >&2
+    printf '\n## Active profile rules: %s\n\n' "$PROFILE_NAME" >>"$REPO/.gga-rules.md"
     cat "$PROFILE/AGENTS.fragment.md" >>"$REPO/.gga-rules.md"
     printf '\n' >>"$REPO/.gga-rules.md"
-    echo "appended profile rules: $PROFILE/AGENTS.fragment.md"
+    echo "appended profile fallback rules: $PROFILE/AGENTS.fragment.md"
   else
-    echo "profile has no AGENTS.fragment.md: $PROFILE" >&2
+    echo "profile has no gga/REVIEW-RULES.md or AGENTS.fragment.md: $PROFILE" >&2
     exit 2
   fi
+else
+  echo "profile GGA rules: not applied (pass --profile <profile-dir> to install them)"
 fi
 
 echo "installed: $REPO/.gga"

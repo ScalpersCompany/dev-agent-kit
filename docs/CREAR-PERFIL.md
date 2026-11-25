@@ -79,8 +79,8 @@ el nombre y el lenguaje en `profile.json`, `profile.env` y el README. Después:
 python3 scripts/validate-profile.py /path/to/dev-agent-profiles/profiles/php-nuevo
 ```
 
-El validador comprueba el contrato, las rutas, `profile.env` y que los ficheros existan. Si
-falla, no sigas: el perfil no está instalable.
+El validador comprueba el contrato, las rutas, `profile.env`, que existan los ficheros y
+que el perfil tenga `gga/REVIEW-RULES.md`. Si falla, no sigas: el perfil no está instalable.
 
 También se puede copiar a mano:
 
@@ -111,7 +111,24 @@ cp -a profiles/_template /ruta/dev-agent-profiles/profiles/php-nuevo
 No repitas las reglas genéricas: evidencia, sin secretos, sin producción, sin comentarios,
 un cambio un commit. Ya están en el núcleo.
 
-## 3. Guard
+## 3. Reglas GGA del perfil
+
+Cada perfil debe tener `gga/REVIEW-RULES.md`. El núcleo aporta las reglas agnósticas
+(contrato de salida, evidencia, secretos, datos, tests, seguridad e higiene); este fichero
+añade solo lo que sabe el perfil:
+
+- comandos exactos de lint, análisis estático y tests;
+- versión y dependencias del lenguaje;
+- reglas de framework, ORM, plantillas, rutas y seguridad;
+- patrones de test y de datos de prueba;
+- evidencia que el perfil exige.
+
+No copies las reglas de otro perfil y no debilites las del núcleo. `install-gga.sh --profile`
+compone núcleo + perfil en `.gga-rules.md`; sin `--profile` solo instala el núcleo. Si el
+perfil aún no tiene reglas propias, deja el fichero con una nota explícita; un perfil nunca
+hereda en silencio las reglas de Odoo o PHP.
+
+## 4. Guard
 
 Un `.sh` ejecutable por check. Contrato:
 
@@ -137,7 +154,7 @@ vendor/bin/phpstan analyse --no-progress "$ROOT" || exit 1
 Un check que siempre sale 0 no es un check. Un check que solo mira el árbol completo y no
 acepta `--staged` bloquea el pre-commit con hallazgos antiguos.
 
-## 4. Verify
+## 5. Verify
 
 Rellena `verify/config.env.example`:
 
@@ -152,7 +169,7 @@ HEALTH_TIMEOUT="60"
 `TEST_CMD` debe ejercitar el cambio, no un smoke ajeno. Una base compartida o de producción
 no es un destino válido. Si no hay configuración, `verify` sale 2; no es verde.
 
-## 5. Skills
+## 6. Skills
 
 - Las cinco genéricas (`dev-verify`, `repro-first`, `review-diff`, `correct`,
   `query-readonly`) son del núcleo; no las copies.
@@ -164,7 +181,7 @@ no es un destino válido. Si no hay configuración, `verify` sale 2; no es verde
 - rsc-harness es opcional: sus skills viven en `.rsc/skills` del repo y no se copian.
 - `gentle-ai` instala y sincroniza agentes, skills y MCP; no sustituye a rsc-harness.
 
-## 6. Evals
+## 7. Evals
 
 Un caso por skill o regla que cambie. Cada caso necesita `TASK.md`, `context.json`, el
 fixture y una rúbrica. El harness es el del núcleo:
@@ -184,7 +201,7 @@ Un caso sin rúbrica o sin `context.json` no es una eval real. `evals/agent_runn
 ejecuta OpenCode, Claude, Codex, pi o Hermes; el juez recibe la misma rúbrica y artefactos.
 Codex necesita su propio login.
 
-## 7. Tests y CI
+## 8. Tests y CI
 
 - Tests para los checks del perfil; un guard sin test puede dejar de bloquear en silencio.
 - `python3 scripts/validate-profile.py <perfil>` en local y en CI.
@@ -192,7 +209,7 @@ Codex necesita su propio login.
   completo. No se toca el CI de Scalpers.
 - El perfil Odoo tiene su propio CI; el núcleo no ejecuta Odoo.
 
-## 8. Instalar en un repo
+## 9. Instalar en un repo
 
 El instalador completo es `install.sh`; el bootstrap sigue como nivel inferior:
 
@@ -221,7 +238,7 @@ El `guard.sh` del núcleo lee `.dev-agent/config`, encuentra
 `.dev-agent/profiles/php-nuevo/guard/*.sh`, exporta `GUARD_ROOT` y ejecuta los checks. Los
 hooks son los mismos para todos los perfiles.
 
-## 9. Checklist
+## 10. Checklist
 
 - [ ] `profile.json` válido y `validate-profile.py` en verde.
 - [ ] `profile.env` con el nombre correcto y rutas relativas.
@@ -235,7 +252,7 @@ hooks son los mismos para todos los perfiles.
 - [ ] Documentación del perfil en `docs/`.
 - [ ] Sin secretos, sin producción, sin datos de cliente.
 
-## 10. Anti-patrones
+## 11. Anti-patrones
 
 - Copiar los hooks del núcleo al perfil: se duplican y se desincronizan.
 - Meter Odoo o PHP en el núcleo: el núcleo deja de ser agnóstico.
@@ -245,7 +262,7 @@ hooks son los mismos para todos los perfiles.
 - Un `TEST_CMD` que prueba otro módulo o una base compartida: evidencia falsa.
 - Añadir un perfil sin `CHANGELOG` o sin versión: no se puede reproducir.
 
-## 11. Estado actual
+## 12. Estado actual
 
 - Plantilla: `profiles/_template`.
 - Generador: `scripts/new-profile.sh`.

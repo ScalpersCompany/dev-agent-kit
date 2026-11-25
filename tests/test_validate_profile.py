@@ -46,6 +46,20 @@ class ValidateProfileTest(unittest.TestCase):
             result = run(str(Path(tmp) / "profiles" / "sample"))
             self.assertEqual(result.returncode, 0, result.stderr)
 
+    def test_missing_profile_gga_rules_are_reported(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "profiles" / "sample"
+            subprocess.run(
+                ["bash", str(GENERATE), "sample", "--language", "python", "--repo", tmp],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            (target / "gga" / "REVIEW-RULES.md").unlink()
+            result = run(str(target))
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("missing gga/REVIEW-RULES.md", result.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()

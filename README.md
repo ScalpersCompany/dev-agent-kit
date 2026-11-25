@@ -171,7 +171,7 @@ The gates are plain bash/Python 3.8+ and git hooks, so OpenCode, Claude Code, Co
 
 ## GGA (optional)
 
-`scripts/install-gga.sh <repo> [--profile <profile-dir>] [--provider <name>] [--with-pre-push]` copies `.gga` and the canonical `.gga-rules.md` with backups. `scripts/review-gga.sh <repo>` is **blocking by default**: it requires `STATUS: PASSED` and exit 0; `--advisory` or `GGA_ADVISORY=1` reports without blocking. `--with-pre-push` installs the composite pre-push hook and enables the GGA gate in `.dev-agent/gga.env` after verify. Do not run `gga install`: it would replace the kit's pre-commit. The rules are the FactorLibre MR preflight as a base, plus the active profile and company norm.
+`scripts/install-gga.sh <repo> [--profile <profile-dir>] [--provider <name>] [--with-pre-push]` copies `.gga` and the core `.gga-rules.md` with backups, then appends the active profile's `gga/REVIEW-RULES.md`. `scripts/review-gga.sh <repo>` is **blocking by default**: it requires `STATUS: PASSED` and exit 0; `--advisory` or `GGA_ADVISORY=1` reports without blocking. `--with-pre-push` installs the composite pre-push hook and enables the GGA gate in `.dev-agent/gga.env` after verify. Do not run `gga install`: it would replace the kit's pre-commit. The core rules are language-agnostic; the Odoo rules live in `profiles/odoo11/gga/REVIEW-RULES.md`, the PHP rules in `profiles/php/gga/REVIEW-RULES.md`, and a new profile must add its own. The company norm still wins.
 
 ## Manual install (fallback)
 

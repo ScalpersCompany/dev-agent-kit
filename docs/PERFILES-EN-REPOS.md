@@ -281,8 +281,9 @@ El repo de destino queda así:
   guard y verify.
 - Los scripts son bash/Python 3.8+; Hermes, OpenCode y Claude Code los ejecutan igual. Las
   skills son `SKILL.md`; `gentle-ai` las distribuye.
-- GGA es bloqueante cuando se ejecuta y se instala por repo; el perfil aporta patrones de
-  fichero y reglas adicionales.
+- GGA es bloqueante cuando se ejecuta y se instala por repo; el núcleo aporta reglas
+  agnósticas y el perfil aporta `gga/REVIEW-RULES.md`, patrones de fichero y reglas de su
+  lenguaje. Un perfil nuevo debe incluir su propio fichero.
 - rsc-harness y engram no entran en el perfil: son capas del flujo, no comandos
   de un lenguaje. `engram` queda en local hasta la infraestructura AWS.
 

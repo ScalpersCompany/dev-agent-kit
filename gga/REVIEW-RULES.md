@@ -1,12 +1,13 @@
-# GGA review rules — DevAgentKit
+# GGA review rules — DevAgentKit core
 
 You are the second reviewer for a development change. `guard` and `verify` are the
 deterministic gate; this review catches semantic defects they cannot prove. Review only the
 staged diff and the files it touches. Do not ask for a full-repository audit.
 
 The company rule in `scalpers-tech-doc/AGENTS.md` wins. The active profile's
-`AGENTS.fragment.md` adds language rules and never weakens the company rule. The OCA
-maintainer conventions are the base for module structure, naming, manifest and tests.
+`AGENTS.fragment.md` adds language rules and never weakens the company rule. The exact
+lint, test and pipeline commands come from the active profile and from the repository
+itself; the profile GGA rules are appended after this file.
 
 ## Output contract
 
@@ -33,255 +34,116 @@ path/to/file:line - RULE - concrete issue and required fix
 
 ## BLOCKING — reject the change
 
-### Manifest, version and changelog
-
-- A functional change is any added, modified or deleted file of a module outside `tests/`,
-  `README.rst`, `CHANGELOG.md` and `static/description/`. It includes `depends`, `data`,
-  `external_dependencies`, `i18n/` and `migrations/`.
-- A commit with a functional change in module `M` must change `version` in
-  `M/__manifest__.py` in the same commit. The diff must show old and new `version` lines,
-  both in `11.0.X.Y.Z`, and the new one strictly greater component by component.
-- A functional file in the diff without a `version` hunk is `FAILED` at the first
-  functional line.
-- The same commit must add a `M/CHANGELOG.md` entry headed by the new version and update
-  `M/README.rst`.
-- A new module starts at `11.0.1.0.0`; manifest, README and CHANGELOG are in the same
-  commit as its first functional code.
-- A commit that only touches `M/tests/` must not change `version` and must not add a
-  CHANGELOG entry.
-- A `M/migrations/<v>/` directory must match the new manifest version.
-- The version cannot be compared with the merge-base from the staged diff alone; require
-  the evidence described in **Quality gates and evidence**.
-
-### Quality gates and evidence
+### Evidence and quality gates
 
 - A gate is `PASS` only with this evidence for the head commit: command, exit code `0`,
   commit SHA and the output or artifact path under `evidence/<run-id>/`. Any other state
   (`ENV-FAIL`, `NOT RUN`, `SKIPPED`, `FAIL`) is not a pass and must be reported as such.
-- A gate that fails for an environment reason (import error, tool or Python version
+- A gate that fails for an environment reason (import error, tool or runtime version
   mismatch, missing network) is `ENV-FAIL`, not `PASS`. It needs a rerun in the pinned
   runtime, or it stays pending. The words “green” or “OK” next to an `ENV-FAIL` gate are a
   blocking finding.
-- `flake8`: both hooks (`flake8 except __init__.py` and `flake8 only __init__.py`) ran on
-  every changed `.py` file and passed.
-- `pylint`: the hook `pylint with mandatory checks` (`.pylintrc-mandatory`, `pylint-odoo`) ran on every changed `.py` file and passed; `pylint-odoo` manifest checks run through `__manifest__.py`. `manifest-required-author` is ignored by design in own modules; no other mandatory check may be ignored. The optional `--exit-zero` hook is never evidence.
-- `check-xml`: passed on every changed XML file.
-- `pre-commit`: the run lists every hook with its result. `SKIP=`, `--no-verify` and edits
-  to `.pre-commit-config.yaml`, `.flake8`, `.pylintrc*` or `.gitlab-ci.yml` made inside the
-  change are blocking unless that file is the stated subject of the change.
-- Pipeline: the evidence is the pipeline id and status for the head SHA of the merge
-  request, with the `test` job in `success`. A pipeline for an older SHA, `skipped`,
+- The active profile names the exact lint, static-analysis and test commands. A run of a
+  different command, a skipped hook, a `SKIP=`, a `--no-verify`, a disabled check or an
+  edited gate configuration inside the change is not evidence.
+- The pipeline evidence is the pipeline id and status for the head SHA of the merge
+  request, with every required job in `success`. A pipeline for an older SHA, `skipped`,
   `canceled`, `manual`, one excluded by the job rules, or a green local run is not
-  evidence. `sonarqube-check` is `allow_failure` and never counts as a gate.
-- A job that is green only because tests were skipped, deselected or not imported is not
-  `PASS`.
+  evidence. A job that is green only because tests were skipped, deselected or not
+  imported is not `PASS`.
 - A claim that the branch is current requires
   `git rev-list --count HEAD..origin/<target>` in the evidence. A positive count on a
   branch that touches the same modules requires a rebase before any gate is accepted.
-- Version against base: for each changed module, include the manifest version at
-  `git merge-base HEAD origin/<target>` and at the head, and the version at the target
-  tip, proving head > base and no collision with the target tip.
+- A gate that the change itself disables, weakens or bypasses is blocking unless the gate
+  is the stated subject of the change.
+
+### Secrets, credentials and dangerous operations
+
+- A credential, token, password, private key, session id, connection string or derived
+  secret in the diff, a log, a test fixture, a capture or a commit message. Use
+  placeholders or the environment; never a real value.
+- A production host, production database, release branch or shared environment touched
+  without explicit human authorization for that operation and that moment.
+- A destructive operation without explicit authorization and a reversible step:
+  `DROP`, `TRUNCATE`, an unbounded `UPDATE`/`DELETE`, `rm -rf`, a force push, a branch
+  deletion, a migration that destroys data, or a restore that overwrites a database.
+- `eval`, `exec`, `pickle.loads`, shell interpolation or dynamic code execution on input
+  that can reach the runtime.
+- A write endpoint or job with no authentication or authorization check, or with a check
+  that can be bypassed by a parameter the caller controls.
 
 ### Tests and evidence
 
 - A test disabled, commented out, deleted, not imported or marked skip only to make the
   pipeline green.
-- A test that only asserts an internal call (`run()`, `assert_called`, a private helper)
-  and would still pass if the behaviour were wrong; tests must prove observable
-  behaviour.
-- `assert_called*` is allowed only when the call is the contract with an external system
-  (HTTP request arguments, enqueued job and its arguments), not for an internal helper.
+- A test that only asserts an internal call and would still pass if the behaviour were
+  wrong; tests must prove observable behaviour. `assert_called*` is allowed only when the
+  call is the contract with an external system, not for an internal helper.
 - A behaviour change with no test that fails without it and passes with it, when a
   deterministic test is possible.
 - A fix or behaviour test whose result depends on floating-point noise or that passes
   identically without the change. It needs an input where old and new behaviour differ by
   more than the field's rounding, and evidence showing the test failing before the fix.
-- `SimpleNamespace`, `Mock` or `MagicMock` standing in for a record or recordset in a test
-  of a rule implemented in `write`, `create`, `unlink`, a compute, a constraint or
-  `_search_rule`/`_get_rule`. The test must be a `TransactionCase` that goes through the
-  real ORM method and asserts the persisted effect. Mocks are allowed for HTTP, clock and
-  filesystem boundaries.
+- A `Mock`, `MagicMock`, `SimpleNamespace` or fake object standing in for the real
+  persistence or transport boundary in a test of a rule. The test must go through the real
+  interface and assert the persisted or returned effect. Mocks are allowed for HTTP,
+  clock, filesystem and other external boundaries.
 - A success claim without the command output or evidence artifact that proves it, or a
   claim based only on a code read.
-- A stock or procurement test that creates products or orders relying on defaults from
-  other installed modules (`route_ids`, company, `date_planned`, `priority`, demo
-  records). Set every value the closure's overrides read explicitly. A local green
-  without the pipeline green for the same commit is not evidence.
+- A test that passes locally only because the local database, fixture or installed set is
+  different from the pipeline's clean environment. The pipeline green for the same commit
+  is the evidence.
 
-### Odoo 11 correctness and OCA style
+### Data, persistence and compatibility
 
-- A feature not available in Odoo 11 or the supported Python runtime: `with_user`,
-  `with_company`, `@api.model_create_multi`, `create()` with a list of dicts,
-  `filtered_domain`, `env.company`, `env.companies`, `env.su`, `flush()`, OWL, `Command`.
-  Use `sudo(user)`, one dict per `create`, and `invalidate_cache`.
-- `@api.one` is available but deprecated in v11; it is a finding of the mandatory
-  `pylint-odoo` gate. Do not use it in new code. This rule does not replace that gate.
-- `type="json"` is valid in v11 and is not a finding by itself. The finding is a route that
-  bypasses access rules or validation.
-- `super(Class, self)` is the normal OCA 11 style; it is not a finding.
-- `f-strings` and syntax newer than the pinned Python runtime are a finding only when that
-  runtime is below 3.6; verify the runtime before reporting.
-- `ensure_one()` missing on a method that assumes one record; missing `for record in
-  self` in a multi-record constrain.
-- `float` money or quantity compared without `float_compare`; `datetime.now()` where a
-  stored or compared `Datetime` field requires `fields.Datetime.now()`. `datetime.now()`
-  for a log line or elapsed measurement is not a finding.
-- `product_uom_qty` summed or rounded with the product UoM rounding; use `product_qty` or
-  `uom._compute_quantity` explicitly.
-- A new or modified field without `help` when the field is new or its semantics changed.
-  A cosmetic change to `string` does not require a new `help`; a documentation-only
-  omission is not blocking unless the field's meaning is now unclear.
-- `_description` missing on a new model; `README.rst` missing; recordset names that end in
-  `_id` (OCA style uses `partner`, not `partner_id`); duplicated extraction of the same
-  business expression.
-
-### OCA / ORM performance and correctness
-
-- `search`, `search_count`, `search_read`, `read_group`, `browse(<single id>)`, `read`,
-  raw `cr.execute`, `invalidate_cache` or `create`/`write`/`unlink` of a related lookup
-  inside a `for`, a comprehension, a lambda passed to `mapped`/`filtered`/`sorted`, an
-  `@api.depends` compute, a cron, a wizard line builder or an onchange when the iterated
-  collection grows with business data.
-  Fix: one `search`/`search_read`/`read_group` before the loop with `('id', 'in', ids)` or
-  a relation domain, resolved to a dict, or `browse(ids)` once.
-  Exception: the iterated collection is a literal or a fixed configuration list of at most
-  10 items, or the lookup must observe a write made in the same transaction and a test
-  proves it. A per-record `create` with different values is allowed in Odoo 11.
-- `len(recordset)`, `len(self.search(...))` or the truthiness of a full `search()` used to
-  decide existence or to count. Fix: `search(domain, limit=1)` for existence,
-  `search_count(domain)` for counts. `len()` on a recordset already loaded for another
-  reason is allowed.
-- `search(domain)` without `limit` on a model whose size grows with business data
-  (products, partners, sale or purchase orders, stock moves and pickings, account moves
-  and lines, attachments, messages) in business code, unless the domain is constrained by
-  ids or by a relation of the current records. `search([])` on such a model is always
-  `FAILED`. Migrations and one-off scripts are exempt.
-- Counting, summing or grouping in Python records that a `read_group` using the field's
-  `group_operator` could aggregate: `sum(r.f for r in self.search(d))`,
-  `len([r for r in self.search(d) if ...])`, or dicts built by looping a `search`.
-  Allowed when the records are already loaded and needed for another reason in the same
-  method.
-- Per-record `write()` with identical values or per-record `unlink()` in a loop. Fix:
-  `records.write(vals)` / `records.unlink()` once. Loops with different values per record
-  are allowed. In Odoo 11 `create` takes one dict: do not request batch create; hoist the
-  lookups instead.
-- `browse(rec.id)`, `self.env[model].browse(x.id)` or `invalidate_cache()` inside a loop
-  that breaks prefetch. Use the recordset directly or `mapped` / `filtered`.
-- A lookup that decides between creating and reactivating, or that detects duplicates, on
-  a model with an `active` field without `with_context(active_test=False)` (archived
-  record ignored, duplicate created). Reading `one2many` caches after a write in the same
-  transaction to decide that is also a finding; use an explicit `search`.
-- `read_group` with `orderby` (not `order`), the field's `group_operator`, or a
-  `groupby` on a non-stored field. Reimplementing `read_group` by hand in Python is a
-  finding.
-- Aggregating quantities of moves or lines with `product_uom_qty` across different UoMs.
-  Use `product_qty` (product UoM) or `uom._compute_quantity` explicitly.
-- SQL with interpolation, `cr.commit()` in business code, or `sudo()` outside the profile
-  allowlist; missing ACL or `ir.rule` for a new model or a new access path.
-
-### Security and data access
-
-- Missing `ir.model.access.csv` for a new model, including a `TransientModel`; missing
-  `ir.rule` for a record rule the domain does not protect.
-- `sudo()` outside the profile allowlist, especially in a controller; an admin token or
-  elevated permission used to work around access rules.
-- A credential, token, password, hash or derived credential field readable by a
-  non-administrator group. Cite the ACL row that grants the read.
-- Raw SQL without parameters, a written justification and an edge-case test;
-  `cr.commit()` in business code; an unparameterised write that can corrupt data.
-- A new or modified route with `auth="user"` or `auth="public"` that creates or modifies
-  payments, refunds, orders, stock or accounting without an explicit group check and a
-  check that the record's company (journal, warehouse, order) belongs to
-  `env.user.company_ids`. It needs a test with a user without the group and a user of
-  another company.
-- A route or token handler that accepts a model name, group, field or dotted path from the
-  request without checking it against an allowlist. A token restricted to `sale.order`
-  must not reach `partner_id.email` or any other model through a dotted path.
-
-### Migrations, XML and data
-
-- Renaming or deleting a persisted field or model without a migration; a migration that
-  would not run on a new install (`post_init_hook` where needed).
-- A destructive `UPDATE`/`DELETE` without a bounded `WHERE`, a backup, a dry run or a log;
-  an `UPDATE` without `WHERE` is always blocking.
-- A migration folder whose version is not the new manifest version.
-- An incomplete `depends`: a module used directly (xmlid in `env.ref`, `ref=`, `groups=`,
-  `inherit_id`, `_inherit`, a `comodel_name`, a decorator or a class import) and absent
-  from the manifest. A transitive closure is not a reason to omit a direct dependency.
-- An unused dependency, or a dependency used only by `tests/`; test-only dependencies must
-  not install in production.
-- A view, XML id, security CSV, data file or asset that does not load in a clean database;
-  a core view edited directly; a duplicated XML id; a missing `noupdate="1"` on
-  customer-editable data.
-- A `migrations/<v>/` script that uses relative imports across a non-package, assumes a
-  column exists on a new install, or runs `env.cr.commit()`.
-
-### Queue, jobs and terminal states
-
-- `RetryableJobError` used for a terminal state; an all-cancelled product or a permanent
-  business condition that will retry forever.
-- A job that retries a condition that cannot change, or swallows an exception and leaves
-  the record in a half-finished state.
+- A schema, format or persisted-data change without a migration or a documented
+  compatibility path; a migration that would not run on a new install.
+- A changing or deleting operation on existing stored data with no backup, dry run or
+  bounded scope.
+- An incomplete dependency declaration: a library, module, extension or service used
+  directly and absent from the manifest, lock file or dependency file. A transitive
+  dependency is not a reason to omit a direct one.
+- A dependency used only by tests installed in the production runtime.
+- A public contract changed or removed without a deprecation path: API, CLI flag, config
+  format, published export, event or message schema.
+- A concurrency, transaction, lock or job behaviour change without a test that proves the
+  ordering, the retry or the terminal state.
 
 ### Scope and code hygiene
 
 - Explanatory comments in new or modified code in any language. Legal headers and tool
-  directives are allowed; docstrings, `help`, `_description` and README are documentation,
+  directives are allowed; docstrings and generated API documentation are documentation,
   not comments.
 - Dead or commented-out code, a debug print, a temporary script, a `.bak`, a capture or a
   work file that reaches the diff.
 - An unrelated refactor, a whole-file reformat, a translation of another environment, a
   dependency bump or another ticket mixed into this change.
-- A change that touches production, a release branch, a shared database or a migration
-  with destructive effects without explicit human authorization.
-- A code path that changes security, permissions, concurrency, payment, stock, fiscal or
+- A code path that changes security, permissions, concurrency, payment, fiscal or
   data-deletion behaviour without a test that proves the new rule.
 - The same extraction, parsing, regex or business expression written twice or more in the
   diff; it must be a single helper reused by all callers.
-- `# noqa` without a code, `# pylint: disable` without a symbol, or a disable of a check
-  enabled in `.pylintrc-mandatory`, used to silence a finding instead of fixing it.
+- A suppression (`# noqa`, `# pylint: disable`, `@phpstan-ignore`, `@SuppressWarnings`,
+  `# type: ignore`) without the exact code or symbol and without a written reason. A
+  suppression of a gate enabled by the profile is blocking.
 
 ## ADVISORY — report, do not fail
 
 - Naming, readability, duplication or a simpler structure that does not change behaviour.
-- Missing docstring or README section that is not required for safety.
+- Missing documentation that is not required for safety.
 - Test coverage that could be broader, a slow query that is not on a hot path, or a
-  performance improvement on a bounded collection (≤ 10 literal items) with no
-  correctness risk.
+  performance improvement on a bounded collection with no correctness risk.
 - A style preference that is not in the company norm or the active profile.
 - A missing convenience command, log line or diagnostic that would help operators.
-- A `getattr` default or an `or {}` / `or []` that is a legitimate optional-module or
-  context pattern. It is blocking only when it hides a `None` from a declared contract or
-  a field of a declared dependency.
-
-## Known failure patterns from real MRs
-
-These are examples of the rules above; they are not extra rules.
-
-- A `depends` that repeats the closure, or an unused/test-only dependency that installs
-  production modules; a missing direct dependency that only fails when the module is
-  installed alone (`External ID not found`).
-- A test tied to the internal `run()` of a connector, or a `SimpleNamespace` that never
-  goes through the real `write()`; a test that passes without the change, or only fails by
-  floating-point noise.
-- A local green E2E that fails in CI because the full closure changes `route_ids`,
-  `company_id`, `date_planned`, `priority` or demo data.
-- A new endpoint with `auth="user"` accepting payments or refunds without group and
-  company checks; a `READ ONLY` transaction that is bypassed by `env.cr.commit()`.
-- Three different regexes extracting the same business code; a sanitisation dependency
-  that is unnecessary because the source is already ASCII.
-- A branch many commits behind the target; a prose comment, a dead test or an unrelated
-  refactor reaching the diff.
-- Pylint hooks failing on a stale isort under Python 3.10 are `ENV-FAIL`, not `PASS`.
+- A defensive default that is a legitimate optional-dependency or context pattern. It is
+  blocking only when it hides a missing value from a declared contract.
 
 ## Method
 
 1. Read the staged diff and the files it touches; use the profile and `AGENTS.md` as
    context, not as a reason to invent rules.
-2. Check manifest/version, quality gates and evidence first. GGA does not run git,
-   pre-commit, pylint, flake8 or the pipeline; it only verifies the artifacts recorded
-   under `evidence/<run-id>/`.
-3. Check blocking Odoo, ORM/OCA, security and data rules. For every finding, cite
+2. Check evidence, secrets and tests first. GGA does not run the gates; it only verifies
+   the artifacts recorded under `evidence/<run-id>/`.
+3. Check the blocking profile rules appended after this file. For every finding, cite
    `file:line`, the rule and the concrete fix.
 4. Check that `guard`, `verify` and the documented evidence are present and honest. A
    claim is not evidence.

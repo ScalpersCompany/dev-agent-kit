@@ -173,7 +173,9 @@ bash scripts/review-gga.sh . --blocking --pr-mode --diff-only
 bash scripts/install-gga.sh . --profile "$HOME/dev-agent-profiles/profiles/odoo11" --with-pre-push
 ```
 
-Las reglas base son el preflight de FactorLibre, el perfil activo y la norma de empresa.
+Las reglas base del núcleo son agnósticas de lenguaje. El perfil activo añade su
+`gga/REVIEW-RULES.md`: las de Odoo 11 están en `profiles/odoo11/gga/REVIEW-RULES.md` y las
+de PHP en `profiles/php/gga/REVIEW-RULES.md`. La norma de empresa sigue ganando.
 `--advisory` o `GGA_ADVISORY=1` informa sin bloquear. No ejecutes `gga install`: pisaría el
 pre-commit del kit. Sin proveedor o sin `.gga`, la revisión bloqueante falla cerrada.
 

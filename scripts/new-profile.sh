@@ -62,5 +62,5 @@ PY
 
 sed -i "s/_template/$NAME/g" "$DEST/profile.env" "$DEST/README.md"
 echo "created: $DEST"
-echo "next: fill profile.json, profile.env, AGENTS.fragment.md, guard/*.sh and verify/config.env.example"
+echo "next: fill profile.json, profile.env, AGENTS.fragment.md, gga/REVIEW-RULES.md, guard/*.sh and verify/config.env.example"
 echo "validate: python3 $ROOT/scripts/validate-profile.py $DEST"

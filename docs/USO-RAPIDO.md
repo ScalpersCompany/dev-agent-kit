@@ -64,9 +64,10 @@ dev-agent review-gga
 dev-agent review-gga --advisory
 ```
 
-La revisión es bloqueante por defecto: exige `STATUS: PASSED` y salida 0. Las reglas salen
-del preflight de FactorLibre, el perfil activo y la norma de empresa. Si no hay `gga` o
-`.gga`, falla cerrada. Para instalarlo:
+La revisión es bloqueante por defecto: exige `STATUS: PASSED` y salida 0. Las reglas del
+núcleo son agnósticas de lenguaje; el perfil activo añade su `gga/REVIEW-RULES.md` (Odoo 11
+o PHP 8), y la norma de empresa sigue ganando. Si no hay `gga` o `.gga`, falla cerrada. Para
+instalarlo:
 
 ```bash
 bash scripts/install-gga.sh . --profile "$HOME/dev-agent-profiles/profiles/odoo11"

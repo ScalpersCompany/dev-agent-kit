@@ -209,20 +209,25 @@ infraestructura AWS para una memoria compartida queda para más adelante.
 la puerta determinista; GGA es la segunda revisión y puede bloquear cuando se ejecuta con
 `review-gga.sh --blocking`. Necesita proveedor y tarda, así que su uso normal es el
 preflight de MR; con `install-gga.sh --with-pre-push` se añade también al pre-push.
-Las reglas base son el preflight de FactorLibre, más el perfil activo y la norma de empresa.
+Las reglas base del núcleo son agnósticas de lenguaje. El perfil añade su propio
+`gga/REVIEW-RULES.md`: Odoo 11 en `profiles/odoo11/gga/REVIEW-RULES.md`, PHP 8 en
+`profiles/php/gga/REVIEW-RULES.md`; un perfil nuevo debe aportar el suyo. La norma de
+empresa sigue ganando.
 
-- `scripts/install-gga.sh <repo>` copia `.gga` y `.gga-rules.md`, con backup si ya
-  existen. **No** ejecuta `gga install`: ese comando instalaría su propio pre-commit y
-  pisaría el del kit.
+- `scripts/install-gga.sh <repo> --profile <perfil>` copia `.gga` y el `.gga-rules.md`
+  del núcleo, y añade `gga/REVIEW-RULES.md` del perfil, con backup si ya existen. **No**
+  ejecuta `gga install`: ese comando instalaría su propio pre-commit y pisaría el del kit.
 - `scripts/review-gga.sh <repo>` ejecuta `gga run` sobre lo staged. Es bloqueante por
   defecto: exige `STATUS: PASSED`; con `--advisory` o `GGA_ADVISORY=1` informa y no
   bloquea. Para revisar un commit: `scripts/review-gga.sh <repo> --ci`.
 - El `.gga` de ejemplo usa `PROVIDER=claude`; se puede cambiar a `opencode`, `codex`,
   `ollama:<modelo>`, `gemini` o el proveedor aprobado. Hermes y OpenCode lanzan el
   script como un comando; no hay API de agente.
-- `.gga-rules.md` es el contrato de revisión: salen del preflight de FactorLibre y cubren
-  comentarios de prosa, tests de comportamiento, UdM, retry terminal, `depends` directo,
-  secretos, ACL, migraciones y alcance. El perfil añade sus reglas; no las debilita.
+- `.gga-rules.md` es el contrato de revisión: el núcleo aporta las reglas agnósticas y el
+  perfil añade su `gga/REVIEW-RULES.md`; el perfil de Odoo conserva las lecciones del
+  preflight de FactorLibre (comentarios de prosa, tests de comportamiento, UdM, retry
+  terminal, `depends` directo, secretos, ACL, migraciones y alcance) como reglas propias,
+  no como reglas globales. No las debilita.
 - Si no hay proveedor o no hay `.gga`, la revisión bloqueante falla cerrada. El `guard`
   determinista sigue siendo la garantía; GGA es la segunda revisión.
 

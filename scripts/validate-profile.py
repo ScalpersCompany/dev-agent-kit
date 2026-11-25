@@ -64,6 +64,9 @@ def validate(profile_dir: Path) -> list[str]:
             continue
         if not path.exists():
             errors.append(f"{key} path not found: {value}")
+    gga_path = profile_dir / "gga" / "REVIEW-RULES.md"
+    if not gga_path.is_file():
+        errors.append("missing gga/REVIEW-RULES.md")
     env_path = profile_dir / "profile.env"
     if not env_path.is_file():
         errors.append("missing profile.env")

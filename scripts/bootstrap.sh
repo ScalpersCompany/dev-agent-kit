@@ -69,7 +69,9 @@ else
 fi
 
 if [ "$WITH_GGA" = "1" ]; then
-  bash "$KIT/scripts/install-gga.sh" "$REPO"
+  GGA_ARGS=("$REPO")
+  [ -n "$PROFILE" ] && GGA_ARGS+=(--profile "$PROFILES_REPO/profiles/$PROFILE")
+  bash "$KIT/scripts/install-gga.sh" "${GGA_ARGS[@]}"
 fi
 
 if [ -n "$PROFILE" ]; then

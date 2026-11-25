@@ -521,7 +521,8 @@ practicar; en un repo real de la empresa, la norma de tech-doc gana.
 GGA es la segunda revisión, no la puerta determinista. `review-gga.sh` es bloqueante por
 defecto y exige `STATUS: PASSED`; `--advisory` o `GGA_ADVISORY=1` informa sin bloquear. Sin
 proveedor o sin `.gga`, la revisión bloqueante falla cerrada. No ejecutar `gga install`:
-pisaría el pre-commit del kit.
+pisaría el pre-commit del kit. Las reglas del núcleo son agnósticas; el perfil activo añade
+`gga/REVIEW-RULES.md` (Odoo 11 o PHP 8).
 
 ```bash
 bash scripts/install-gga.sh . --profile "$HOME/dev-agent-profiles/profiles/odoo11"

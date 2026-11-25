@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.5.0] - 2026-11-25
+
+### Changed
+
+- `gga/REVIEW-RULES.md` is now language-agnostic: output contract, evidence, secrets, data, tests, security and hygiene. Odoo 11 specifics moved to the active profile.
+- `scripts/install-gga.sh` appends `<profile>/gga/REVIEW-RULES.md`; a profile with only `AGENTS.fragment.md` remains a reported compatibility fallback. Without `--profile`, only the core rules are installed.
+- `scripts/bootstrap.sh --with-gga` passes the selected profile to `install-gga.sh`; `profiles/_template` and `new-profile.sh` include `gga/REVIEW-RULES.md`.
+
+### Added
+
+- `tests/test_install_gga.py`: core + profile composition, core-only mode and fragment fallback.
+
 ## [3.4.0] - 2026-11-25
 
 ### Added
