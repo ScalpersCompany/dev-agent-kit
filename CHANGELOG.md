@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.0] - 2026-11-25
+
+### Added
+
+- `docs/SISTEMA-FUNCIONALIDADES.html`: complete functional reference for the system: four repos, auto-installation, inventory, gate, profiles, skills, CodeGraph, Engram, tech-doc, change flow, CLI, evals, limits and current state.
+- `docs/formacion/dev-agent-kit-para-companeros.html`: 16-slide informative presentation for the team, without trainer cues, simulations or exercises; it explains what the system is, how it installs, how it works and what changes for the team.
+
 ## [3.2.0] - 2026-11-25
 
 ### Added

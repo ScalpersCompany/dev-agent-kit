@@ -14,10 +14,13 @@ Al terminar, el compañero debe poder:
 4. usar las cinco skills del núcleo y una skill de su perfil;
 5. elegir un modelo aprobado y un juez distinto para las evals;
 6. entregar un cambio sin secretos, sin producción y con evidencia;
-7. reconocer las deudas conocidas: el eval todavía usa OpenCode y el instalador de perfiles
-   automático no está cableado.
+7. reconocer las deudas conocidas: el eval todavía usa OpenCode y `dev-agent init`/lock
+   siguen pendientes.
 
 La presentación para proyectar está en `docs/formacion/dev-agent-kit-formacion.html`.
+La referencia funcional completa está en `docs/SISTEMA-FUNCIONALIDADES.html`; la
+presentación informativa para el equipo, en
+`docs/formacion/dev-agent-kit-para-companeros.html`.
 Esta guía es el manual del formador y la referencia escrita del alumno.
 
 ## Antes de la primera sesión

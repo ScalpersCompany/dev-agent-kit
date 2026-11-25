@@ -8,6 +8,8 @@ Start here: `docs/INSTALACION-Y-FUNCIONAMIENTO.md` (Spanish) — install, daily 
 
 For a new colleague, start with `docs/INSTALADOR.md` (one line), then
 `docs/FORMACION-DEV-AGENT-KIT.md` and `docs/formacion/dev-agent-kit-formacion.html`.
+The complete functional reference is `docs/SISTEMA-FUNCIONALIDADES.html`; the short
+peer presentation is `docs/formacion/dev-agent-kit-para-companeros.html`.
 Daily commands: `docs/USO-RAPIDO.md`. Improving a skill: `docs/MEJORAR-SKILLS.md`.
 
 ## Repositories that work together
@@ -78,6 +80,8 @@ docs/USO-RAPIDO.md            daily commands
 docs/MEJORAR-SKILLS.md        skill improvement loop
 docs/FORMACION-DEV-AGENT-KIT.md  three-session training guide
 docs/formacion/dev-agent-kit-formacion.html  37-slide training deck with simulations
+docs/SISTEMA-FUNCIONALIDADES.html  complete functional reference: components, installer, gates, memory, status
+docs/formacion/dev-agent-kit-para-companeros.html  16-slide peer presentation, informative, no trainer cues
 docs/CREAR-PERFIL.md          how to build a new profile
 docs/INTEGRACION-TECHDOC.md   how the company norm repository connects to the kit
 docs/DIAGRAMA-SISTEMA.md      Mermaid map of the whole system

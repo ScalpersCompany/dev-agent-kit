@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DevAgentKit — presentación para el equipo</title>
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #18211f;
+    --paper: #f4efe5;
+    --card: #fffdf8;
+    --muted: #6a7069;
+    --line: #d8d0c1;
+    --teal: #2f6b62;
+    --teal-soft: #dcebe6;
+    --orange: #c25432;
+    --orange-soft: #f3d9cd;
+    --dark: #121817;
+    --dark-ink: #f6f0e5;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --serif: ui-serif, Georgia, "Times New Roman", serif;
+    --scale: 1;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body { background: var(--dark); color: var(--ink); font-family: var(--sans); overflow: hidden; }
+  .slide { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; display: none; flex-direction: column; background: var(--paper); padding: 56px 119px 48px; transform: translate(-50%, -50%) scale(var(--scale)); transform-origin: center center; }
+  .slide.active { display: flex; }
+  .slide.dark { background: var(--dark); color: var(--dark-ink); }
+  .kicker { font-size: 11px; letter-spacing: .17em; text-transform: uppercase; color: var(--orange); font-weight: 750; }
+  .dark .kicker { color: #e6a184; }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; letter-spacing: -.025em; margin: 0; }
+  h1 { font-size: 108px; line-height: .96; max-width: 15ch; margin-top: 24px; }
+  h2 { font-size: 56px; line-height: 1.04; max-width: 21ch; margin-top: 14px; }
+  h3 { font-size: 26px; line-height: 1.15; }
+  p { margin: 0; color: var(--muted); font-size: 22px; line-height: 1.42; }
+  .dark p { color: #c8c0b3; }
+  .lede { max-width: 58ch; margin-top: 22px; font-size: 27px; }
+  .top { display: flex; justify-content: space-between; gap: 76px; align-items: flex-start; }
+  .meta { text-align: right; color: var(--muted); font-size: 12px; line-height: 1.55; min-width: 170px; }
+  .dark .meta { color: #a89f92; }
+  .meta b { display: block; color: var(--ink); font-size: 13px; }
+  .dark .meta b { color: var(--dark-ink); }
+  .quote { font-family: var(--serif); font-size: 68px; line-height: 1.08; max-width: 20ch; margin: 32px 0 0; letter-spacing: -.03em; }
+  .grid2, .grid3, .grid4 { display: grid; gap: 28px; margin-top: 38px; }
+  .grid2 { grid-template-columns: 1fr 1fr; }
+  .grid3 { grid-template-columns: repeat(3, 1fr); }
+  .grid4 { grid-template-columns: repeat(4, 1fr); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 24px 26px; }
+  .dark .card { background: #1b2421; border-color: #34413c; }
+  .card .n { font-family: var(--serif); color: var(--orange); font-size: 40px; line-height: 1; }
+  .card h3 { margin-top: 9px; }
+  .card p { font-size: 17px; margin-top: 7px; line-height: 1.4; }
+  .flow { display: flex; align-items: stretch; gap: 11px; margin-top: 38px; }
+  .node { flex: 1; background: var(--card); border: 1px solid var(--line); border-radius: 11px; padding: 16px 15px; min-height: 140px; }
+  .node b { display: block; font-size: 18px; line-height: 1.2; }
+  .node span { display: block; margin-top: 6px; color: var(--muted); font-size: 14px; line-height: 1.32; }
+  .arrow { display: flex; align-items: center; color: var(--orange); font-size: 20px; }
+  .code { background: #1a1f1d; color: #f5eee2; border-radius: 12px; padding: 19px 23px; font-family: var(--mono); font-size: 16px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; margin-top: 26px; }
+  .code .c { color: #a99b8c; }
+  .code .a { color: #f0ad8e; }
+  .table { width: 100%; border-collapse: collapse; margin-top: 26px; font-size: 16px; }
+  .table th { text-align: left; font-size: 11px; letter-spacing: .11em; text-transform: uppercase; color: var(--orange); border-bottom: 2px solid var(--ink); padding: 0 8px 7px 0; }
+  .dark .table th { border-bottom-color: var(--dark-ink); }
+  .table td { border-bottom: 1px solid var(--line); padding: 10px 8px 10px 0; vertical-align: top; color: var(--muted); }
+  .table td:first-child { color: var(--ink); font-weight: 650; }
+  .dark .table td { border-bottom-color: #34413c; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+  .pill.ok { color: #2d6a4c; background: #dcf0e4; }
+  .pill.warn { color: #8b5717; background: #f4e4cc; }
+  .pill.hot { color: var(--orange); background: var(--orange-soft); }
+  .pill.neutral { color: #315f70; background: #deecef; }
+  .footer { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 20px; color: var(--muted); font-size: 11px; }
+  .dark .footer { border-top-color: #34413c; color: #a89f92; }
+  .footer b { color: var(--ink); }
+  .dark .footer b { color: var(--dark-ink); }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 24px; }
+  .badge { border: 1px solid var(--line); border-radius: 999px; padding: 5px 10px; font-size: 12px; color: var(--muted); }
+  .dark .badge { border-color: #46534d; color: #d3c9bb; }
+  .badge.ok { border-color: #84b79d; color: #2d6a4c; }
+  .dark .badge.ok { border-color: #71a98b; color: #a6d4ba; }
+  .badge.hot { border-color: var(--orange); color: var(--orange); }
+  .note { border-left: 3px solid var(--orange); padding: 12px 0 12px 16px; color: var(--muted); font-size: 17px; margin-top: 25px; max-width: 80ch; }
+  .note b { color: var(--ink); }
+  .cover { padding: 76px 154px 54px; }
+  .cover h1 { max-width: 16ch; }
+  .cover .lede { max-width: 55ch; }
+  .cover .bottom { margin-top: auto; display: flex; justify-content: space-between; gap: 30px; align-items: end; }
+  .cover .big { font-family: var(--serif); font-size: 36px; line-height: 1.13; max-width: 18ch; color: #e9dfd2; }
+  .cover .bottom p { font-size: 13px; color: #a89f92; max-width: 35ch; }
+  .controls { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); display: flex; gap: 7px; z-index: 20; }
+  .controls button { border: 1px solid #59645e; background: #1b2421; color: #f1e9dd; border-radius: 8px; padding: 6px 10px; font: 12px var(--sans); cursor: pointer; }
+  .controls button:hover { background: #2a3732; }
+  .progress { position: fixed; left: 0; right: 0; bottom: 0; height: 3px; background: #2d3934; z-index: 19; }
+  .progress i { display: block; height: 100%; width: 0; background: var(--orange); transition: width .2s ease; }
+  .counter { font-family: var(--mono); font-size: 11px; color: #b6aa9b; }
+  @media print {
+    @page { size: A4 landscape; margin: 0; }
+    html, body { overflow: visible; background: #fff; }
+    .slide { position: relative; left: auto; top: auto; transform: none; width: 100%; height: auto; min-height: 100vh; page-break-after: always; }
+    .controls, .progress { display: none; }
+  }
+</style>
+</head>
+<body>
+  <section class="slide cover dark active" id="s1">
+    <div class="top">
+      <div>
+        <div class="kicker">Presentación interna · DevAgentKit</div>
+        <h1>Una misma puerta para todos los agentes.</h1>
+        <p class="lede">No es un modelo. Es la forma en que el trabajo de cualquier agente se convierte en un cambio comprobable, revisable y seguro.</p>
+        <div class="badge-row"><span class="badge ok">una línea</span><span class="badge">perfil por stack</span><span class="badge">guard + verify</span><span class="badge hot">producción fuera</span></div>
+      </div>
+      <div class="meta"><b>Equipo de desarrollo</b><span>Qué es · cómo funciona · qué cambia</span></div>
+    </div>
+    <div class="bottom">
+      <div class="big">El agente propone.<br>La puerta comprueba.<br>La persona decide.</div>
+      <p>Claude Code, OpenCode, Codex, pi o Hermes. Odoo, PHP o cualquier otro stack. El contrato es el mismo.</p>
+    </div>
+    <div class="footer"><span><b>DevAgentKit</b> · presentación para el equipo</span><span>Flechas o espacio para avanzar.</span></div>
+  </section>
+
+  <section class="slide" id="s2">
+    <div class="top"><div><div class="kicker">El problema</div><h2>No es que el agente escriba. Es que no sabemos qué ha comprobado.</h2></div><div class="meta"><b>01</b><span>por qué existe</span></div></div>
+    <div class="grid3">
+      <div class="card"><div class="n">01</div><h3>Cada agente, un flujo</h3><p>Claude, OpenCode, Codex, pi y Hermes tienen sus propias reglas. El mismo cambio se comporta distinto según quién lo haya hecho.</p></div>
+      <div class="card"><div class="n">02</div><h3>“Hecho” sin evidencia</h3><p>Una respuesta convincente no es una prueba. Sin salida de test, HTTP o artefacto, la revisión empieza de cero.</p></div>
+      <div class="card"><div class="n">03</div><h3>Contexto que se pierde</h3><p>La decisión vive en el chat. Al cerrar la sesión, el repo no sabe por qué se eligió una solución.</p></div>
+    </div>
+    <div class="note"><b>El coste:</b> más tiempo revisando, más dudas y más cambios que parecen terminados sin estarlo.</div>
+    <div class="footer"><span><b>DevAgentKit</b></span><span>01 · El problema</span></div>
+  </section>
+
+  <section class="slide" id="s3">
+    <div class="top"><div><div class="kicker">La idea</div><h2>Un contrato neutral. Un perfil por stack. Una puerta local.</h2></div><div class="meta"><b>02</b><span>la respuesta</span></div></div>
+    <div class="quote">“Que el mismo cambio pase por la misma puerta, lo haya escrito quien lo haya escrito.”</div>
+    <div class="grid4">
+      <div class="card"><h3>Fuente única</h3><p>Skills, comandos y juez viven una vez; los agentes los consumen.</p></div>
+      <div class="card"><h3>Perfil</h3><p>Odoo 11, PHP o el siguiente stack: el dominio vive fuera del núcleo.</p></div>
+      <div class="card"><h3>Puerta</h3><p>Guard y verify convierten el cambio en algo comprobable.</p></div>
+      <div class="card"><h3>Memoria</h3><p>CodeGraph y Engram dejan estructura y decisiones fuera del chat.</p></div>
+    </div>
+    <div class="footer"><span><b>DevAgentKit</b></span><span>02 · La idea</span></div>
+  </section>
+
+  <section class="slide" id="s4">
+    <div class="top"><div><div class="kicker">Marco</div><h2>Qué es y qué no es.</h2></div><div class="meta"><b>03</b><span>expectativas</span></div></div>
+    <div class="grid2">
+      <div class="card"><h3>Es</h3><p>Una puerta local de calidad. Un contrato de perfiles. Un conjunto de skills. Un instalador. Una forma de conservar contexto y normas.</p></div>
+      <div class="card"><h3>No es</h3><p>Ni un modelo, ni un CI remoto, ni un auto-merge, ni un despliegue, ni un repo de producto fijo. No sustituye la revisión humana.</p></div>
+    </div>
+    <div class="note"><b>La distinción:</b> hecho ≠ verificado ≠ aprobado. El kit hace visible la diferencia.</div>
+    <div class="footer"><span><b>DevAgentKit</b></span><span>03 · Marco</span></div>
+  </section>
+
+  <section class="slide" id="s5">
+    <div class="top"><div><div class="kicker">Arquitectura</div><h2>Cuatro repos, un contrato.</h2></div><div class="meta"><b>04</b><span>el mapa</span></div></div>
+    <div class="flow">
+      <div class="node"><b>dev-agent-kit</b><span>puerta, skills, hooks, evals e instalador</span></div><div class="arrow">→</div>
+      <div class="node"><b>dev-agent-profiles</b><span>perfiles Odoo 11 y PHP</span></div><div class="arrow">→</div>
+      <div class="node"><b>scalpers-tech-doc</b><span>norma y documentación de empresa</span></div><div class="arrow">→</div>
+      <div class="node"><b>tu repo</b><span>destino: Odoo, PHP o cualquier stack</span></div>
+    </div>
+    <div class="note">El kit no contiene Odoo ni PHP. El perfil aporta el dominio; la norma de empresa se enlaza, no se copia.</div>
+    <div class="footer"><span><b>DevAgentKit</b></span><span>04 · Arquitectura</span></div>
+  </section>
+
+  <section class="slide" id="s6">
+    <div class="top"><div><div class="kicker">Autoinstalación</div><h2>Se instala con una línea y un menú.</h2></div><div class="meta"><b>05</b><span>puesta en marcha</span></div></div>
+    <div class="code">git clone https://github.com/ScalpersCompany/dev-agent-kit.git "$HOME/.dev-agent-kit" \
+  &amp;&amp; "$HOME/.dev-agent-kit/install.sh"</div>
+    <div class="grid3">
+      <div class="card"><h3>Perfil</h3><p>El instalador descubre los perfiles del repo y pregunta cuál o cuáles instalar; siempre queda uno activo.</p></div>
+      <div class="card"><h3>Agentes</h3><p>Claude, OpenCode, Codex, pi, Hermes o todos. Las skills se copian a la ruta que cada uno usa.</p></div>
+      <div class="card"><h3>Extras</h3><p>CodeGraph, Engram y tech-doc. Si faltan o no hay acceso, avisa y el núcleo sigue instalado.</p></div>
+    </div>
+    <div class="note">No hay que memorizar flags: la instalación normal es interactiva. La versión sin preguntas existe para automatización.</div>
+    <div class="footer"><span><b>DevAgentKit</b></span><span>05 · Puesta en marcha</span></div>
+  </section>
+
+  <section class="slide" id="s7">
+    <div class="top"><div><div class="kicker">Inventario</div><h2>Qué deja en el repo.</h2></div><div class="meta"><b>06</b><span>lo instalado</span></div></div>
+    <div class="grid3">
+      <div class="card"><h3>Kit y perfil</h3><p>AGENTS.md, skills, comandos, agentes, guard, verify y el perfil activo en .dev-agent.</p></div>
+      <div class="card"><h3>Guardarraíles</h3><p>pre-commit, pre-push, verify/config.env, .dev-agent/verify.env y comment_lint.</p></div>
+      <div class="card"><h3>Adaptadores</h3><p>.claude y .opencode generados; copias globales para Codex, pi y Hermes.</p></div>
+      <div class="card"><h3>Contexto</h3><p>.codegraph y .engram/config.json si las herramientas están disponibles.</p></div>
+      <div class="card"><h3>Norma</h3><p>Enlace a ~/.agents/AGENTS.md y docs/TECHDOC.md; el HTML privado queda local.</p></div>
+      <div class="card"><h3>Uso diario</h3><p>bin/dev-agent y el doctor final; las exclusiones locales evitan ruido en git.</p></div>
+    </div>
+    <div class="footer"><span><b>DevAgentKit</b></span><span>06 · Inventario</span></div>
+  </section>
+
+  <section class="slide" id="s8">
+    <div class="top"><div><div class="kicker">La puerta</div><h2>Lo determinista antes de lo opinable.</h2></div><div class="meta"><b>07</b><span>guard y verify</span></div></div>
+    <div class="flow">
+      <div class="node"><b>guard</b><span>perfil, reglas del repo y comentarios nuevos</span></div><div class="arrow">→</div>
+      <div class="node"><b>verify</b><span>smoke y tests reales; deja evidencia</span></div><div class="arrow">→</div>
+      <div class="node"><b>hooks</b><span>pre-commit y pre-push</span></div><div class="arrow">→</div>
+      <div class="node"><b>persona</b><span>revisión, veredicto y merge</span></div>
+    </div>
+    <div class="grid3" style="margin-top:2.6vh">
+      <div class="card"><h3>skipped</h3><p>No miró nada: falta perfil o no hay staged. No es un pass.</p></div>
+      <div class="card"><h3>exit 2</h3><p>Falta configuración, como TEST_CMD. La puerta está incompleta.</p></div>
+      <div class="card"><h3>--no-verify</h3><p>Salta el hook local, no el CI ni la revisión. No es una salida.</p></div>
+    </div>
+    <div class="footer"><span><b>DevAgentKit</b></span><span>07 · La puerta</span></div>
+  </section>
+
+  <section class="slide" id="s9">
+    <div class="top"><div><div class="kicker">Perfiles</div><h2>El lenguaje vive fuera del núcleo.</h2></div><div class="meta"><b>08</b><span>agnóstico</span></div></div>
+    <div class="grid2">
+      <div class="card"><h3>Odoo 11</h3><p>Guard específico, odoo_lint, verify, skills de dominio y casos. Cubre XML, seguridad, ORM y preflight de MR.</p></div>
+      <div class="card"><h3>PHP</h3><p>Contrato y plantilla. PHPStan, PHPCS y PHPUnit todavía no están cableados: es un esqueleto declarado.</p></div>
+    </div>
+    <div class="note">Un repo tiene un perfil activo. Se puede cambiar sin reinstalar todo; el perfil activo está en .dev-agent/config.</div>
+    <div class="footer"><span><b>DevAgentKit</b></span><span>08 · Perfiles</span></div>
+  </section>
+
+  <section class="slide" id="s10">
+    <div class="top"><div><div class="kicker">Skills</div><h2>Procedimientos, no prompts sueltos.</h2></div><div class="meta"><b>09</b><span>agentes</span></div></div>
+    <table class="table">
+      <thead><tr><th>Skill</th><th>Cuándo</th><th>Qué produce</th></tr></thead>
+      <tbody>
+        <tr><td>dev-verify</td><td>después de un cambio</td><td>evidencia y veredicto</td></tr>
+        <tr><td>repro-first</td><td>al corregir un bug</td><td>test rojo antes del arreglo</td></tr>
+        <tr><td>review-diff</td><td>antes de revisar</td><td>hallazgos y veredicto</td></tr>
+        <tr><td>correct</td><td>corrección repetida</td><td>lint, test o CI</td></tr>
+        <tr><td>query-readonly</td><td>pregunta de datos</td><td>consulta de solo lectura y evidencia</td></tr>
+      </tbody>
+    </table>
+    <div class="note">El perfil añade skills de su lenguaje. Claude, OpenCode, Codex, pi y Hermes leen la misma fuente; los adaptadores se generan, no se editan a mano.</div>
+    <div class="footer"><span><b>DevAgentKit</b></span><span>09 · Skills</span></div>
+  </section>
+
+  <section class="slide" id="s11">
+    <div class="top"><div><div class="kicker">Contexto y norma</div><h2>Que el repo y la decisión no vivan solo en el chat.</h2></div><div class="meta"><b>10</b><span>memoria</span></div></div>
+    <div class="grid3">
+      <div class="card"><h3>CodeGraph</h3><p>Indexa estructura, símbolos y llamadas. El agente consulta el mapa en vez de adivinar por el árbol.</p></div>
+      <div class="card"><h3>Engram</h3><p>Guarda decisiones, bugs y contexto del proyecto. La sesión termina; la memoria no.</p></div>
+      <div class="card"><h3>tech-doc</h3><p>La norma de empresa se enlaza en ~/.agents/AGENTS.md. Si el clon está sucio, el check falla cerrado.</p></div>
+    </div>
+    <div class="note">CodeGraph y Engram son apoyo, no puertas. tech-doc es la fuente canónica; el kit no la copia ni la reemplaza.</div>
+    <div class="footer"><span><b>DevAgentKit</b></span><span>10 · Contexto y norma</span></div>
+  </section>
+
+  <section class="slide" id="s12">
+    <div class="top"><div><div class="kicker">Ciclo de trabajo</div><h2>Un cambio, de principio a fin.</h2></div><div class="meta"><b>11</b><span>el día a día</span></div></div>
+    <div class="flow">
+      <div class="node"><b>1. Rama</b><span>feat / fix / hotfix</span></div><div class="arrow">→</div>
+      <div class="node"><b>2. Contexto</b><span>AGENTS + perfil</span></div><div class="arrow">→</div>
+      <div class="node"><b>3. Reproducir</b><span>test rojo</span></div><div class="arrow">→</div>
+      <div class="node"><b>4. Implementar</b><span>código, tests y docs</span></div>
+    </div>
+    <div class="flow" style="margin-top:1.5vh">
+      <div class="node"><b>5. Guard</b><span>staged, determinista</span></div><div class="arrow">→</div>
+      <div class="node"><b>6. Verify</b><span>comportamiento real</span></div><div class="arrow">→</div>
+      <div class="node"><b>7. Revisión</b><span>diff y evidencia</span></div><div class="arrow">→</div>
+      <div class="node"><b>8. Entrega</b><span>CI y merge humano</span></div>
+    </div>
+    <div class="note">El kit no decide el producto ni el merge. Hace que la entrega llegue con evidencia y que el contexto no se pierda.</div>
+    <div class="footer"><span><b>DevAgentKit</b></span><span>11 · Ciclo de trabajo</span></div>
+  </section>
+
+  <section class="slide" id="s13">
+    <div class="top"><div><div class="kicker">Límites</div><h2>Lo que el sistema no hace.</h2></div><div class="meta"><b>12</b><span>confianza</span></div></div>
+    <div class="grid4">
+      <div class="card"><h3>No toca producción</h3><p>Se instala en la base de desarrollo; no despliega ni configura servidores.</p></div>
+      <div class="card"><h3>No guarda secretos</h3><p>Las claves viven en el entorno del agente, nunca en el repo o la evidencia.</p></div>
+      <div class="card"><h3>No hace push</h3><p>El push, el merge y el release siguen siendo decisiones humanas.</p></div>
+      <div class="card"><h3>No borra</h3><p>Respalda con .bak-&lt;fecha&gt; antes de reemplazar. No toca datos ni historial.</p></div>
+    </div>
+    <div class="note"><b>El CI de Scalpers no se toca.</b> La puerta local es una ayuda; el CI y la revisión humana son la garantía dura.</div>
+    <div class="footer"><span><b>DevAgentKit</b></span><span>12 · Límites</span></div>
+  </section>
+
+  <section class="slide" id="s14">
+    <div class="top"><div><div class="kicker">Estado</div><h2>Qué existe hoy y qué está pendiente.</h2></div><div class="meta"><b>13</b><span>sin promesas vacías</span></div></div>
+    <table class="table">
+      <thead><tr><th>Pieza</th><th>Estado</th><th>Nota</th></tr></thead>
+      <tbody>
+        <tr><td>Instalador, wrapper y doctor</td><td><span class="pill ok">implementado</span></td><td>Instalación, perfiles, agentes, contexto y diagnóstico.</td></tr>
+        <tr><td>Guard, verify y hooks</td><td><span class="pill ok">implementado</span></td><td>Puerta local con evidencia.</td></tr>
+        <tr><td>Odoo 11</td><td><span class="pill ok">implementado</span></td><td>Perfil, guard, skills y casos.</td></tr>
+        <tr><td>PHP</td><td><span class="pill warn">esqueleto</span></td><td>Faltan PHPStan, PHPCS y PHPUnit.</td></tr>
+        <tr><td>Eval neutral</td><td><span class="pill warn">pendiente</span></td><td>El harness sigue atado a OpenCode.</td></tr>
+        <tr><td>dev-agent init y lock</td><td><span class="pill warn">pendiente</span></td><td>install.sh es el camino completo actual.</td></tr>
+        <tr><td>Producción</td><td><span class="pill hot">humana</span></td><td>El kit no despliega ni decide el merge.</td></tr>
+      </tbody>
+    </table>
+    <div class="footer"><span><b>DevAgentKit</b></span><span>13 · Estado</span></div>
+  </section>
+
+  <section class="slide" id="s15">
+    <div class="top"><div><div class="kicker">Qué cambia</div><h2>Menos “funciona en mi máquina”. Más evidencia compartida.</h2></div><div class="meta"><b>14</b><span>para el equipo</span></div></div>
+    <div class="grid4">
+      <div class="card"><h3>Una forma común</h3><p>El mismo contrato para cualquier agente y cualquier stack.</p></div>
+      <div class="card"><h3>Revisiones más cortas</h3><p>La evidencia llega antes; la conversación empieza en los hallazgos.</p></div>
+      <div class="card"><h3>Agentes intercambiables</h3><p>Cambiar de herramienta no obliga a reescribir el proceso.</p></div>
+      <div class="card"><h3>Producción protegida</h3><p>El kit filtra el desarrollo; el merge y el despliegue siguen siendo humanos.</p></div>
+    </div>
+    <div class="note"><b>No es más burocracia:</b> es la misma puerta, una vez, para todos.</div>
+    <div class="footer"><span><b>DevAgentKit</b></span><span>14 · Qué cambia</span></div>
+  </section>
+
+  <section class="slide cover dark" id="s16">
+    <div class="top"><div><div class="kicker">Cierre</div><h1>El agente propone.<br>La puerta comprueba.<br>La persona decide.</h1></div><div class="meta"><b>DevAgentKit</b><span>documentación y uso</span></div></div>
+    <div class="bottom">
+      <div class="big">La calidad no depende del modelo. Depende de lo que somos capaces de demostrar.</div>
+      <p>docs/INSTALADOR.md · docs/USO-RAPIDO.md · docs/SISTEMA-FUNCIONALIDADES.html · docs/FORMACION-DEV-AGENT-KIT.md</p>
+    </div>
+    <div class="footer"><span><b>DevAgentKit</b> · presentación para el equipo</span><span>Gracias.</span></div>
+  </section>
+
+  <div class="controls">
+    <button id="prev" aria-label="Anterior">←</button>
+    <button id="next" aria-label="Siguiente">→</button>
+    <span class="counter" id="counter">01 / 16</span>
+  </div>
+  <div class="progress"><i id="bar"></i></div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let index = 0;
+  const counter = document.getElementById('counter');
+  const bar = document.getElementById('bar');
+  function fit() {
+    const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    document.documentElement.style.setProperty('--scale', String(scale));
+  }
+  window.addEventListener('resize', fit);
+  fit();
+
+  function show(n) {
+    index = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
+    const current = String(index + 1).padStart(2, '0');
+    const total = String(slides.length).padStart(2, '0');
+    counter.textContent = current + ' / ' + total;
+    bar.style.width = ((index + 1) / slides.length * 100) + '%';
+  }
+  document.getElementById('prev').addEventListener('click', () => show(index - 1));
+  document.getElementById('next').addEventListener('click', () => show(index + 1));
+  document.addEventListener('keydown', (event) => {
+    if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(event.key)) { event.preventDefault(); show(index + 1); }
+    if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(event.key)) { event.preventDefault(); show(index - 1); }
+    if (event.key === 'Home') show(0);
+    if (event.key === 'End') show(slides.length - 1);
+  });
+  show(0);
+</script>
+</body>
+</html>
