@@ -101,7 +101,8 @@ El perfil `odoo11` está extraído en
 `ScalpersCompany/dev-agent-profiles/profiles/odoo11`; su remoto público está creado. El
 núcleo ya no contiene Odoo: `guard.sh` carga el perfil y ejecuta `guard/odoo.sh`.
 `scripts/bootstrap.sh --profile odoo11` copia el perfil a `.dev-agent/profiles/odoo11` y
-escribe `.dev-agent/config`; el instalador completo `dev-agent init` sigue pendiente.
+escribe `.dev-agent/config`; `install.sh` es el instalador completo actual, con menú de
+perfiles, agentes, CodeGraph, Engram y tech-doc. `dev-agent init` y el lock siguen pendientes.
 
 ```text
 profile skills/       odoo-safe-change, odoo-11-code-review, factorlibre-mr-preflight
@@ -136,10 +137,17 @@ suyos, sin reemplazarlos.
 
 ## Instalador actual
 
-El camino que ya funciona es el bootstrap, con perfil y, si se quiere, tech-doc:
+El instalador completo es `install.sh`; pregunta perfiles, perfil activo, agentes y extras:
 
 ```bash
-bash "$HOME/dev-agent-kit/scripts/bootstrap.sh" /ruta/al/repo \
+git clone https://github.com/ScalpersCompany/dev-agent-kit.git "$HOME/.dev-agent-kit" \
+  && "$HOME/.dev-agent-kit/install.sh"
+```
+
+El bootstrap sigue disponible como nivel inferior:
+
+```bash
+bash "$HOME/.dev-agent-kit/scripts/bootstrap.sh" /ruta/al/repo \
   --profile odoo11 \
   --with-verify \
   --with-techdoc \
@@ -152,7 +160,11 @@ bash "$HOME/dev-agent-kit/scripts/bootstrap.sh" /ruta/al/repo \
 
 ## Instalador futuro
 
-El comando del núcleo se llama `dev-agent`:
+El wrapper `dev-agent` ya existe para `doctor`, `guard`, `verify`, `review`, `eval`,
+`profile`, `codegraph` y `memory`. `dev-agent init`, `profiles update` y el lock siguen
+pendientes; `install.sh` es el camino completo actual.
+
+El comando `dev-agent init` previsto sería:
 
 ```bash
 ./dev-agent init --repo /ruta/al/repo --profile php

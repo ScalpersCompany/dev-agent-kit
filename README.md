@@ -6,9 +6,9 @@ A repo-local kit to make agents trustworthy on a development codebase. It implem
 
 Start here: `docs/INSTALACION-Y-FUNCIONAMIENTO.md` (Spanish) — install, daily flow, guard, verify, evals, GGA, profiles, security and the implemented-versus-pending status.
 
-For a new colleague, start with `docs/FORMACION-DEV-AGENT-KIT.md` and project
-`docs/formacion/dev-agent-kit-formacion.html`: a three-session, step-by-step onboarding
-with Claude Code or any compatible agent.
+For a new colleague, start with `docs/INSTALADOR.md` (one line), then
+`docs/FORMACION-DEV-AGENT-KIT.md` and `docs/formacion/dev-agent-kit-formacion.html`.
+Daily commands: `docs/USO-RAPIDO.md`. Improving a skill: `docs/MEJORAR-SKILLS.md`.
 
 ## Repositories that work together
 
@@ -41,6 +41,8 @@ This kit is for the development base, not production. Production receives only c
 ## Core
 
 ```text
+install.sh                    one-line installer: profile menu, agents, CodeGraph, Engram, tech-doc and doctor
+bin/dev-agent                 usage wrapper: doctor, guard, verify, review, eval, profile, codegraph, memory
 AGENTS.md                     generic rules the agent reads first
 skills/                       five core skills: dev-verify, repro-first, review-diff, correct, query-readonly
 commands/                     neutral prompt templates; adapters install them per agent
@@ -65,11 +67,17 @@ scripts/install-techdoc.sh    clones or links tech-doc, links AGENTS.md and writ
 scripts/new-profile.sh        creates a profile from profiles/_template with a backup
 scripts/validate-profile.py   validates the profile contract and paths
 scripts/install-hooks.sh      installs the hooks and backs up the existing ones
+scripts/doctor.sh             reports installed, optional and missing pieces without false green
 hooks/pre-commit              local pre-commit: guard --staged
 hooks/pre-push                local pre-push: verify/run.sh
 tests/test_comment_lint.py    unit tests for the comment gate
 .github/workflows/quality.yml unit tests, syntax and eval dry-run in CI
 docs/                         install, operations, architecture, profiles, coverage
+docs/INSTALADOR.md            one-line install, menu and recovery
+docs/USO-RAPIDO.md            daily commands
+docs/MEJORAR-SKILLS.md        skill improvement loop
+docs/FORMACION-DEV-AGENT-KIT.md  three-session training guide
+docs/formacion/dev-agent-kit-formacion.html  37-slide training deck with simulations
 docs/CREAR-PERFIL.md          how to build a new profile
 docs/INTEGRACION-TECHDOC.md   how the company norm repository connects to the kit
 docs/DIAGRAMA-SISTEMA.md      Mermaid map of the whole system
@@ -85,27 +93,28 @@ The core has no `odoo_lint`, Odoo allowlist, Odoo skills, Odoo eval cases or Odo
 From this kit:
 
 ```bash
-bash scripts/bootstrap.sh /path/to/development-repo
-bash scripts/bootstrap.sh /path/to/development-repo --with-verify
-bash scripts/bootstrap.sh /path/to/development-repo --with-gga
-bash scripts/bootstrap.sh /path/to/development-repo \
-  --profile odoo11 --with-verify --with-techdoc --build-techdoc-html
+git clone https://github.com/ScalpersCompany/dev-agent-kit.git "$HOME/.dev-agent-kit" \
+  && "$HOME/.dev-agent-kit/install.sh"
 ```
 
-The bootstrap copies `AGENTS.md`, `skills/`, `commands/`, `agents/`, `verify/`, `guard/`,
-`evals/`, `scripts/`, `docs/` and `profiles/`; backs up anything it replaces as
-`.bak-<timestamp>`; creates `verify/config.env` from the example; and installs the
-pre-commit hook. `--with-verify` adds the pre-push gate and `.dev-agent/verify.env`;
-`--with-gga` adds the optional GGA files; `--profile` installs the active profile in
-`.dev-agent/profiles/` and writes `.dev-agent/config`; `--with-techdoc` clones or links
-tech-doc, links `~/.agents/AGENTS.md` and writes a local `docs/TECHDOC.md`; with
-`--build-techdoc-html` it also builds and links the single HTML. It does not touch
-production, git history or a profile registry.
+The installer asks for the target repository, profile or profiles, active profile, agents
+and optional CodeGraph, Engram and tech-doc. It installs the kit, all skills, the hooks,
+guard/verify, the selected profiles and the local references; see `docs/INSTALADOR.md`.
 
-The full profile installer (`dev-agent init --profile ... --all`) is still pending;
-`scripts/bootstrap.sh --profile` is the current automated path. If tech-doc is private and
-the machine has no access, the kit is still installed and the bootstrap reports the
-missing reference.
+Non-interactive:
+
+```bash
+./install.sh --target /path/to/development-repo \
+  --profiles all --active odoo11 --agents all \
+  --with-codegraph --with-engram --with-techdoc --yes
+```
+
+The bootstrap remains the lower-level path:
+
+```bash
+bash scripts/bootstrap.sh /path/to/development-repo --profile odoo11 --with-verify
+bash scripts/bootstrap.sh /path/to/development-repo --with-gga
+```
 
 ## Profiles
 
@@ -138,8 +147,10 @@ The visual map of the system is in `docs/diagrams/sistema.html`; the detailed fl
 | core `guard`, `verify`, evals, pre-commit/pre-push | implemented and covered by tests |
 | Odoo 11 profile | extracted to `ScalpersCompany/dev-agent-profiles/profiles/odoo11`; public |
 | PHP profile | skeleton moved to the profiles repository; PHPStan/PHPCS/PHPUnit not wired |
-| `bootstrap --profile` | implemented; copies the active profile and writes `.dev-agent/config` |
-| `dev-agent init` and the profile lock | designed; not implemented |
+| `install.sh` one-line installer | implemented; menu of profiles, agents, CodeGraph, Engram, tech-doc and doctor |
+| `bootstrap --profile` | implemented; lower-level path that copies the active profile and writes `.dev-agent/config` |
+| `dev-agent` wrapper | implemented; doctor, guard, verify, review, eval, profile, codegraph, memory |
+| `dev-agent init` and the profile lock | pending; `install.sh` is the complete path today |
 | profile template, `new-profile.sh` and `validate-profile.py` | implemented and tested |
 | visual system map | `docs/diagrams/sistema.html` and `docs/DIAGRAMA-SISTEMA.md` |
 | detailed flow | `docs/diagrams/flujo-detallado.html` and the Mermaid section in `docs/DIAGRAMA-SISTEMA.md` |

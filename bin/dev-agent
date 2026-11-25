@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SELF="$(readlink -f "${BASH_SOURCE[0]}")"
+KIT="$(cd "$(dirname "$SELF")/.." && pwd)"
+PROFILES="${DEV_AGENT_PROFILES:-$HOME/dev-agent-profiles}"
+cmd="${1:-help}"
+if [ $# -gt 0 ]; then shift; fi
+
+usage() {
+  cat >&2 <<'EOF'
+usage: dev-agent <command> [args]
+
+  doctor [repo]          diagnóstico de la instalación
+  guard [args]           guard determinista del repo actual
+  verify [args]          verify del repo actual
+  review                 muestra el diff y el prompt de revisión
+  eval [args]            eval harness (OpenCode; deuda conocida)
+  profile list           perfiles instalados
+  profile use <name>     cambia el perfil activo
+  codegraph [args]       codegraph sync del repo actual, o pasa args
+  memory [args]          engram save/search/... del proyecto
+EOF
+}
+
+case "$cmd" in
+  help|-h|--help) usage ;;
+  doctor) exec bash "$KIT/scripts/doctor.sh" "${1:-$PWD}" ;;
+  guard) exec bash "$KIT/guard/guard.sh" "$@" ;;
+  verify) export VERIFY_ROOT="${VERIFY_ROOT:-$PWD}"; exec bash "$KIT/verify/run.sh" "$@" ;;
+  eval) exec python3 "$KIT/evals/harness.py" "$@" ;;
+  review)
+    git diff --stat
+    echo
+    echo "Pide a tu agente: usa la skill review-diff sobre este diff; no edites."
+    echo "La skill está en $KIT/skills/review-diff/SKILL.md"
+    ;;
+  profile)
+    action="${1:-list}"
+    if [ "$action" = "list" ]; then
+      active=""
+      [ -f "$PWD/.dev-agent/config" ] && active="$(sed -n 's/^DEV_AGENT_PROFILE=//p' "$PWD/.dev-agent/config")"
+      if [ -d "$PWD/.dev-agent/profiles" ]; then
+        find "$PWD/.dev-agent/profiles" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort | while read -r name; do
+          if [ "$name" = "$active" ]; then echo "* $name"; else echo "  $name"; fi
+        done
+      else
+        echo "no hay perfiles en $PWD/.dev-agent/profiles"
+      fi
+    elif [ "$action" = "use" ]; then
+      name="${2:-}"
+      [ -n "$name" ] || { echo "falta el nombre del perfil" >&2; exit 2; }
+      [ -f "$PWD/.dev-agent/profiles/$name/profile.env" ] || { echo "perfil no instalado: $name" >&2; exit 2; }
+      mkdir -p "$PWD/.dev-agent"
+      if [ -f "$PWD/.dev-agent/config" ]; then
+        cp -a "$PWD/.dev-agent/config" "$PWD/.dev-agent/config.bak-$(date +%Y%m%d-%H%M%S)"
+      fi
+      printf 'DEV_AGENT_PROFILE=%s\n' "$name" >"$PWD/.dev-agent/config"
+      echo "perfil activo: $name"
+    else
+      usage
+      exit 2
+    fi
+    ;;
+  codegraph)
+    if [ $# -eq 0 ]; then exec codegraph sync "$PWD"; else exec codegraph "$@"; fi
+    ;;
+  memory) exec engram "$@" ;;
+  *) usage; exit 2 ;;
+esac

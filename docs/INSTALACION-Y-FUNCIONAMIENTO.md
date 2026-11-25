@@ -52,11 +52,22 @@ completa está en `docs/INTEGRACION-TECHDOC.md`.
 
 ## 3. Instalación del núcleo
 
-### 3.1 Automatizada (recomendada)
+### 3.1 Instalador único (recomendada)
 
-El bootstrap instala el kit, el perfil activo, los hooks y, si se pide, la referencia a
-tech-doc. El HTML de tech-doc se enlaza en local si ya está construido; no se copia en el
-repo.
+El instalador pregunta el repo, el perfil o perfiles, el perfil activo, los agentes y los
+extras. Instala el kit, el perfil, todas las skills, los hooks, guard/verify, CodeGraph,
+Engram y la referencia a tech-doc.
+
+```bash
+git clone https://github.com/ScalpersCompany/dev-agent-kit.git "$HOME/.dev-agent-kit" \
+  && "$HOME/.dev-agent-kit/install.sh"
+```
+
+La guía corta está en `docs/INSTALADOR.md`; el uso diario, en `docs/USO-RAPIDO.md`.
+
+### 3.1.1 Bootstrap (nivel inferior)
+
+El bootstrap sigue disponible para automatizar una parte sin el menú:
 
 ```bash
 bash scripts/bootstrap.sh /ruta/a/tu/repo \
@@ -79,7 +90,7 @@ bash scripts/bootstrap.sh /ruta/a/tu/repo \
 Si no hay acceso al repo privado de tech-doc, el kit sigue instalado y el bootstrap avisa.
 Se puede pasar `--techdoc-path` con un clon existente.
 
-### 3.1.1 Sin tech-doc
+### 3.1.2 Sin tech-doc
 
 ```bash
 bash scripts/bootstrap.sh /ruta/a/tu/repo --profile odoo11 --with-verify
@@ -230,7 +241,8 @@ El perfil vive en `dev-agent-profiles/profiles/odoo11`:
 Para usarlo, copia el perfil a `.dev-agent/profiles/odoo11` (o `profiles/odoo11`) y escribe
 `.dev-agent/config` con `DEV_AGENT_PROFILE=odoo11`. El `guard.sh` del núcleo ejecutará
 `guard/odoo.sh`. `scripts/bootstrap.sh --profile odoo11` ya copia el perfil y escribe
-`.dev-agent/config`; el instalador completo `dev-agent init` sigue pendiente.
+`.dev-agent/config`; `install.sh` es el instalador completo actual; `dev-agent init` y el
+lock siguen pendientes.
 
 Para crear otro perfil: `profiles/_template`, `scripts/new-profile.sh <nombre> --language
 <lenguaje> --repo <repo-de-perfiles>` y `scripts/validate-profile.py <perfil>`; la guía

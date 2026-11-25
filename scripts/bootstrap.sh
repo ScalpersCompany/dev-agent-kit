@@ -110,4 +110,4 @@ fi
 echo
 echo "next: edit verify/config.env, run bash verify/run.sh, then bash guard/guard.sh"
 echo "agents: gentle-ai sync or scripts/install-to-editors.sh for a specific skill"
-echo "profiles: see docs/PERFILES-EN-REPOS.md; bootstrap --profile installs one; dev-agent init is still pending"
+echo "profiles: see docs/PERFILES-EN-REPOS.md; install.sh is the complete installer; bootstrap --profile installs one; dev-agent init is still pending"

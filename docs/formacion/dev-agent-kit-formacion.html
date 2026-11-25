@@ -92,6 +92,29 @@
   .right-note p, .right-note li { font-size: 19px; color: var(--muted); }
   .right-note ul { margin: 8px 0 0; padding-left: 19px; }
   .right-note li { margin: 7px 0; }
+  .strengths { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 28px; }
+  .strength { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px 22px 20px; min-height: 190px; }
+  .strength .n { font-family: var(--serif); font-size: 34px; line-height: 1; color: var(--accent); }
+  .strength h3 { font-size: 23px; margin: 10px 0 7px; }
+  .strength p { font-size: 18px; line-height: 1.35; color: var(--muted); margin: 0; }
+  .demo { border: 1px solid var(--accent); background: #fff8f3; border-radius: 14px; padding: 18px 22px; margin-top: 20px; }
+  .demo .demo-head { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; }
+  .demo h3 { font-size: 24px; }
+  .demo p { font-size: 20px; line-height: 1.35; color: var(--ink); margin: 8px 0 0; }
+  .demo .code { margin-top: 10px; font-size: 17px; padding: 14px 16px; }
+  .demo-steps { list-style: none; padding: 0; margin: 10px 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: 7px 22px; }
+  .demo-steps li { font-size: 18px; color: var(--muted); line-height: 1.3; padding-left: 26px; position: relative; cursor: pointer; }
+  .demo-steps li::before { content: "□"; position: absolute; left: 0; top: -3px; color: var(--accent); font-size: 21px; }
+  .demo-steps li.done { color: var(--ink); }
+  .demo-steps li.done::before { content: "✓"; color: var(--ok); }
+  .flow.two { margin-top: 18px; }
+  .flow.tight .node { padding: 14px 11px; }
+  .flow.tight .node b { font-size: 17px; }
+  .flow.tight .node span { font-size: 13px; }
+  .code.compact { font-size: 15px; line-height: 1.4; padding: 14px 16px; }
+  .table.compact { font-size: 17px; margin-top: 18px; }
+  .table.compact th { font-size: 13px; padding-bottom: 7px; }
+  .table.compact td { padding: 9px 10px 9px 0; }
   .big-quote { font-family: var(--serif); font-size: 42px; line-height: 1.18; max-width: 22ch; margin-top: 24px; }
   .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
   .controls { position: fixed; left: 50%; right: auto; bottom: 18px; transform: translateX(-50%); display: flex; gap: 8px; z-index: 20; }
@@ -116,7 +139,7 @@
   <section class="slide cover active" id="slide-1" data-session="Apertura">
     <div class="top">
       <div>
-        <div class="kicker">Formación interna · 3 sesiones</div>
+        <div class="kicker">Formación interna · 3 sesiones + simulación</div>
         <h1>DevAgentKit,<br>de cero a la primera puerta.</h1>
       </div>
       <div class="meta">
@@ -129,20 +152,61 @@
       <p class="big-quote">El agente propone.<br>La puerta decide.<br>La persona autoriza.</p>
       <p>No es un curso de Odoo.<br>Es aprender a entregar con evidencia, en cualquier repo y cualquier stack.</p>
     </div>
-    <div class="footer"><span><b>DevAgentKit</b> · formación</span><span>El kit no despliega; filtra lo que llega a la base de desarrollo.</span></div>
+    <div class="footer"><span><b>DevAgentKit</b> · formación</span><span>Flechas o espacio para avanzar; F para pantalla completa; P para imprimir.</span></div>
   </section>
-<section class="slide section" id="slide-2" data-session="Sesión 1">
+
+  <section class="slide section" id="slide-2" data-session="Sesión 1">
     <div class="num">01</div>
     <div class="kicker">La promesa</div>
     <h2>Al terminar, no sabrás “usar el kit”.<br>Sabrás entregar un cambio que se pueda comprobar.</h2>
     <div class="cols-3">
-      <div class="card"><h3>Instalar</h3><p>Clonar el kit, los perfiles y tu repo; dejarlo en la raíz.</p></div>
+      <div class="card"><h3>Instalar</h3><p>Una línea, un menú y el repo listo: kit, perfil, skills, hooks, CodeGraph y Engram.</p></div>
       <div class="card"><h3>Probar</h3><p>Ejecutar guard y verify; leer la evidencia; distinguir skipped de pass.</p></div>
       <div class="card"><h3>Entregar</h3><p>Usar skills, modelos aprobados y revisión humana; sin secretos ni producción.</p></div>
     </div>
     <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>Primero la puerta; después el agente.</span></div>
   </section>
-<section class="slide" id="slide-3" data-session="Sesión 1">
+
+  <section class="slide" id="slide-3" data-session="Sesión 1">
+    <div class="kicker">Para qué sirve este flujo</div>
+    <h2>No es un atajo para escribir más código.<br>Es una forma de saber qué se puede entregar.</h2>
+    <div class="strengths">
+      <div class="strength"><div class="n">01</div><h3>De la petición a la evidencia</h3><p>El agente escribe; guard y verify convierten el resultado en algo que otra persona puede revisar.</p></div>
+      <div class="strength"><div class="n">02</div><h3>Un contrato, varios agentes</h3><p>Claude, OpenCode, Codex, pi y Hermes leen la misma fuente; no hay cinco flujos distintos.</p></div>
+      <div class="strength"><div class="n">03</div><h3>Un repo listo en una línea</h3><p>El compañero no memoriza flags: elige perfil, agentes y extras; el instalador hace el resto.</p></div>
+      <div class="strength"><div class="n">04</div><h3>Producción fuera del alcance</h3><p>El kit filtra la base de desarrollo. El merge y el despliegue siguen siendo humanos.</p></div>
+    </div>
+    <div class="note">El flujo no decide el producto: decide qué está comprobado y qué no.</div>
+    <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>La unidad de entrega es un cambio con evidencia, no una conversación.</span></div>
+  </section>
+
+  <section class="slide" id="slide-4" data-session="Sesión 1">
+    <div class="kicker">Puntos fuertes · 1 de 2</div>
+    <h2>Lo que hace fuerte al sistema no es el modelo: es el contrato.</h2>
+    <div class="strengths">
+      <div class="strength"><div class="n">01</div><h3>Una línea, un menú</h3><p>Clonar y ejecutar. El instalador detecta perfiles y pregunta solo lo que no puede deducir.</p></div>
+      <div class="strength"><div class="n">02</div><h3>Agnóstico del stack</h3><p>Odoo 11, PHP o lo que venga: el núcleo no importa el lenguaje; el perfil aporta el dominio.</p></div>
+      <div class="strength"><div class="n">03</div><h3>Todas las skills, no una muestra</h3><p>El core y el perfil se copian completos; los adaptadores se regeneran, no se editan a mano.</p></div>
+      <div class="strength"><div class="n">04</div><h3>Guard + verify + hooks</h3><p>Lo determinista se comprueba antes del commit; el comportamiento real deja evidencia antes del push.</p></div>
+    </div>
+    <div class="note">La fuerza es la puerta: si no hay salida, no hay verde.</div>
+    <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>Hecho ≠ verificado ≠ aprobado.</span></div>
+  </section>
+
+  <section class="slide" id="slide-5" data-session="Sesión 1">
+    <div class="kicker">Puntos fuertes · 2 de 2</div>
+    <h2>El contexto y la norma también forman parte de la entrega.</h2>
+    <div class="strengths">
+      <div class="strength"><div class="n">05</div><h3>CodeGraph</h3><p>El repo se indexa; el agente consulta estructura y llamadas en vez de adivinar por el árbol.</p></div>
+      <div class="strength"><div class="n">06</div><h3>Engram</h3><p>Decisiones, bugs y contexto sobreviven a la sesión; la memoria no vive solo en el chat.</p></div>
+      <div class="strength"><div class="n">07</div><h3>tech-doc como norma</h3><p>La norma de empresa se enlaza, no se copia; si el clon está sucio, la puerta falla cerrado.</p></div>
+      <div class="strength"><div class="n">08</div><h3>Sin secretos ni producción</h3><p>Las claves quedan en el entorno; el kit no despliega, no hace push y no borra sin backup.</p></div>
+    </div>
+    <div class="note">El kit no sustituye al CI: añade una puerta local y una memoria compartida.</div>
+    <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>Contexto, norma y evidencia; las tres o no hay entrega.</span></div>
+  </section>
+
+  <section class="slide" id="slide-6" data-session="Sesión 1">
     <div class="kicker">Marco mental</div>
     <h2>Qué es DevAgentKit y qué no es.</h2>
     <div class="cols">
@@ -152,14 +216,15 @@
     <div class="note">El agente es intercambiable; la puerta es un comando.</div>
     <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>Hecho ≠ verificado ≠ aprobado.</span></div>
   </section>
-<section class="slide" id="slide-4" data-session="Sesión 1">
+
+  <section class="slide" id="slide-7" data-session="Sesión 1">
     <div class="kicker">Mapa de repos</div>
     <h2>Cuatro piezas separadas, no un monolito.</h2>
     <table class="table">
       <thead><tr><th>Repo</th><th>Papel</th><th>Cómo se usa</th></tr></thead>
       <tbody>
         <tr><td>dev-agent-kit</td><td>Puerta, hooks, skills, evals</td><td>Se clona; es el núcleo</td></tr>
-        <tr><td>dev-agent-profiles</td><td>Perfiles Odoo 11 y PHP</td><td>Se clona aparte; se copia el perfil activo</td></tr>
+        <tr><td>dev-agent-profiles</td><td>Perfiles Odoo 11 y PHP</td><td>Se clona aparte; se copian los elegidos</td></tr>
         <tr><td>scalpers-tech-doc</td><td>Norma y documentación de empresa</td><td>Se enlaza su AGENTS.md; no se copia</td></tr>
         <tr><td>Tu repo de desarrollo</td><td>Odoo, PHP o cualquier stack</td><td>El kit y el perfil se instalan en su raíz</td></tr>
       </tbody>
@@ -167,22 +232,30 @@
     <div class="note">No hay un repo de producto fijo. No hay submódulos. La norma de empresa gana.</div>
     <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>El repo donde trabajas es el destino, no un repo de ejemplo.</span></div>
   </section>
-<section class="slide" id="slide-5" data-session="Sesión 1">
-    <div class="kicker">Recorrido</div>
-    <h2>De la descarga a la primera entrega.</h2>
-    <div class="flow">
-      <div class="node"><b>1. Descarga</b><span>kit + perfiles + tu repo</span></div><div class="arrow">→</div>
-      <div class="node"><b>2. Instala</b><span>bootstrap en la raíz</span></div><div class="arrow">→</div>
-      <div class="node"><b>3. Perfil</b><span>Odoo 11 o PHP</span></div><div class="arrow">→</div>
-      <div class="node"><b>4. Skills</b><span>adaptadores por agente</span></div><div class="arrow">→</div>
-      <div class="node"><b>5. Guard</b><span>cambio staged</span></div><div class="arrow">→</div>
-      <div class="node"><b>6. Verify</b><span>comportamiento real</span></div><div class="arrow">→</div>
-      <div class="node"><b>7. Entrega</b><span>evidencia + revisión</span></div>
+
+  <section class="slide" id="slide-8" data-session="Sesión 1">
+    <div class="kicker">El flujo completo</div>
+    <h2>De delante atrás: de la línea al merge humano.</h2>
+    <div class="flow tight">
+      <div class="node"><b>0. Una línea</b><span>clonar + install.sh</span></div><div class="arrow">→</div>
+      <div class="node"><b>1. Menú</b><span>perfil, activo, agentes, extras</span></div><div class="arrow">→</div>
+      <div class="node"><b>2. Kit</b><span>perfil + todas las skills</span></div><div class="arrow">→</div>
+      <div class="node"><b>3. Puerta</b><span>hooks + guard + verify</span></div><div class="arrow">→</div>
+      <div class="node"><b>4. CodeGraph</b><span>índice del repo</span></div>
     </div>
-    <div class="note">La sesión 1 cubre 1–5; la 2, 4 y 6; la 3, 6–7, perfil en profundidad y tech-doc. El orden no se salta.</div>
+    <div class="flow tight two">
+      <div class="node"><b>5. Engram</b><span>memoria del proyecto</span></div><div class="arrow">→</div>
+      <div class="node"><b>6. tech-doc</b><span>norma enlazada</span></div><div class="arrow">→</div>
+      <div class="node"><b>7. Doctor</b><span>qué quedó y qué falta</span></div><div class="arrow">→</div>
+      <div class="node"><b>8. Día a día</b><span>rama, cambio, tests, docs</span></div><div class="arrow">→</div>
+      <div class="node"><b>9. Evidencia</b><span>verify + review</span></div><div class="arrow">→</div>
+      <div class="node"><b>10. Producción</b><span>decisión humana</span></div>
+    </div>
+    <div class="note">Sesión 1: 0–4. Sesión 2: 2, 4–5 y 8. Sesión 3: 3, 6–7 y 9–10. El orden no se salta.</div>
     <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>No se avanza si verify no tiene un TEST_CMD real.</span></div>
   </section>
-<section class="slide" id="slide-6" data-session="Sesión 1">
+
+  <section class="slide" id="slide-9" data-session="Sesión 1">
     <div class="kicker">Antes del lunes</div>
     <h2>Lo que el compañero tiene que traer.</h2>
     <ul class="checklist">
@@ -194,51 +267,66 @@
     <div class="warnbox">Si falta el repo de desarrollo o el proveedor aprobado, la formación se para. El kit no inventa credenciales ni crea entornos.</div>
     <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>Pre-work: 15 minutos, no una sorpresa.</span></div>
   </section>
-<section class="slide" id="slide-7" data-session="Sesión 1">
-    <div class="kicker">Descarga</div>
-    <h2>Dos clones y tu repo de desarrollo.</h2>
-    <div class="code"><span class="c"># kit y perfiles</span>
-mkdir -p "$HOME/dev"
-git clone https://github.com/ScalpersCompany/dev-agent-kit.git "$HOME/dev-agent-kit"
-git clone https://github.com/ScalpersCompany/dev-agent-profiles.git "$HOME/dev-agent-profiles"
 
-<span class="c"># tu repo de desarrollo, con tu URL y tu credencial</span>
-git clone &lt;url-de-tu-repo&gt; /ruta/a/tu/repo
-
-<span class="c"># los hooks buscan el kit aquí</span>
-export DEV_AGENT_KIT="$HOME/dev-agent-kit"</div>
-    <div class="note">Necesitas acceso a los repos de ScalpersCompany; el tuyo, con tu credencial. Nunca pegues un token en un fichero del repo.</div>
-    <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>DEV_AGENT_KIT es el contrato de ruta con los hooks.</span></div>
-  </section>
-<section class="slide" id="slide-8" data-session="Sesión 1">
+  <section class="slide" id="slide-10" data-session="Sesión 1">
     <div class="kicker">Instalación</div>
-    <h2>El bootstrap copia la puerta y los hooks.</h2>
-    <div class="code">cd /ruta/a/tu/repo
-bash "$HOME/dev-agent-kit/scripts/bootstrap.sh" . \
-  --profile odoo11 --with-verify \
-  --with-techdoc --build-techdoc-html</div>
+    <h2>Una línea. Después, el menú hace las preguntas.</h2>
+    <div class="code">git clone https://github.com/ScalpersCompany/dev-agent-kit.git "$HOME/.dev-agent-kit" \
+  &amp;&amp; "$HOME/.dev-agent-kit/install.sh"</div>
     <div class="cols">
-      <div class="card"><h3>Hace</h3><ul><li>Copia AGENTS, skills, commands, agents, verify, guard, evals, scripts, docs y profiles/.</li><li>Respalda lo existente como .bak-&lt;fecha&gt;.</li><li>Crea verify/config.env.</li><li>Instala perfil, pre-commit y, con --with-verify, pre-push.</li></ul></div>
-      <div class="card"><h3>No hace</h3><ul><li>No crea la base de datos.</li><li>No configura el modelo.</li><li>No empuja ni despliega.</li><li>No copia el HTML privado de tech-doc.</li></ul></div>
+      <div class="card"><h3>Qué pasa</h3><ul><li>Preflight de git, Python, rsync y repo.</li><li>Clona el kit y los perfiles; no toca el repo destino hasta confirmar.</li><li>Pregunta perfil, perfil activo, agentes y extras.</li><li>Respalda lo que reemplaza y termina con doctor.</li></ul></div>
+      <div class="card"><h3>Qué no pasa</h3><ul><li>No se usa <b>curl | bash</b>.</li><li>No se pide ni se guarda un token.</li><li>No se copia el HTML privado de tech-doc.</li><li>No se hace push ni se toca producción.</li></ul></div>
     </div>
-    <div class="note">El bootstrap sobrescribe AGENTS.md y hace merge de directorios; revisa los .bak. --with-techdoc enlaza la referencia; --build-techdoc-html construye el HTML.</div>
-    <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>Backups primero; nada se borra.</span></div>
+    <div class="note">Si ya tienes el kit clonado: <b>./install.sh</b>. La misma orden sirve para cualquier repo de desarrollo.</div>
+    <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>Una entrada; el resto son decisiones explícitas.</span></div>
   </section>
-<section class="slide" id="slide-9" data-session="Sesión 1">
+
+  <section class="slide" id="slide-11" data-session="Sesión 1">
+    <div class="kicker">El menú</div>
+    <h2>El instalador pregunta lo que no puede deducir.</h2>
+    <div class="split">
+      <div>
+        <div class="code compact">$ ./install.sh
+Repo de desarrollo [/ruta/a/tu/repo]:
+Perfiles disponibles:
+  1) odoo11  Odoo 11, XML, seguridad y preflight
+  2) php     PHP, PHPStan, PHPCS y PHPUnit
+  3) todos
+Perfil activo si instalas varios [1]:
+Agentes:
+  1) Claude Code   2) OpenCode   3) Codex
+  4) pi             5) Hermes     6) todos
+¿CodeGraph? [S/n]
+¿Engram? [S/n]
+¿Tech-doc? [S/n] (privado)
+¿Construir HTML? [s/N]</div>
+        <div class="note">Los perfiles se leen del repo: si mañana hay un tercero, aparece solo. No hay lista hardcodeada.</div>
+      </div>
+      <div class="right-note"><h3>Qué instala</h3><ul><li>Kit, perfiles elegidos y perfil activo.</li><li>Todas las skills del core y del perfil.</li><li>Hooks, guard, verify y comment_lint.</li><li>CodeGraph y Engram si están disponibles.</li><li>tech-doc enlazado; HTML local si se pide.</li><li>El wrapper dev-agent y el doctor final.</li></ul></div>
+    </div>
+    <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>Un perfil, varios o todos; siempre hay un activo.</span></div>
+  </section>
+
+  <section class="slide" id="slide-12" data-session="Sesión 1">
     <div class="kicker">Perfil</div>
     <h2>Un perfil activo por repo.</h2>
-    <div class="code">mkdir -p .dev-agent/profiles
-rsync -a --exclude='verify/config.env' \
-  "$HOME/dev-agent-profiles/profiles/odoo11/" .dev-agent/profiles/odoo11/
-printf 'DEV_AGENT_PROFILE=odoo11\n' &gt; .dev-agent/config</div>
+    <div class="code">cat .dev-agent/config
+DEV_AGENT_PROFILE=odoo11
+
+dev-agent profile list
+* odoo11
+  php
+
+dev-agent profile use odoo11</div>
     <div class="cols">
       <div class="card"><h3>Odoo 11</h3><p>guard/odoo.sh, odoo_lint, verify, tres skills y casos.</p></div>
       <div class="card"><h3>PHP</h3><p>Esqueleto: contrato y plantilla; PHPStan/PHPCS/PHPUnit aún no cableados.</p></div>
     </div>
-    <div class="note">Si usaste --profile, ya está; esto es el fallback. .dev-agent es local; para CI o equipo, copia el perfil a profiles/. Skipped no es pass.</div>
+    <div class="note">El instalador ya copió el perfil; esto es para comprobar y cambiar. .dev-agent es local; para CI o equipo, copia el perfil a profiles/. Skipped no es pass.</div>
     <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>El perfil aporta el lenguaje; el núcleo no sabe Odoo ni PHP.</span></div>
   </section>
-<section class="slide" id="slide-10" data-session="Sesión 1">
+
+  <section class="slide" id="slide-13" data-session="Sesión 1">
     <div class="kicker">Verify</div>
     <h2>Dos ficheros, una idea: comportamiento real.</h2>
     <div class="cols">
@@ -250,7 +338,8 @@ TEST_CMD='python3 -m unittest discover -v'</div>
     <div class="note">Si no hay SMOKE_CMD ni TEST_CMD, verify sale 2. No es verde: es una configuración incompleta.</div>
     <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>Una base desechable; nunca la compartida ni producción.</span></div>
   </section>
-<section class="slide" id="slide-11" data-session="Sesión 1">
+
+  <section class="slide" id="slide-14" data-session="Sesión 1">
     <div class="kicker">Hooks</div>
     <h2>La puerta local no es la única puerta.</h2>
     <table class="table">
@@ -264,7 +353,38 @@ TEST_CMD='python3 -m unittest discover -v'</div>
     <div class="warnbox">El CI de Scalpers no se toca. El CI del repo y la revisión humana son la garantía dura. Un skipped no es un pass.</div>
     <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>Guard y verify dejan evidencia; el hook solo la exige.</span></div>
   </section>
-<section class="slide" id="slide-12" data-session="Sesión 1">
+
+  <section class="slide" id="slide-15" data-session="Sesión 1">
+    <div class="kicker">Contexto y memoria</div>
+    <h2>CodeGraph y Engram: el repo y la decisión, fuera del chat.</h2>
+    <div class="cols">
+      <div class="card"><h3>CodeGraph</h3><p>Indexa estructura, símbolos y llamadas. El agente consulta el repo en vez de adivinar.</p><div class="code compact">codegraph init .
+codegraph sync .
+codegraph status .</div></div>
+      <div class="card"><h3>Engram</h3><p>Guarda decisiones, bugs y contexto del proyecto. La memoria no se pierde al cerrar la sesión.</p><div class="code compact">engram save "Decisión" \
+  "Qué y por qué" --type decision</div></div>
+    </div>
+    <div class="note">Son contexto, no puertas. Si faltan, el doctor lo dice; no se declara verde lo que no se comprobó.</div>
+    <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>El instalador los activa si están; el wrapper los usa desde el repo.</span></div>
+  </section>
+
+  <section class="slide" id="slide-16" data-session="Sesión 1">
+    <div class="kicker">Doctor</div>
+    <h2>El cierre no es “instalado”: es “sé qué quedó”.</h2>
+    <table class="table compact">
+      <thead><tr><th>Estado</th><th>Qué significa</th><th>Qué hace el formador</th></tr></thead>
+      <tbody>
+        <tr><td>ok</td><td>La pieza está y se puede usar.</td><td>La enseña como parte del flujo.</td></tr>
+        <tr><td>warn</td><td>Opcional o pendiente: CodeGraph, Engram, HTML, TEST_CMD.</td><td>Explica el límite; no lo pinta de verde.</td></tr>
+        <tr><td>FAIL</td><td>Falta una pieza obligatoria: git, perfil, hooks.</td><td>Para y corrige antes de seguir.</td></tr>
+      </tbody>
+    </table>
+    <div class="code">dev-agent doctor</div>
+    <div class="note">El instalador termina con doctor. Si el formador no puede explicar un warn, no lo ha entendido.</div>
+    <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>Implementado, opcional y omitido son tres estados distintos.</span></div>
+  </section>
+
+  <section class="slide" id="slide-17" data-session="Sesión 1">
     <div class="kicker">Laboratorio 1</div>
     <h2>La primera puerta, en un repo desechable.</h2>
     <div class="code">mkdir -p "$HOME/devkit-lab" &amp;&amp; cd "$HOME/devkit-lab"
@@ -272,15 +392,18 @@ git init
 printf 'def suma(a, b):\n    return a + b\n' &gt; calc.py
 printf 'import unittest\nfrom calc import suma\n...' &gt; test_calc.py
 git add . &amp;&amp; git commit -m 'lab inicial'
-bash "$HOME/dev-agent-kit/scripts/bootstrap.sh" . --with-verify</div>
+bash "$HOME/.dev-agent-kit/install.sh" \
+  --target "$PWD" --profiles odoo11 --active odoo11 \
+  --agents none --no-codegraph --no-engram --no-techdoc --yes</div>
     <div class="cols">
       <div class="card"><h3>Configurar</h3><p>SMOKE_CMD='python3 -c "import calc"'<br>TEST_CMD='python3 -m unittest discover -v'</p></div>
-      <div class="card"><h3>Demostrar</h3><p>bash guard/guard.sh<br>bash verify/run.sh<br>Leer evidence/&lt;run-id&gt;/summary.json</p></div>
+      <div class="card"><h3>Demostrar</h3><p>dev-agent guard<br>dev-agent verify<br>Leer evidence/&lt;run-id&gt;/summary.json</p></div>
     </div>
     <div class="note">Criterio de salida: el alumno explica qué comprobó cada comando y dónde está la evidencia. test_calc.py completo en la guía §1.7; no copies la elipsis.</div>
     <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>Nunca en el repo real de producción.</span></div>
   </section>
-<section class="slide" id="slide-13" data-session="Sesión 2">
+
+  <section class="slide" id="slide-18" data-session="Sesión 2">
     <div class="kicker">Fuente única</div>
     <h2>Skills, comandos y juez: una sola fuente neutral.</h2>
     <div class="flow">
@@ -289,18 +412,19 @@ bash "$HOME/dev-agent-kit/scripts/bootstrap.sh" . --with-verify</div>
       <div class="node"><b>agents/</b><span>juez de las evals</span></div><div class="arrow">→</div>
       <div class="node"><b>.opencode / .claude</b><span>adaptadores generados</span></div>
     </div>
-    <div class="code">bash "$HOME/dev-agent-kit/scripts/install-agent-adapters.sh" . \
+    <div class="code">bash "$HOME/.dev-agent-kit/scripts/install-agent-adapters.sh" . \
   --agents claude,opencode \
   --profile "$HOME/dev-agent-profiles/profiles/odoo11"</div>
     <div class="note">No se editan los adaptadores a mano: se regeneran. El script no escribe .gitignore; revisa .opencode y .claude antes de git add.</div>
     <div class="footer"><span><b>Sesión 2</b> · martes</span><span>Una fuente; varios agentes.</span></div>
   </section>
-<section class="slide" id="slide-14" data-session="Sesión 2">
+
+  <section class="slide" id="slide-19" data-session="Sesión 2">
     <div class="kicker">Claude Code</div>
     <h2>El camino principal, paso a paso.</h2>
     <div class="cols">
       <div>
-        <div class="code">bash "$HOME/dev-agent-kit/scripts/install-agent-adapters.sh" . \
+        <div class="code">bash "$HOME/.dev-agent-kit/scripts/install-agent-adapters.sh" . \
   --agents claude \
   --profile "$HOME/dev-agent-profiles/profiles/odoo11"
 
@@ -312,22 +436,24 @@ ln -s AGENTS.md CLAUDE.md</div>
     </div>
     <div class="footer"><span><b>Sesión 2</b> · martes</span><span>Claude es el ejemplo; el kit no depende de Claude.</span></div>
   </section>
-<section class="slide" id="slide-15" data-session="Sesión 2">
+
+  <section class="slide" id="slide-20" data-session="Sesión 2">
     <div class="kicker">Otros agentes</div>
     <h2>El mismo contrato, distintas rutas.</h2>
     <table class="table">
       <thead><tr><th>Agente</th><th>Ruta / instalación</th><th>Nota</th></tr></thead>
       <tbody>
         <tr><td>OpenCode</td><td>--agents opencode → .opencode/</td><td>Reiniciar sesión tras generar.</td></tr>
-        <tr><td>Codex</td><td>~/.codex/AGENTS.md y sus skills</td><td>Sin adaptador del kit; fuente global.</td></tr>
-        <tr><td>pi / gentle-shell</td><td>su directorio de skills</td><td>gentle-ai sync o copia/enlace.</td></tr>
-        <tr><td>Hermes</td><td>~/.hermes/skills/</td><td>La base compartida es ~/.agents/skills.</td></tr>
+        <tr><td>Codex</td><td>~/.codex/skills</td><td>El instalador copia core + perfil.</td></tr>
+        <tr><td>pi / gentle-shell</td><td>~/.pi/agent/skills</td><td>El instalador copia core + perfil.</td></tr>
+        <tr><td>Hermes</td><td>~/.hermes/skills/</td><td>El instalador copia core + perfil.</td></tr>
       </tbody>
     </table>
-    <div class="note">Sin adaptador para Codex/pi/Hermes: copia skills/. a su ruta; no copies comandos si el host no los soporta. Ver guía §2.4.</div>
-    <div class="footer"><span><b>Sesión 2</b> · martes</span><span>Si no hay adaptador, se copia la skill concreta; no se duplica la fuente.</span></div>
+    <div class="note">Si no hay adaptador, se copian las skills a la ruta del agente; no se duplica la fuente ni se edita a mano.</div>
+    <div class="footer"><span><b>Sesión 2</b> · martes</span><span>El agente cambia; el contrato no.</span></div>
   </section>
-<section class="slide" id="slide-16" data-session="Sesión 2">
+
+  <section class="slide" id="slide-21" data-session="Sesión 2">
     <div class="kicker">Skills del núcleo</div>
     <h2>Cinco procedimientos, no cien prompts.</h2>
     <table class="table">
@@ -343,7 +469,8 @@ ln -s AGENTS.md CLAUDE.md</div>
     <div class="note">La skill no es una wish list: es un procedimiento con salida comprobable.</div>
     <div class="footer"><span><b>Sesión 2</b> · martes</span><span>El perfil añade las skills de su lenguaje.</span></div>
   </section>
-<section class="slide" id="slide-17" data-session="Sesión 2">
+
+  <section class="slide" id="slide-22" data-session="Sesión 2">
     <div class="kicker">Skills de perfil</div>
     <h2>Odoo 11 añade dominio; PHP aún es esqueleto.</h2>
     <div class="cols">
@@ -353,7 +480,8 @@ ln -s AGENTS.md CLAUDE.md</div>
     <div class="note">Las skills de dominio se presentan aquí; el perfil se activa en la sesión 1 y se profundiza en la 3. El núcleo no importa Odoo ni PHP.</div>
     <div class="footer"><span><b>Sesión 2</b> · martes</span><span>El núcleo no importa Odoo ni PHP.</span></div>
   </section>
-<section class="slide" id="slide-18" data-session="Sesión 2">
+
+  <section class="slide" id="slide-23" data-session="Sesión 2">
     <div class="kicker">Preparar una skill</div>
     <h2>De una corrección repetida a un mecanismo.</h2>
     <div class="flow">
@@ -371,7 +499,8 @@ version: 0.1.0
     <div class="note">La descripción es el disparador. Si no cabe en una frase, la skill no está lista.</div>
     <div class="footer"><span><b>Sesión 2</b> · martes</span><span>Documentación al final; primero el mecanismo.</span></div>
   </section>
-<section class="slide" id="slide-19" data-session="Sesión 2">
+
+  <section class="slide" id="slide-24" data-session="Sesión 2">
     <div class="kicker">Modelos</div>
     <h2>El kit no elige el modelo; la empresa sí.</h2>
     <div class="cols">
@@ -381,7 +510,8 @@ version: 0.1.0
     <div class="warnbox">Una media alta con una corrida baja es una skill inestable. No se declara verde por la media sola.</div>
     <div class="footer"><span><b>Sesión 2</b> · martes</span><span>Sin claves en el repo; sin nombres internos en la documentación.</span></div>
   </section>
-<section class="slide" id="slide-20" data-session="Sesión 2">
+
+  <section class="slide" id="slide-25" data-session="Sesión 2">
     <div class="kicker">Flujo diario</div>
     <h2>Ocho pasos, siempre en el mismo orden.</h2>
     <div class="flow">
@@ -397,17 +527,28 @@ version: 0.1.0
     <div class="note">El merge y el despliegue son humanos. El kit nunca toca producción.</div>
     <div class="footer"><span><b>Sesión 2</b> · martes</span><span>Una rama, un cambio, un commit; sin secretos.</span></div>
   </section>
-<section class="slide" id="slide-21" data-session="Sesión 2">
-    <div class="kicker">Laboratorio 2</div>
-    <h2>Reproducir, verificar y revisar.</h2>
-    <div class="cols">
-      <div class="card"><h3>Prompt 1</h3><p>“Usa repro-first: escribe el test que falla, conserva la salida y corrige después.”</p><p class="small">Después: bash verify/run.sh.</p></div>
-      <div class="card"><h3>Prompt 2</h3><p>“Usa review-diff sobre el diff; no edites.”</p><p class="small">Después: “Usa correct; convierte la regla en lint, test o CI.”</p></div>
-    </div>
-    <div class="note">Criterio de salida: test nuevo, salida de verify y una regla con mecanismo.</div>
-    <div class="footer"><span><b>Sesión 2</b> · martes</span><span>La skill se invoca por descripción; si no, se nombra.</span></div>
+
+  <section class="slide" id="slide-26" data-session="Sesión 2">
+    <div class="kicker">El wrapper</div>
+    <h2>Los comandos de uso, sin recordar rutas.</h2>
+    <table class="table compact">
+      <thead><tr><th>Comando</th><th>Para qué</th></tr></thead>
+      <tbody>
+        <tr><td>dev-agent doctor</td><td>Ver qué está instalado, qué es opcional y qué falta.</td></tr>
+        <tr><td>dev-agent guard</td><td>Pasar las comprobaciones deterministas antes del commit.</td></tr>
+        <tr><td>dev-agent verify</td><td>Ejecutar el comportamiento real y dejar evidencia.</td></tr>
+        <tr><td>dev-agent review</td><td>Ver el diff y el prompt de la skill review-diff.</td></tr>
+        <tr><td>dev-agent eval --dry-run</td><td>Validar un caso sin gastar modelo.</td></tr>
+        <tr><td>dev-agent profile list / use</td><td>Ver o cambiar el perfil activo.</td></tr>
+        <tr><td>dev-agent codegraph</td><td>Sincronizar el índice del repo.</td></tr>
+        <tr><td>dev-agent memory save ...</td><td>Guardar una decisión o un bug en Engram.</td></tr>
+      </tbody>
+    </table>
+    <div class="note">El instalador enlaza dev-agent en ~/.local/bin. Si no está en PATH, usa $HOME/.dev-agent-kit/bin/dev-agent.</div>
+    <div class="footer"><span><b>Sesión 2</b> · martes</span><span>Los scripts existentes siguen funcionando; el wrapper evita rutas y flags.</span></div>
   </section>
-<section class="slide" id="slide-22" data-session="Sesión 3">
+
+  <section class="slide" id="slide-27" data-session="Sesión 2">
     <div class="kicker">Eval</div>
     <h2>Medir una skill, no un cambio de producto.</h2>
     <div class="code">python3 evals/harness.py \
@@ -423,26 +564,56 @@ version: 0.1.0
     </div>
     <div class="footer"><span><b>Sesión 3</b> · jueves</span><span>--dry-run primero; no gastar modelo en validar el caso.</span></div>
   </section>
-<section class="slide" id="slide-23" data-session="Sesión 3">
+
+  <section class="slide" id="slide-28" data-session="Sesión 3">
+    <div class="kicker">De atrás hacia adelante</div>
+    <h2>Si falta un eslabón, el anterior no está verde.</h2>
+    <table class="table compact">
+      <thead><tr><th>Desde el final</th><th>Evidencia</th><th>Si falta</th></tr></thead>
+      <tbody>
+        <tr><td>10. Producción</td><td>Autorización humana y merge</td><td>No se despliega; el kit no lo hace.</td></tr>
+        <tr><td>9. Revisión</td><td>Veredicto con hallazgos</td><td>No hay aprobación.</td></tr>
+        <tr><td>8. Verify</td><td>evidence/&lt;run&gt;/summary.json</td><td>No está verificado.</td></tr>
+        <tr><td>7. Guard</td><td>guard-report.json</td><td>No hay commit limpio.</td></tr>
+        <tr><td>6. Perfil</td><td>.dev-agent/config y profile.env</td><td>No hay checks del lenguaje.</td></tr>
+        <tr><td>5. Skills</td><td>AGENTS.md, skills/, commands/</td><td>El agente no tiene procedimiento.</td></tr>
+        <tr><td>4. Instalación</td><td>.dev-agent/, hooks y doctor</td><td>No hay puerta ni contexto.</td></tr>
+      </tbody>
+    </table>
+    <div class="note">Esta es la prueba de “de delante atrás”: se recorre la entrega desde el merge hasta la línea de instalación. Un artefacto ausente corta la cadena.</div>
+    <div class="footer"><span><b>Sesión 3</b> · jueves</span><span>La evidencia es el hilo; la conversación no.</span></div>
+  </section>
+
+  <section class="slide" id="slide-29" data-session="Sesión 2">
+    <div class="kicker">Laboratorio 2</div>
+    <h2>Reproducir, verificar y revisar.</h2>
+    <div class="cols">
+      <div class="card"><h3>Prompt 1</h3><p>“Usa repro-first: escribe el test que falla, conserva la salida y corrige después.”</p><p class="small">Después: dev-agent verify.</p></div>
+      <div class="card"><h3>Prompt 2</h3><p>“Usa review-diff sobre el diff; no edites.”</p><p class="small">Después: “Usa correct; convierte la regla en lint, test o CI.”</p></div>
+    </div>
+    <div class="note">Criterio de salida: test nuevo, salida de verify y una regla con mecanismo.</div>
+    <div class="footer"><span><b>Sesión 2</b> · martes</span><span>La skill se invoca por descripción; si no, se nombra.</span></div>
+  </section>
+
+  <section class="slide" id="slide-30" data-session="Sesión 3">
     <div class="kicker">Norma de empresa</div>
     <h2>tech-doc es la fuente; el kit no la copia.</h2>
     <div class="split">
       <div>
         <p>Su <b>AGENTS.md</b> es la norma canónica. Se enlaza en <b>~/.agents/AGENTS.md</b> y se comprueba con el script del kit.</p>
-        <div class="code">git clone git@github.com:ScalpersCompany/scalpers-tech-doc.git \
-  "$HOME/odoo-doodba-template/scalpers-tech-doc"
-mkdir -p "$HOME/.agents"
-ln -sfn "$HOME/odoo-doodba-template/scalpers-tech-doc/AGENTS.md" \
-  "$HOME/.agents/AGENTS.md"
-bash "$HOME/dev-agent-kit/scripts/check-techdoc.sh" \
+        <div class="code compact">./install.sh --with-techdoc
+
+<span class="c"># o, si ya está clonado:</span>
+bash "$HOME/.dev-agent-kit/scripts/check-techdoc.sh" \
   --path "$HOME/odoo-doodba-template/scalpers-tech-doc" \
   --branch main --require-link</div>
       </div>
       <div class="right-note"><h3>Regla</h3><ul><li>No es un submódulo.</li><li>No se copia dentro del perfil.</li><li>Si el árbol está sucio, el check falla cerrado.</li><li><span class="muted">--allow-dirty</span> solo para revisión local.</li><li>El kit no empuja tech-doc.</li></ul></div>
     </div>
-    <div class="footer"><span><b>Sesión 3</b> · jueves</span><span>El bootstrap con --with-techdoc lo automatiza y enlaza docs/techdoc.html; si no hay acceso, se practica con el AGENTS local.</span></div>
+    <div class="footer"><span><b>Sesión 3</b> · jueves</span><span>El instalador con --with-techdoc lo automatiza y enlaza docs/techdoc.html; si no hay acceso, se practica con el AGENTS local.</span></div>
   </section>
-<section class="slide" id="slide-24" data-session="Sesión 3">
+
+  <section class="slide" id="slide-31" data-session="Sesión 3">
     <div class="kicker">Laboratorio 3</div>
     <h2>Perfil, eval y norma de empresa.</h2>
     <div class="cols-3">
@@ -453,47 +624,116 @@ bash "$HOME/dev-agent-kit/scripts/check-techdoc.sh" \
     <div class="note">Criterio de salida: el alumno distingue perfil, eval y norma; no confunde skipped con pass.</div>
     <div class="footer"><span><b>Sesión 3</b> · jueves</span><span>Si tech-doc está sucio, se para; no se fuerza.</span></div>
   </section>
-<section class="slide" id="slide-25" data-session="Cierre">
+
+  <section class="slide" id="slide-32" data-session="Sesión 3">
+    <div class="kicker">Simulación 1 · el formador enseña</div>
+    <h2>Instalar delante de ellos, sin esconder el menú.</h2>
+    <div class="demo">
+      <div class="demo-head"><h3>Haz esto en un repo desechable</h3><span class="badge hot">demo</span></div>
+      <div class="code">git clone https://github.com/ScalpersCompany/dev-agent-kit.git "$HOME/.dev-agent-kit"
+"$HOME/.dev-agent-kit/install.sh"</div>
+      <ol class="demo-steps">
+        <li>Elegir el repo desechable, no el real.</li>
+        <li>Elegir odoo11 y dejarlo como activo.</li>
+        <li>Elegir todos los agentes o solo el que uses.</li>
+        <li>CodeGraph sí; Engram sí; tech-doc no.</li>
+        <li>Leer el resumen antes de confirmar.</li>
+        <li>Ver el doctor final y separar warn de FAIL.</li>
+      </ol>
+    </div>
+    <div class="note">Haz clic en cada paso cuando lo hayas ejecutado. Verás “profile: odoo11 installed”, “doctor: núcleo correcto” y los warn de lo opcional. Si no hay tech-doc, avisa y sigue; no aborta.</div>
+    <div class="footer"><span><b>Sesión 3</b> · jueves</span><span>La demo no se corta en el primer warn; se explica.</span></div>
+  </section>
+
+  <section class="slide" id="slide-33" data-session="Sesión 3">
+    <div class="kicker">Simulación 2 · la primera puerta</div>
+    <h2>Del cambio a la evidencia, sin saltarse el rojo.</h2>
+    <div class="demo">
+      <div class="demo-head"><h3>Haz esto después del primer commit</h3><span class="badge hot">demo</span></div>
+      <div class="code">dev-agent guard
+dev-agent verify
+printf '\n# comentario de prosa\n' &gt;&gt; calc.py
+git add calc.py
+dev-agent guard --staged</div>
+      <ol class="demo-steps">
+        <li>Guard sin staged: dice skipped, no pass.</li>
+        <li>Verify con TEST_CMD: deja summary.json.</li>
+        <li>Leer el summary, no solo el código de salida.</li>
+        <li>Meter el comentario de prosa.</li>
+        <li>Ver el fallo de comment_lint.</li>
+        <li>Quitarlo; no usar --no-verify.</li>
+      </ol>
+    </div>
+    <div class="note">Haz clic en cada paso al ejecutarlo. Si verify sale 2, falta configuración. Si guard dice skipped, no ha mirado nada. Ninguno de los dos es verde.</div>
+    <div class="footer"><span><b>Sesión 3</b> · jueves</span><span>La demo incluye un fallo; si todo sale verde, no se ha probado la puerta.</span></div>
+  </section>
+
+  <section class="slide" id="slide-34" data-session="Sesión 3">
+    <div class="kicker">Simulación 3 · agente, contexto y memoria</div>
+    <h2>El agente trabaja; el repo y la decisión quedan.</h2>
+    <div class="demo">
+      <div class="demo-head"><h3>Haz esto con el agente abierto</h3><span class="badge hot">demo</span></div>
+      <div class="code">“Usa repro-first: escribe el test que falla y no toques producción.”
+dev-agent codegraph
+dev-agent memory save "Decisión de demo" \
+  "Se eligió odoo11 y se dejó verify cerrado." --type decision
+dev-agent doctor</div>
+      <ol class="demo-steps">
+        <li>Pedir el test rojo y conservar la salida.</li>
+        <li>Implementar; guard y verify otra vez.</li>
+        <li>Sincronizar CodeGraph y explicar qué indexa.</li>
+        <li>Guardar la decisión en Engram.</li>
+        <li>Leer el doctor; no confundir warn con FAIL.</li>
+        <li>Pedir review-diff; el humano decide.</li>
+      </ol>
+    </div>
+    <div class="note">Haz clic en cada paso al ejecutarlo. Verás un índice, una memoria y un veredicto. No verás un merge automático ni un despliegue.</div>
+    <div class="footer"><span><b>Sesión 3</b> · jueves</span><span>El contexto se enseña; la decisión sigue siendo humana.</span></div>
+  </section>
+
+  <section class="slide" id="slide-35" data-session="Cierre">
     <div class="kicker">Problemas frecuentes</div>
     <h2>Qué mirar antes de pedir ayuda.</h2>
-    <table class="table">
+    <table class="table compact">
       <thead><tr><th>Síntoma</th><th>Causa</th><th>Arreglo</th></tr></thead>
       <tbody>
-        <tr><td>profile skipped</td><td>sin config o ruta</td><td>revisar DEV_AGENT_PROFILE</td></tr>
+        <tr><td>profile skipped</td><td>sin config o ruta</td><td>dev-agent profile list / use</td></tr>
         <tr><td>verify exit 2</td><td>sin TEST_CMD</td><td>rellenar verify/config.env</td></tr>
         <tr><td>pre-push bloquea</td><td>falta .dev-agent/verify.env</td><td>copiar ejemplo y rellenar</td></tr>
         <tr><td>comment_lint</td><td>prosa nueva</td><td>quitar; solo directivas</td></tr>
         <tr><td>CLAUDE.md no carga</td><td>Claude lee CLAUDE.md</td><td>enlace a AGENTS.md</td></tr>
         <tr><td>eval no corre</td><td>harness OpenCode-only</td><td>dry-run u OpenCode</td></tr>
+        <tr><td>tech-doc falla</td><td>clon sucio o remoto</td><td>limpiar o --allow-dirty local</td></tr>
       </tbody>
     </table>
     <div class="footer"><span><b>Cierre</b></span><span>Un fallo repetido se convierte en lint, test o CI.</span></div>
   </section>
-<section class="slide" id="slide-26" data-session="Cierre">
+
+  <section class="slide" id="slide-36" data-session="Cierre">
     <div class="kicker">Checklist de salida</div>
     <h2>Lo que el compañero debe poder demostrar.</h2>
     <ul class="checklist">
-      <li>Clonar kit, perfiles y repo</li><li>Instalar en la raíz</li>
-      <li>Copiar perfil y configurar</li><li>Rellenar verify y hook</li>
+      <li>Instalar con una línea y elegir perfil</li><li>Leer el doctor y separar warn/FAIL</li>
       <li>Explicar skipped y exit 2</li><li>Generar adaptadores Claude/OpenCode</li>
       <li>Usar las cinco skills</li><li>Elegir modelo y juez</li>
-      <li>Reconocer la deuda de eval</li><li>No tocar producción ni secretos</li>
+      <li>Indexar con CodeGraph</li><li>Guardar una decisión en Engram</li>
       <li>Tech-doc como norma, no copia</li><li>Entregar con evidencia</li>
+      <li>No tocar producción ni secretos</li><li>Reconocer la deuda de eval</li>
     </ul>
     <div class="footer"><span><b>Cierre</b></span><span>El objetivo es criterio, no memorizar comandos.</span></div>
   </section>
-<section class="slide section" id="slide-27" data-session="Cierre">
+
+  <section class="slide section" id="slide-37" data-session="Cierre">
     <div class="num">02</div>
     <div class="kicker">Siguiente paso</div>
     <h2>Primero una puerta verde.<br>Después, más agentes.</h2>
     <p class="lede">La formación termina cuando el compañero puede instalar, verificar y explicar. No cuando sabe recitar el README.</p>
-    <div class="pill-row"><span class="badge ok">guard</span><span class="badge ok">verify</span><span class="badge">skills</span><span class="badge">perfil</span><span class="badge warn">eval: deuda conocida</span><span class="badge hot">producción: humana</span></div>
+    <div class="pill-row"><span class="badge ok">install.sh</span><span class="badge ok">guard</span><span class="badge ok">verify</span><span class="badge">CodeGraph</span><span class="badge">Engram</span><span class="badge warn">eval: deuda conocida</span><span class="badge hot">producción: humana</span></div>
     <div class="footer"><span><b>DevAgentKit</b> · formación</span><span>Guía: docs/FORMACION-DEV-AGENT-KIT.md · Deck: docs/formacion/dev-agent-kit-formacion.html</span></div>
   </section>
 </div>
-
 <div class="controls" aria-label="Navegación de diapositivas">
-  <span class="counter-inline" aria-live="polite" id="counter">01 / 27</span>
+  <span class="counter-inline" aria-live="polite" id="counter">01 / 37</span>
   <button type="button" id="prev" aria-label="Diapositiva anterior">← Anterior</button>
   <button type="button" id="next" aria-label="Diapositiva siguiente">Siguiente →</button>
 </div>
@@ -526,6 +766,8 @@ bash "$HOME/dev-agent-kit/scripts/check-techdoc.sh" \
     const id = slides[index].id;
     if (id) history.replaceState(null, '', '#' + id);
   }
+
+  document.querySelectorAll('.demo-steps li').forEach((item) => item.addEventListener('click', () => item.classList.toggle('done')));
 
   document.getElementById('prev').addEventListener('click', () => show(index - 1));
   document.getElementById('next').addEventListener('click', () => show(index + 1));

@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.2.0] - 2026-11-25
+
+### Added
+
+- `install.sh`: interactive one-line installer with dynamic profile discovery, one or several profiles, active profile, agents, CodeGraph, Engram, tech-doc and optional single HTML; idempotent and non-interactive through flags.
+- `bin/dev-agent`: usage wrapper for `doctor`, `guard`, `verify`, `review`, `eval`, `profile`, `codegraph` and `memory`.
+- `scripts/doctor.sh`: reads the repo and reports installed, optional and missing pieces without turning a warning into green.
+- `docs/INSTALADOR.md`, `docs/USO-RAPIDO.md` and `docs/MEJORAR-SKILLS.md`.
+- The installer patches the kit path into the installed hooks, symlinks `dev-agent` under `~/.local/bin`, excludes local artifacts and saves the installation in Engram when available.
+
+### Changed
+
+- README, install guide and training guide make `install.sh` the primary path; `bootstrap.sh` remains the lower-level path.
+- Training deck grows to 37 slides: purpose, strengths, the full front-to-back flow, CodeGraph/Engram/doctor, a reverse evidence walkthrough and three clickable live simulations.
+
 ## [3.1.0] - 2026-11-19
 
 ### Added

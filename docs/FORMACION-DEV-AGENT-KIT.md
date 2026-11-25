@@ -73,63 +73,88 @@ Enseñar la diferencia entre:
 - **verificado**: hay salida de comando, test, HTTP o artefacto;
 - **aprobado**: una persona revisó y decidió.
 
-### 1.2 Descarga
+### 1.1.1 Para qué sirve y puntos fuertes
+
+El flujo convierte una petición en una entrega comprobable: el agente propone, la puerta
+decide y la persona autoriza. Sirve para que varios agentes compartan un contrato, para que
+el repo quede listo con una línea y para que producción quede fuera del alcance.
+
+Puntos fuertes que hay que enseñar:
+
+- **una línea y un menú**: perfil, perfil activo, agentes, CodeGraph, Engram y tech-doc;
+- **agnóstico del stack**: Odoo 11, PHP o cualquier repo; el perfil aporta el dominio;
+- **todas las skills**: core y perfil completos, con adaptadores generados;
+- **guard + verify + hooks**: lo determinista antes del commit y la evidencia antes del push;
+- **CodeGraph y Engram**: estructura del repo y memoria de decisiones;
+- **tech-doc como norma**: se enlaza, no se copia; si el clon está sucio, falla cerrado;
+- **sin secretos, producción, push ni borrados sin backup**;
+- **doctor**: distingue instalado, opcional y omitido; nunca pinta un warn de verde.
+
+### 1.2 Descarga manual (solo si no usas el instalador)
 
 ```bash
 mkdir -p "$HOME/dev"
-git clone https://github.com/ScalpersCompany/dev-agent-kit.git "$HOME/dev-agent-kit"
+git clone https://github.com/ScalpersCompany/dev-agent-kit.git "$HOME/.dev-agent-kit"
 git clone https://github.com/ScalpersCompany/dev-agent-profiles.git "$HOME/dev-agent-profiles"
 ```
 
 El repo de desarrollo se clona aparte, con la URL y la credencial que correspondan. No se
 pega ningún token en un fichero del repo.
 
-Exportar el kit para que los hooks lo encuentren:
+### 1.2.1 El kit en tu máquina
+
+El instalador deja el kit en `$HOME/.dev-agent-kit`, pero no necesitas exportar nada para
+usarlo: `install.sh` enlaza `bin/dev-agent` y ajusta la ruta del kit en los hooks del repo.
+Si haces una instalación manual, exporta `DEV_AGENT_KIT` en el entorno en el que git
+ejecuta el hook; los clientes GUI no leen el perfil del shell.
 
 ```bash
-export DEV_AGENT_KIT="$HOME/dev-agent-kit"
-```
-
-Añadirlo al perfil del shell si el compañero no clona en esa ruta. Los hooks
-`hooks/pre-commit` y `hooks/pre-push` tienen `/home/scalpers/dev-agent-kit` como ruta por
-defecto. Si el compañero clona en otra ruta u otro HOME, tiene que exportar
-`DEV_AGENT_KIT` en el entorno en el que git ejecuta el hook; los clientes GUI no leen el
-perfil del shell. Comprobarlo antes de seguir:
-
-```bash
+export DEV_AGENT_KIT="$HOME/.dev-agent-kit"
 test -x "$DEV_AGENT_KIT/guard/guard.sh" && echo "kit OK"
 ```
 
 ### 1.3 Instalación en el repo de desarrollo
 
+La instalación normal es una línea desde la raíz del repo:
+
 ```bash
-cd /ruta/a/tu/repo
-bash "$HOME/dev-agent-kit/scripts/bootstrap.sh" . \
-  --profile odoo11 \
-  --with-verify \
-  --with-techdoc \
-  --build-techdoc-html
+git clone https://github.com/ScalpersCompany/dev-agent-kit.git "$HOME/.dev-agent-kit" \
+  && "$HOME/.dev-agent-kit/install.sh"
 ```
 
-Qué hace y qué no:
+El instalador pregunta:
+
+```text
+Repo de desarrollo [/ruta/a/tu/repo]:
+Perfiles: 1) odoo11  2) php  3) todos
+Perfil activo: ...
+Agentes: Claude, OpenCode, Codex, pi, Hermes, todos
+¿CodeGraph? [S/n]
+¿Engram? [S/n]
+¿Tech-doc? [S/n]
+```
+
+Qué hace:
 
 - copia `AGENTS.md`, `skills/`, `commands/`, `agents/`, `verify/`, `guard/`, `evals/`,
   `scripts/`, `docs/` y `profiles/`;
 - respalda lo que ya exista como `.bak-<fecha>`;
-- crea `verify/config.env` desde el ejemplo;
-- instala el pre-commit;
-- con `--with-verify`, instala el pre-push y crea `.dev-agent/verify.env`;
-- con `--profile`, copia el perfil a `.dev-agent/profiles/<nombre>` y escribe
-  `.dev-agent/config`; el `verify/config.env` real del perfil no se copia;
-- con `--with-techdoc`, clona o enlaza tech-doc, enlaza `~/.agents/AGENTS.md` y crea
-  `docs/TECHDOC.md`; con `--build-techdoc-html`, construye y enlaza el HTML;
+- instala el perfil activo y los demás perfiles elegidos en `.dev-agent/profiles/`;
+- crea `verify/config.env`, instala pre-commit/pre-push y `.dev-agent/verify.env`;
+- genera los adaptadores `.claude/` y `.opencode/` y copia skills a Codex, pi y Hermes si
+  se eligen;
+- indexa con CodeGraph y guarda la instalación en Engram si están disponibles;
+- enlaza tech-doc y, si se pide, construye el HTML local;
+- termina con `dev-agent doctor` y un resumen de lo instalado, lo opcional y lo omitido;
 - **no** crea la base de datos, no configura el modelo y no empuja.
 
-El bootstrap **sobrescribe** `AGENTS.md` y hace merge de los directorios copiados; los
-backups `.bak-<fecha>` son la red. Si el repo ya tenía reglas propias en `AGENTS.md`, hay
-que fusionarlas desde el backup. Los `.bak` quedan como ficheros sin seguimiento.
+Los detalles están en `docs/INSTALADOR.md`; los comandos de cada día, en
+`docs/USO-RAPIDO.md`.
 
-Para que el repo no se llene de artefactos locales, añade las exclusiones antes de trabajar:
+Si el repo ya tenía reglas propias en `AGENTS.md`, el instalador lo respalda; hay que
+fusionarlas desde el backup. Los `.bak` quedan como ficheros sin seguimiento.
+
+Para que el repo no se llene de artefactos locales, el instalador añade las exclusiones:
 
 ```bash
 printf '%s\n' '.dev-agent/' 'evidence/' 'guard-report.json' 'verify/config.env' \
@@ -137,12 +162,11 @@ printf '%s\n' '.dev-agent/' 'evidence/' 'guard-report.json' 'verify/config.env' 
   >> .git/info/exclude
 ```
 
-El bootstrap no copia un `.gitignore` al repo destino: estas reglas son locales a tu clon.
-Si quieres compartir alguna, conviértela en una entrada deliberada de `.gitignore`, no en un
-efecto colateral.
+El bootstrap sigue existiendo como nivel inferior para automatizar una parte:
 
-El instalador automático de perfiles completo (`dev-agent init`) está diseñado, no cableado.
-`bootstrap --profile` sí instala uno; no se promete el instalador completo en la formación.
+```bash
+bash "$HOME/.dev-agent-kit/scripts/bootstrap.sh" . --profile odoo11 --with-verify
+```
 
 ### 1.4 Comprobar o reparar el perfil
 
@@ -240,7 +264,9 @@ git init
 printf 'def suma(a, b):\n    return a + b\n' > calc.py
 printf 'import unittest\nfrom calc import suma\n\nclass TestCalc(unittest.TestCase):\n    def test_suma(self):\n        self.assertEqual(suma(2, 3), 5)\n\nif __name__ == "__main__":\n    unittest.main()\n' > test_calc.py
 git add . && git -c user.name='Formacion' -c user.email='formacion@example.com' commit -m 'lab inicial'
-bash "$HOME/dev-agent-kit/scripts/bootstrap.sh" . --with-verify
+bash "$HOME/.dev-agent-kit/install.sh" \
+  --target "$PWD" --profiles odoo11 --active odoo11 \
+  --agents none --no-codegraph --no-engram --no-techdoc --yes
 ```
 
 Rellenar `verify/config.env` y `.dev-agent/verify.env` con:
@@ -558,13 +584,26 @@ aprueba. El merge y el despliegue no se delegan.
 - El merge y el despliegue son decisiones humanas.
 - El kit no crea el entorno de Odoo ni la base de datos: eso lo prepara el equipo.
 
+## Simulaciones en vivo
+
+El deck tiene tres diapositivas de simulación con pasos que se pueden marcar al hacer la
+demo. El formador no las lee: las ejecuta y va explicando lo que aparece.
+
+1. **Instalación**: una línea, menú, resumen y doctor. Si no hay tech-doc, avisa y sigue.
+2. **Primera puerta**: guard sin staged (skipped), verify con TEST_CMD, comment_lint con un
+   comentario de prosa. Si todo sale verde, la demo no ha probado la puerta.
+3. **Agente, contexto y memoria**: repro-first, CodeGraph, Engram, doctor y review-diff.
+   El merge sigue siendo humano.
+
+Criterio: cada paso tiene una salida observable; si no, no se marca.
+
 ## Estado actual que hay que decir en voz alta
 
-- `bootstrap.sh` instala el kit; `--profile` instala un perfil; `dev-agent init` completo sigue pendiente.
+- `install.sh` instala el kit, los perfiles, todas las skills, los hooks, guard/verify, CodeGraph, Engram y tech-doc; `dev-agent` es el wrapper de uso.
 - `.dev-agent/` queda local y excluido; si el perfil debe ir a CI, va en `profiles/` y se commitea.
 - El `.example` del perfil Odoo es una plantilla vacía; el `config.env` real de esta máquina no se copia.
-- Los hooks tienen `/home/scalpers/dev-agent-kit` como ruta por defecto; `DEV_AGENT_KIT` debe estar en el entorno de git.
-- `dev-agent init` y el lock de perfiles están diseñados, no implementados.
+- El instalador ajusta la ruta del kit en los hooks; en una instalación manual, `DEV_AGENT_KIT` debe estar en el entorno de git.
+- `dev-agent init` y el lock de perfiles siguen pendientes; `install.sh` es el camino completo actual.
 - El perfil PHP es un esqueleto.
 - `evals/harness.py` y `evals/loop.sh` todavía usan OpenCode.
 - `check-techdoc.sh` falla cerrado si tech-doc está sucio; el clon de esta máquina está en

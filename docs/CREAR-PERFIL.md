@@ -193,14 +193,18 @@ todavía ejecutan OpenCode; el runner neutral es una deuda conocida, no un gate 
 
 ## 8. Instalar en un repo
 
-El camino automático es el bootstrap del núcleo:
+El instalador completo es `install.sh`; el bootstrap sigue como nivel inferior:
 
 ```bash
-bash "$HOME/dev-agent-kit/scripts/bootstrap.sh" /ruta/repo \
+git clone https://github.com/ScalpersCompany/dev-agent-kit.git "$HOME/.dev-agent-kit"
+bash "$HOME/.dev-agent-kit/install.sh"
+
+# o, sin menú:
+bash "$HOME/.dev-agent-kit/scripts/bootstrap.sh" /ruta/repo \
   --profile php-nuevo --with-verify
 ```
 
-Si necesitas el fallback manual, mientras `dev-agent init` no exista:
+Si necesitas el fallback manual:
 
 ```bash
 mkdir -p /ruta/repo/.dev-agent/profiles
@@ -247,5 +251,5 @@ hooks son los mismos para todos los perfiles.
 - Validador: `scripts/validate-profile.py`.
 - Odoo 11: `ScalpersCompany/dev-agent-profiles/profiles/odoo11`, público.
 - PHP: `ScalpersCompany/dev-agent-profiles/profiles/php`, esqueleto.
-- Instalador `dev-agent init`: pendiente.
+- Instalador `install.sh`: implementado. `dev-agent init` y el lock: pendientes.
 - Mapa visual: `docs/DIAGRAMA-SISTEMA.md` y `docs/diagrams/sistema.html`.

@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Instalador único DevAgentKit — propuesta</title>
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #211d18;
+    --muted: #6d655b;
+    --paper: #f6f1e8;
+    --card: #fffdf8;
+    --line: #d9cfc0;
+    --accent: #c34a2b;
+    --accent-soft: #f1d7cd;
+    --ok: #2f6b4b;
+    --warn: #a65a16;
+    --code: #241f1b;
+    --code-ink: #f8f2e8;
+    --serif: ui-serif, Georgia, "Times New Roman", serif;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); line-height: 1.45; }
+  .board { width: min(1180px, 100%); margin: 0 auto; padding: 34px 26px 46px; display: flex; flex-direction: column; gap: 22px; }
+  .eyebrow { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; letter-spacing: -.02em; margin: 0; }
+  h1 { font-size: clamp(34px, 5vw, 64px); line-height: 1.02; max-width: 18ch; margin-top: 6px; }
+  h2 { font-size: 27px; line-height: 1.1; }
+  h3 { font-size: 18px; line-height: 1.2; }
+  p { margin: 0; color: var(--muted); font-size: 16px; }
+  .lede { max-width: 62ch; font-size: 18px; margin-top: 12px; }
+  .hero { border-bottom: 2px solid var(--ink); padding-bottom: 24px; }
+  .command { background: var(--code); color: var(--code-ink); border-radius: 13px; padding: 18px 20px; font-family: var(--mono); font-size: 15px; line-height: 1.5; overflow-wrap: anywhere; }
+  .command .c { color: #b7a99a; }
+  .command b { color: #f3b58f; font-weight: 600; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .badge { border: 1px solid var(--line); border-radius: 999px; padding: 5px 10px; font-size: 12px; color: var(--muted); }
+  .badge.ok { border-color: var(--ok); color: var(--ok); }
+  .badge.warn { border-color: var(--warn); color: var(--warn); }
+  .badge.hot { border-color: var(--accent); color: var(--accent); }
+  .section { display: flex; flex-direction: column; gap: 14px; }
+  .section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 18px; border-bottom: 1px solid var(--line); padding-bottom: 7px; }
+  .section-head span { font-size: 12px; color: var(--muted); }
+  .flow { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+  .node { border: 1px solid var(--line); background: var(--card); border-radius: 12px; padding: 14px 12px; min-height: 118px; }
+  .node .n { font-family: var(--serif); font-size: 28px; color: var(--accent); line-height: 1; }
+  .node h3 { margin: 8px 0 5px; font-size: 15px; }
+  .node p { font-size: 12px; line-height: 1.35; }
+  .cols { display: grid; grid-template-columns: 1.05fr .95fr; gap: 20px; }
+  .card { border: 1px solid var(--line); background: var(--card); border-radius: 13px; padding: 18px 20px; }
+  .card h3 { margin-bottom: 8px; }
+  .card p, .card li { font-size: 14px; line-height: 1.4; color: var(--muted); }
+  .card ul { margin: 6px 0 0; padding-left: 18px; }
+  .card li { margin: 5px 0; }
+  .terminal { background: var(--code); color: var(--code-ink); border-radius: 13px; padding: 18px 20px; font-family: var(--mono); font-size: 14px; line-height: 1.55; white-space: pre-wrap; }
+  .terminal .c { color: #b7a99a; }
+  .terminal .a { color: #f3b58f; }
+  .table { width: 100%; border-collapse: collapse; margin-top: 2px; font-size: 14px; }
+  .table th { text-align: left; font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--accent); border-bottom: 2px solid var(--ink); padding: 0 10px 7px 0; }
+  .table td { border-bottom: 1px solid var(--line); padding: 9px 10px 9px 0; vertical-align: top; }
+  .table td:first-child { font-family: var(--mono); font-size: 12px; white-space: nowrap; color: var(--ink); }
+  .checklist { list-style: none; padding: 0; margin: 4px 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 22px; }
+  .checklist li { font-size: 14px; color: var(--muted); padding-left: 24px; position: relative; line-height: 1.3; }
+  .checklist li::before { content: "□"; position: absolute; left: 0; top: -2px; color: var(--accent); font-size: 18px; }
+  .approve { border: 1px solid var(--accent); border-radius: 14px; padding: 20px 22px; background: #fff8f3; }
+  .approve h2 { font-size: 25px; margin-bottom: 8px; }
+  .approve ol { margin: 8px 0 0; padding-left: 22px; color: var(--ink); font-size: 15px; line-height: 1.45; }
+  .approve li { margin: 6px 0; }
+  .footer { border-top: 1px solid var(--line); padding-top: 12px; display: flex; justify-content: space-between; gap: 18px; font-size: 12px; color: var(--muted); }
+  .footer b { color: var(--ink); }
+  .loop { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 13px; color: var(--muted); }
+  .loop b { color: var(--ink); }
+  .loop .arrow { color: var(--accent); font-size: 18px; }
+  @media (max-width: 980px) {
+    .flow { grid-template-columns: repeat(3, 1fr); }
+    .cols { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 620px) {
+    .board { padding: 24px 16px 36px; }
+    .flow { grid-template-columns: 1fr 1fr; }
+    .checklist { grid-template-columns: 1fr; }
+    .section-head { flex-direction: column; gap: 4px; }
+  }
+  @media print {
+    @page { size: A4; margin: 12mm; }
+    body { background: #fff; }
+    .board { width: 100%; padding: 0; }
+    .node, .card, .approve { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<main class="board">
+  <header class="hero">
+    <div class="eyebrow">DevAgentKit · propuesta de instalación</div>
+    <h1>Un comando.<br>Un menú.<br>Todo instalado.</h1>
+    <p class="lede">El compañero no aprende flags: ejecuta una línea, elige su perfil y el instalador deja el kit, las skills, los guardarraíles, CodeGraph, Engram y tech-doc en su repo de desarrollo.</p>
+    <div class="meta">
+      <span class="badge ok">una línea</span>
+      <span class="badge ok">perfiles dinámicos</span>
+      <span class="badge">CodeGraph + Engram</span>
+      <span class="badge warn">tech-doc privado</span>
+      <span class="badge hot">sin producción</span>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="section-head"><h2>La experiencia</h2><span>lo que ve el compañero</span></div>
+    <div class="command"><span class="c"># clonar el kit y ejecutar el instalador</span>
+git clone https://github.com/ScalpersCompany/dev-agent-kit.git "$HOME/.dev-agent-kit" \
+  && "$HOME/.dev-agent-kit/install.sh"</div>
+    <p>No se usa <b>curl | bash</b>: el compañero puede leer el script antes de ejecutarlo. Si ya tiene el kit, ejecuta <b>./install.sh</b>.</p>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><h2>El flujo</h2><span>seis etapas, una sola decisión</span></div>
+    <div class="flow">
+      <div class="node"><div class="n">0</div><h3>Preflight</h3><p>bash, git, python, rsync, repo destino y accesos.</p></div>
+      <div class="node"><div class="n">1</div><h3>Preguntas</h3><p>perfil, perfil activo, agentes, CodeGraph, Engram y tech-doc.</p></div>
+      <div class="node"><div class="n">2</div><h3>Instala</h3><p>kit, perfiles, todas las skills, comandos y adaptadores.</p></div>
+      <div class="node"><div class="n">3</div><h3>Protege</h3><p>hooks, guard, verify, comment_lint y exclusiones locales.</p></div>
+      <div class="node"><div class="n">4</div><h3>Indexa y recuerda</h3><p>CodeGraph sobre el repo; Engram guarda la instalación.</p></div>
+      <div class="node"><div class="n">5</div><h3>Doctor</h3><p>qué quedó instalado, qué es opcional y qué se omitió.</p></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><h2>El menú de perfiles</h2><span>se genera del repo, no está hardcodeado</span></div>
+    <div class="cols">
+      <div class="terminal"><span class="c">$ ./install.sh</span>
+Repo de desarrollo [detectado: /ruta/al/repo]:
+Perfiles disponibles:
+  <span class="a">1)</span> odoo11  Odoo 11, XML, seguridad y preflight de MR
+  <span class="a">2)</span> php     PHP, PHPStan, PHPCS y PHPUnit (esqueleto)
+  <span class="a">3)</span> todos
+Perfil activo si instalas varios [1]:
+Agentes:
+  <span class="a">1)</span> Claude Code
+  <span class="a">2)</span> OpenCode
+  <span class="a">3)</span> Codex
+  <span class="a">4)</span> pi
+  <span class="a">5)</span> Hermes
+  <span class="a">6)</span> todos
+¿CodeGraph? [S/n]
+¿Engram? [S/n]
+¿Tech-doc? [S/n] (privado)
+¿Construir HTML? [s/N]</div>
+      <div class="card"><h3>La regla</h3><ul><li>Un perfil, otro o todos.</li><li>Si instalas varios, eliges uno activo.</li><li>Un perfil nuevo aparece sin tocar el instalador.</li><li>Si no hay acceso a tech-doc, el resto sigue.</li><li>Las opciones se pueden fijar con flags para automatización.</li></ul></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><h2>Qué deja instalado</h2><span>“todo” significa todo lo repetible</span></div>
+    <div class="cols">
+      <div class="card"><h3>En el repo</h3><ul><li>AGENTS.md, skills, commands y agents.</li><li>Perfil(es) en .dev-agent/profiles/ y perfil activo.</li><li>Hooks pre-commit y pre-push.</li><li>guard, verify, comment_lint y verify/config.env.</li><li>CodeGraph indexado y .engram/config.json.</li><li>docs/TECHDOC.md y enlace local docs/techdoc.html.</li></ul></div>
+      <div class="card"><h3>En los agentes</h3><ul><li>Claude Code y OpenCode: adaptadores generados.</li><li>Codex, pi y Hermes: skills copiadas o gentle-ai sync.</li><li>Todos los comandos que el host soporte.</li><li>Ninguna clave ni token en el repo.</li><li>Un wrapper dev-agent para no recordar rutas.</li></ul></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><h2>Uso diario</h2><span>lo que se enseña después de instalar</span></div>
+    <table class="table">
+      <thead><tr><th>Comando</th><th>Para qué</th></tr></thead>
+      <tbody>
+        <tr><td>dev-agent doctor</td><td>Saber qué está instalado, qué falta y qué es opcional.</td></tr>
+        <tr><td>dev-agent guard</td><td>Pasar las comprobaciones deterministas antes del commit.</td></tr>
+        <tr><td>dev-agent verify</td><td>Ejecutar el comportamiento real y dejar evidencia.</td></tr>
+        <tr><td>dev-agent review</td><td>Revisar un diff con la skill y un veredicto.</td></tr>
+        <tr><td>dev-agent eval --dry-run</td><td>Validar un caso de skill sin gastar modelo.</td></tr>
+        <tr><td>dev-agent profile use odoo11</td><td>Cambiar el perfil activo del repo.</td></tr>
+        <tr><td>dev-agent codegraph sync</td><td>Reindexar después de cambios grandes.</td></tr>
+        <tr><td>dev-agent memory save ...</td><td>Guardar una decisión o un bug en Engram.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><h2>Mejorar una skill</h2><span>sin convertir la mejora en una puerta</span></div>
+    <div class="loop"><b>corrección repetida</b><span class="arrow">→</span><b>correct</b><span class="arrow">→</span><b>editar SKILL.md</b><span class="arrow">→</span><b>caso de eval</b><span class="arrow">→</span><b>--dry-run</b><span class="arrow">→</span><b>K=3</b><span class="arrow">→</span><b>docs</b></div>
+    <p>La skill cambia cuando el mecanismo cambia: lint, test, CI o regla. La media sola no basta; se mira la dispersión. Una skill inestable no se declara verde.</p>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><h2>Límites</h2><span>lo que el instalador no hace</span></div>
+    <div class="meta">
+      <span class="badge hot">no toca producción</span>
+      <span class="badge hot">no guarda secretos</span>
+      <span class="badge hot">no hace push</span>
+      <span class="badge hot">no borra sin backup</span>
+      <span class="badge warn">no copia el HTML privado</span>
+      <span class="badge">no instala un modelo no aprobado</span>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><h2>Criterios de aceptación</h2><span>verde antes de dar el visto bueno</span></div>
+    <ul class="checklist">
+      <li>Una línea y termina instalado.</li>
+      <li>Menú real de perfiles y perfil activo.</li>
+      <li>Todas las skills y guardarraíles.</li>
+      <li>CodeGraph y Engram si están.</li>
+      <li>Tech-doc enlazado; HTML local.</li>
+      <li>Doctor distingue omitido de verde.</li>
+      <li>Instalador idempotente y probado.</li>
+      <li>Sin secretos, producción ni push.</li>
+    </ul>
+  </section>
+
+  <section class="approve">
+    <div class="eyebrow">Para el visto bueno</div>
+    <h2>Cinco decisiones, una sola aprobación.</h2>
+    <ol>
+      <li><b>install.sh</b> como entrada única; <b>bin/dev-agent</b> como wrapper de uso.</li>
+      <li>Menú dinámico de perfiles, opción “todos” y elección de perfil activo.</li>
+      <li>CodeGraph y Engram activados si están instalados; omitidos con aviso si no.</li>
+      <li>Tech-doc opcional; HTML solo con <b>--build-techdoc-html</b>; nunca copiado.</li>
+      <li>Tres guías rápidas: instalador, uso diario y mejora de skills.</li>
+    </ol>
+  </section>
+
+  <footer class="footer"><span><b>DevAgentKit</b> · propuesta de instalador único</span><span>Documento detallado: docs/PROPUESTA-INSTALADOR-UNICO.md</span></footer>
+</main>
+</body>
+</html>
