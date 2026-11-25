@@ -67,7 +67,7 @@ h1 { font-size: clamp(22px, 3vw, 31px); line-height: 1.1; letter-spacing: -.02em
     <div>
       <h2>0. Repos, norma y adaptadores</h2>
       <p>Cuatro piezas separadas: <b>dev-agent-kit</b> (puerta), <b>dev-agent-profiles</b> (lenguaje), <b>scalpers-tech-doc</b> (norma y documentación de empresa) y <b>el repo donde se desarrolla</b> (Odoo, PHP o cualquier stack). techdoc no es submódulo: <b>~/.agents/AGENTS.md</b> enlaza su AGENTS.md y <b>check-techdoc.sh</b> comprueba remoto, rama, commit y limpieza. El repo guarda una sola fuente: <b>skills/</b>, <b>commands/</b> y <b>agents/</b>; los adaptadores se generan y gentle-ai sincroniza los globales.</p>
-      <div class="art"><b>Artefactos:</b> skills/*/SKILL.md, AGENTS.md, AGENTS.fragment.md, techdoc/AGENTS.md, adapters gitignored</div>
+      <div class="art"><b>Artefactos:</b> skills/*/SKILL.md, AGENTS.md, AGENTS.fragment.md, techdoc/AGENTS.md, adapters generados (decide excluirlos o commitearlos)</div>
       <div class="loop">Si check-techdoc falla por remoto, rama o árbol sucio, no se instala perfil ni se da la norma por buena: se cierra en el repo de empresa.</div>
     </div>
   </section>

@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DevAgentKit — formación en 3 sesiones</title>
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #211d18;
+    --muted: #6d655b;
+    --paper: #f6f1e8;
+    --card: #fffdf8;
+    --line: #d9cfc0;
+    --accent: #c34a2b;
+    --accent-soft: #f1d7cd;
+    --ok: #2f6b4b;
+    --warn: #a65a16;
+    --code: #241f1b;
+    --code-ink: #f8f2e8;
+    --serif: ui-serif, Georgia, "Times New Roman", serif;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; background: var(--paper); color: var(--ink); font-family: var(--sans); }
+  body { overflow: hidden; }
+  #stage {
+    position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+    transform-origin: top left; background: var(--paper);
+  }
+  .slide {
+    position: absolute; inset: 0; display: none; flex-direction: column;
+    padding: 64px 88px 104px; overflow: hidden;
+  }
+  .slide.active { display: flex; }
+  .kicker { font-size: 15px; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; letter-spacing: -.02em; margin: 0; }
+  h1 { font-size: 84px; line-height: 1.02; max-width: 18ch; }
+  h2 { font-size: 54px; line-height: 1.08; max-width: 24ch; }
+  h3 { font-size: 27px; line-height: 1.2; }
+  p, li { font-size: 24px; line-height: 1.35; color: var(--ink); }
+  p.lede { color: var(--muted); font-size: 26px; max-width: 62ch; margin: 14px 0 0; }
+  .muted { color: var(--muted); }
+  .accent { color: var(--accent); }
+  .small { font-size: 19px; color: var(--muted); line-height: 1.4; }
+  .tiny { font-size: 15px; color: var(--muted); line-height: 1.35; }
+  .rule { width: 100%; height: 1px; background: var(--line); margin: 24px 0; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 42px; margin-top: 28px; }
+  .cols-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 26px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 24px 26px; }
+  .card h3 { margin-bottom: 8px; }
+  .card p, .card li { font-size: 20px; line-height: 1.35; color: var(--muted); }
+  .card ul { margin: 8px 0 0; padding-left: 20px; }
+  .card li { margin: 5px 0; }
+  .badge { display: inline-block; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; font-size: 15px; color: var(--muted); margin-right: 6px; }
+  .badge.ok { border-color: var(--ok); color: var(--ok); }
+  .badge.warn { border-color: var(--warn); color: var(--warn); }
+  .badge.hot { border-color: var(--accent); color: var(--accent); }
+  .flow { display: flex; gap: 10px; align-items: stretch; margin-top: 36px; }
+  .flow .node { flex: 1; min-width: 0; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 14px; }
+  .flow .node b { display: block; font-size: 19px; margin-bottom: 5px; }
+  .flow .node span { display: block; font-size: 15px; color: var(--muted); line-height: 1.3; }
+  .flow .arrow { flex: 0 0 24px; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 24px; }
+  .table { width: 100%; border-collapse: collapse; margin-top: 26px; font-size: 20px; }
+  .table th { text-align: left; font-size: 15px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); border-bottom: 2px solid var(--ink); padding: 0 12px 9px 0; }
+  .table td { vertical-align: top; border-bottom: 1px solid var(--line); padding: 12px 12px 12px 0; color: var(--ink); line-height: 1.3; }
+  .table td:first-child { font-weight: 700; }
+  .table .muted { color: var(--muted); }
+  .code { background: var(--code); color: var(--code-ink); border-radius: 12px; padding: 20px 22px; font-family: var(--mono); font-size: 19px; line-height: 1.45; white-space: pre-wrap; margin-top: 20px; }
+  .code .c { color: #b7a99a; }
+  .code .k { color: #f3b58f; }
+  .note { border-left: 3px solid var(--accent); padding: 10px 0 10px 18px; margin-top: 22px; color: var(--ink); font-size: 21px; line-height: 1.35; }
+  .warnbox { border: 1px solid var(--warn); border-radius: 12px; background: #fff8ee; padding: 18px 20px; margin-top: 22px; color: var(--ink); font-size: 20px; line-height: 1.35; }
+  .checklist { list-style: none; padding: 0; margin: 22px 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 36px; }
+  .checklist li { font-size: 20px; color: var(--muted); padding-left: 30px; position: relative; line-height: 1.3; }
+  .checklist li::before { content: "□"; position: absolute; left: 0; top: -3px; color: var(--accent); font-size: 24px; }
+  .footer { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 20px; font-size: 14px; color: var(--muted); letter-spacing: .04em; }
+  .footer b { color: var(--ink); font-weight: 600; }
+  .cover { justify-content: space-between; }
+  .cover .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 40px; }
+  .cover h1 { font-size: 108px; max-width: 15ch; }
+  .cover .meta { text-align: right; padding-top: 12px; }
+  .cover .meta p { font-size: 18px; margin: 6px 0; color: var(--muted); }
+  .cover .bottom { display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; }
+  .cover .bottom p { max-width: 55ch; font-size: 22px; color: var(--muted); }
+  .section { justify-content: center; }
+  .section .num { font-family: var(--serif); font-size: 180px; line-height: .8; color: var(--accent-soft); margin-bottom: 8px; }
+  .section h2 { font-size: 64px; max-width: 20ch; }
+  .split { display: grid; grid-template-columns: 1.2fr .8fr; gap: 46px; align-items: start; }
+  .right-note { border: 1px solid var(--line); background: var(--card); border-radius: 14px; padding: 24px; }
+  .right-note p, .right-note li { font-size: 19px; color: var(--muted); }
+  .right-note ul { margin: 8px 0 0; padding-left: 19px; }
+  .right-note li { margin: 7px 0; }
+  .big-quote { font-family: var(--serif); font-size: 42px; line-height: 1.18; max-width: 22ch; margin-top: 24px; }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+  .controls { position: fixed; left: 50%; right: auto; bottom: 18px; transform: translateX(-50%); display: flex; gap: 8px; z-index: 20; }
+  .controls button { border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 9px; padding: 9px 13px; font-size: 16px; cursor: pointer; }
+  .controls button:hover, .controls button:focus-visible { border-color: var(--accent); color: var(--accent); outline: none; }
+  .counter-inline { align-self: center; padding: 0 8px; font-size: 14px; color: var(--muted); letter-spacing: .05em; }
+  .progress { position: fixed; left: 0; bottom: 0; height: 4px; width: 0; background: var(--accent); z-index: 21; transition: width .2s ease; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+  @media (prefers-reduced-motion: reduce) { .progress { transition: none; } }
+  @media print {
+    @page { size: 1920px 1080px; margin: 0; }
+    html, body { background: #fff; overflow: visible; }
+    #stage { position: static; width: auto; height: auto; transform: none !important; }
+    .slide { position: relative; display: flex !important; width: 1920px; height: 1080px; page-break-after: always; background: var(--paper); }
+    .controls, .counter, .progress { display: none !important; }
+  }
+</style>
+</head>
+<body>
+<a class="sr-only" href="#slide-1">Saltar a la primera diapositiva</a>
+<div id="stage" aria-live="polite">
+  <section class="slide cover active" id="slide-1" data-session="Apertura">
+    <div class="top">
+      <div>
+        <div class="kicker">Formación interna · 3 sesiones</div>
+        <h1>DevAgentKit,<br>de cero a la primera puerta.</h1>
+      </div>
+      <div class="meta">
+        <p><b>Lunes · Martes · Jueves</b></p>
+        <p>90 minutos por sesión</p>
+        <p>Claude Code, OpenCode, Codex, pi o Hermes</p>
+      </div>
+    </div>
+    <div class="bottom">
+      <p class="big-quote">El agente propone.<br>La puerta decide.<br>La persona autoriza.</p>
+      <p>No es un curso de Odoo.<br>Es aprender a entregar con evidencia, en cualquier repo y cualquier stack.</p>
+    </div>
+    <div class="footer"><span><b>DevAgentKit</b> · formación</span><span>El kit no despliega; filtra lo que llega a la base de desarrollo.</span></div>
+  </section>
+<section class="slide section" id="slide-2" data-session="Sesión 1">
+    <div class="num">01</div>
+    <div class="kicker">La promesa</div>
+    <h2>Al terminar, no sabrás “usar el kit”.<br>Sabrás entregar un cambio que se pueda comprobar.</h2>
+    <div class="cols-3">
+      <div class="card"><h3>Instalar</h3><p>Clonar el kit, los perfiles y tu repo; dejarlo en la raíz.</p></div>
+      <div class="card"><h3>Probar</h3><p>Ejecutar guard y verify; leer la evidencia; distinguir skipped de pass.</p></div>
+      <div class="card"><h3>Entregar</h3><p>Usar skills, modelos aprobados y revisión humana; sin secretos ni producción.</p></div>
+    </div>
+    <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>Primero la puerta; después el agente.</span></div>
+  </section>
+<section class="slide" id="slide-3" data-session="Sesión 1">
+    <div class="kicker">Marco mental</div>
+    <h2>Qué es DevAgentKit y qué no es.</h2>
+    <div class="cols">
+      <div class="card"><h3>Es</h3><ul><li>Una puerta determinista: guard y verify.</li><li>Un conjunto de skills que el agente lee.</li><li>Un contrato de perfiles por lenguaje.</li><li>Una forma de dejar evidencia antes de decir “hecho”.</li></ul></div>
+      <div class="card"><h3>No es</h3><ul><li>Un modelo ni un proveedor de IA.</li><li>Un CI remoto ni un sustituto del CI.</li><li>Un repo de producto fijo.</li><li>Un auto-merge ni un despliegue.</li></ul></div>
+    </div>
+    <div class="note">El agente es intercambiable; la puerta es un comando.</div>
+    <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>Hecho ≠ verificado ≠ aprobado.</span></div>
+  </section>
+<section class="slide" id="slide-4" data-session="Sesión 1">
+    <div class="kicker">Mapa de repos</div>
+    <h2>Cuatro piezas separadas, no un monolito.</h2>
+    <table class="table">
+      <thead><tr><th>Repo</th><th>Papel</th><th>Cómo se usa</th></tr></thead>
+      <tbody>
+        <tr><td>dev-agent-kit</td><td>Puerta, hooks, skills, evals</td><td>Se clona; es el núcleo</td></tr>
+        <tr><td>dev-agent-profiles</td><td>Perfiles Odoo 11 y PHP</td><td>Se clona aparte; se copia el perfil activo</td></tr>
+        <tr><td>scalpers-tech-doc</td><td>Norma y documentación de empresa</td><td>Se enlaza su AGENTS.md; no se copia</td></tr>
+        <tr><td>Tu repo de desarrollo</td><td>Odoo, PHP o cualquier stack</td><td>El kit y el perfil se instalan en su raíz</td></tr>
+      </tbody>
+    </table>
+    <div class="note">No hay un repo de producto fijo. No hay submódulos. La norma de empresa gana.</div>
+    <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>El repo donde trabajas es el destino, no un repo de ejemplo.</span></div>
+  </section>
+<section class="slide" id="slide-5" data-session="Sesión 1">
+    <div class="kicker">Recorrido</div>
+    <h2>De la descarga a la primera entrega.</h2>
+    <div class="flow">
+      <div class="node"><b>1. Descarga</b><span>kit + perfiles + tu repo</span></div><div class="arrow">→</div>
+      <div class="node"><b>2. Instala</b><span>bootstrap en la raíz</span></div><div class="arrow">→</div>
+      <div class="node"><b>3. Perfil</b><span>Odoo 11 o PHP</span></div><div class="arrow">→</div>
+      <div class="node"><b>4. Skills</b><span>adaptadores por agente</span></div><div class="arrow">→</div>
+      <div class="node"><b>5. Guard</b><span>cambio staged</span></div><div class="arrow">→</div>
+      <div class="node"><b>6. Verify</b><span>comportamiento real</span></div><div class="arrow">→</div>
+      <div class="node"><b>7. Entrega</b><span>evidencia + revisión</span></div>
+    </div>
+    <div class="note">La sesión 1 cubre 1–5; la 2, 4 y 6; la 3, 6–7, perfil en profundidad y tech-doc. El orden no se salta.</div>
+    <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>No se avanza si verify no tiene un TEST_CMD real.</span></div>
+  </section>
+<section class="slide" id="slide-6" data-session="Sesión 1">
+    <div class="kicker">Antes del lunes</div>
+    <h2>Lo que el compañero tiene que traer.</h2>
+    <ul class="checklist">
+      <li>git y bash</li><li>Python 3.8+ y rsync</li>
+      <li>curl si hay health check</li><li>Claude Code, OpenCode, Codex, pi o Hermes</li>
+      <li>Acceso al repo de desarrollo</li><li>Un modelo aprobado por la empresa</li>
+      <li>Docker y base desechable si es Odoo</li><li>Acceso a tech-doc, si aplica</li>
+    </ul>
+    <div class="warnbox">Si falta el repo de desarrollo o el proveedor aprobado, la formación se para. El kit no inventa credenciales ni crea entornos.</div>
+    <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>Pre-work: 15 minutos, no una sorpresa.</span></div>
+  </section>
+<section class="slide" id="slide-7" data-session="Sesión 1">
+    <div class="kicker">Descarga</div>
+    <h2>Dos clones y tu repo de desarrollo.</h2>
+    <div class="code"><span class="c"># kit y perfiles</span>
+mkdir -p "$HOME/dev"
+git clone https://github.com/ScalpersCompany/dev-agent-kit.git "$HOME/dev-agent-kit"
+git clone https://github.com/ScalpersCompany/dev-agent-profiles.git "$HOME/dev-agent-profiles"
+
+<span class="c"># tu repo de desarrollo, con tu URL y tu credencial</span>
+git clone &lt;url-de-tu-repo&gt; /ruta/a/tu/repo
+
+<span class="c"># los hooks buscan el kit aquí</span>
+export DEV_AGENT_KIT="$HOME/dev-agent-kit"</div>
+    <div class="note">Necesitas acceso a los repos de ScalpersCompany; el tuyo, con tu credencial. Nunca pegues un token en un fichero del repo.</div>
+    <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>DEV_AGENT_KIT es el contrato de ruta con los hooks.</span></div>
+  </section>
+<section class="slide" id="slide-8" data-session="Sesión 1">
+    <div class="kicker">Instalación</div>
+    <h2>El bootstrap copia la puerta y los hooks.</h2>
+    <div class="code">cd /ruta/a/tu/repo
+bash "$HOME/dev-agent-kit/scripts/bootstrap.sh" . --with-verify</div>
+    <div class="cols">
+      <div class="card"><h3>Hace</h3><ul><li>Copia AGENTS, skills, commands, agents, verify, guard, evals, scripts, docs y profiles/ (plantilla).</li><li>Respalda lo existente como .bak-&lt;fecha&gt;.</li><li>Crea verify/config.env.</li><li>Instala pre-commit y, con --with-verify, pre-push.</li></ul></div>
+      <div class="card"><h3>No hace</h3><ul><li>No instala el perfil Odoo o PHP.</li><li>No crea la base de datos.</li><li>No configura el modelo.</li><li>No empuja ni despliega.</li></ul></div>
+    </div>
+    <div class="note">El bootstrap sobrescribe AGENTS.md y hace merge de directorios; revisa los .bak. No instala el perfil.</div>
+    <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>Backups primero; nada se borra.</span></div>
+  </section>
+<section class="slide" id="slide-9" data-session="Sesión 1">
+    <div class="kicker">Perfil</div>
+    <h2>Un perfil activo por repo.</h2>
+    <div class="code">mkdir -p .dev-agent/profiles
+rsync -a --exclude='verify/config.env' \
+  "$HOME/dev-agent-profiles/profiles/odoo11/" .dev-agent/profiles/odoo11/
+printf 'DEV_AGENT_PROFILE=odoo11\n' &gt; .dev-agent/config</div>
+    <div class="cols">
+      <div class="card"><h3>Odoo 11</h3><p>guard/odoo.sh, odoo_lint, verify, tres skills y casos.</p></div>
+      <div class="card"><h3>PHP</h3><p>Esqueleto: contrato y plantilla; PHPStan/PHPCS/PHPUnit aún no cableados.</p></div>
+    </div>
+    <div class="note">Si guard dice “profile skipped”, no hay config o la ruta no existe. .dev-agent es local; para CI o equipo, copia el perfil a profiles/. Skipped no es pass.</div>
+    <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>El perfil aporta el lenguaje; el núcleo no sabe Odoo ni PHP.</span></div>
+  </section>
+<section class="slide" id="slide-10" data-session="Sesión 1">
+    <div class="kicker">Verify</div>
+    <h2>Dos ficheros, una idea: comportamiento real.</h2>
+    <div class="cols">
+      <div class="card"><h3>verify/config.env</h3><p>Lo usa <b>bash verify/run.sh</b> a mano.</p><p class="small">SMOKE_CMD y TEST_CMD.</p></div>
+      <div class="card"><h3>.dev-agent/verify.env</h3><p>Lo usa el hook <b>pre-push</b>.</p><p class="small">Debe tener el mismo TEST_CMD real.</p></div>
+    </div>
+    <div class="code">SMOKE_CMD='python3 -c "import mi_paquete"'
+TEST_CMD='python3 -m unittest discover -v'</div>
+    <div class="note">Si no hay SMOKE_CMD ni TEST_CMD, verify sale 2. No es verde: es una configuración incompleta.</div>
+    <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>Una base desechable; nunca la compartida ni producción.</span></div>
+  </section>
+<section class="slide" id="slide-11" data-session="Sesión 1">
+    <div class="kicker">Hooks</div>
+    <h2>La puerta local no es la única puerta.</h2>
+    <table class="table">
+      <thead><tr><th>Hook</th><th>Qué ejecuta</th><th>Qué significa</th></tr></thead>
+      <tbody>
+        <tr><td>pre-commit</td><td>guard --staged</td><td>Solo lo que entra en el commit; rápido y determinista.</td></tr>
+        <tr><td>pre-push</td><td>verify con .dev-agent/verify.env</td><td>Falla cerrado si falta el TEST_CMD o la config.</td></tr>
+        <tr><td>--no-verify</td><td>salta el hook local</td><td>No salta el CI ni la revisión; no es una salida.</td></tr>
+      </tbody>
+    </table>
+    <div class="warnbox">El CI de Scalpers no se toca. El CI del repo y la revisión humana son la garantía dura. Un skipped no es un pass.</div>
+    <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>Guard y verify dejan evidencia; el hook solo la exige.</span></div>
+  </section>
+<section class="slide" id="slide-12" data-session="Sesión 1">
+    <div class="kicker">Laboratorio 1</div>
+    <h2>La primera puerta, en un repo desechable.</h2>
+    <div class="code">mkdir -p "$HOME/devkit-lab" &amp;&amp; cd "$HOME/devkit-lab"
+git init
+printf 'def suma(a, b):\n    return a + b\n' &gt; calc.py
+printf 'import unittest\nfrom calc import suma\n...' &gt; test_calc.py
+git add . &amp;&amp; git commit -m 'lab inicial'
+bash "$HOME/dev-agent-kit/scripts/bootstrap.sh" . --with-verify</div>
+    <div class="cols">
+      <div class="card"><h3>Configurar</h3><p>SMOKE_CMD='python3 -c "import calc"'<br>TEST_CMD='python3 -m unittest discover -v'</p></div>
+      <div class="card"><h3>Demostrar</h3><p>bash guard/guard.sh<br>bash verify/run.sh<br>Leer evidence/&lt;run-id&gt;/summary.json</p></div>
+    </div>
+    <div class="note">Criterio de salida: el alumno explica qué comprobó cada comando y dónde está la evidencia. test_calc.py completo en la guía §1.7; no copies la elipsis.</div>
+    <div class="footer"><span><b>Sesión 1</b> · lunes</span><span>Nunca en el repo real de producción.</span></div>
+  </section>
+<section class="slide" id="slide-13" data-session="Sesión 2">
+    <div class="kicker">Fuente única</div>
+    <h2>Skills, comandos y juez: una sola fuente neutral.</h2>
+    <div class="flow">
+      <div class="node"><b>skills/</b><span>cinco skills del núcleo</span></div><div class="arrow">→</div>
+      <div class="node"><b>commands/</b><span>/verify, /guard, /repro, /correct, /eval</span></div><div class="arrow">→</div>
+      <div class="node"><b>agents/</b><span>juez de las evals</span></div><div class="arrow">→</div>
+      <div class="node"><b>.opencode / .claude</b><span>adaptadores generados</span></div>
+    </div>
+    <div class="code">bash "$HOME/dev-agent-kit/scripts/install-agent-adapters.sh" . \
+  --agents claude,opencode \
+  --profile "$HOME/dev-agent-profiles/profiles/odoo11"</div>
+    <div class="note">No se editan los adaptadores a mano: se regeneran. El script no escribe .gitignore; revisa .opencode y .claude antes de git add.</div>
+    <div class="footer"><span><b>Sesión 2</b> · martes</span><span>Una fuente; varios agentes.</span></div>
+  </section>
+<section class="slide" id="slide-14" data-session="Sesión 2">
+    <div class="kicker">Claude Code</div>
+    <h2>El camino principal, paso a paso.</h2>
+    <div class="cols">
+      <div>
+        <div class="code">bash "$HOME/dev-agent-kit/scripts/install-agent-adapters.sh" . \
+  --agents claude \
+  --profile "$HOME/dev-agent-profiles/profiles/odoo11"
+
+<span class="c"># Claude lee CLAUDE.md, no AGENTS.md</span>
+ln -s AGENTS.md CLAUDE.md</div>
+        <div class="note">Si CLAUDE.md ya existe, añade una referencia a AGENTS.md; no lo pises.</div>
+      </div>
+      <div class="right-note"><h3>Después</h3><ul><li>Abrir Claude en la raíz del repo.</li><li>Elegir modelo aprobado con /model.</li><li>Ajustar esfuerzo con /effort.</li><li>No usar --dangerously-skip-permissions.</li><li>Comprobar .claude/skills y .claude/commands.</li></ul></div>
+    </div>
+    <div class="footer"><span><b>Sesión 2</b> · martes</span><span>Claude es el ejemplo; el kit no depende de Claude.</span></div>
+  </section>
+<section class="slide" id="slide-15" data-session="Sesión 2">
+    <div class="kicker">Otros agentes</div>
+    <h2>El mismo contrato, distintas rutas.</h2>
+    <table class="table">
+      <thead><tr><th>Agente</th><th>Ruta / instalación</th><th>Nota</th></tr></thead>
+      <tbody>
+        <tr><td>OpenCode</td><td>--agents opencode → .opencode/</td><td>Reiniciar sesión tras generar.</td></tr>
+        <tr><td>Codex</td><td>~/.codex/AGENTS.md y sus skills</td><td>Sin adaptador del kit; fuente global.</td></tr>
+        <tr><td>pi / gentle-shell</td><td>su directorio de skills</td><td>gentle-ai sync o copia/enlace.</td></tr>
+        <tr><td>Hermes</td><td>~/.hermes/skills/</td><td>La base compartida es ~/.agents/skills.</td></tr>
+      </tbody>
+    </table>
+    <div class="note">Sin adaptador para Codex/pi/Hermes: copia skills/. a su ruta; no copies comandos si el host no los soporta. Ver guía §2.4.</div>
+    <div class="footer"><span><b>Sesión 2</b> · martes</span><span>Si no hay adaptador, se copia la skill concreta; no se duplica la fuente.</span></div>
+  </section>
+<section class="slide" id="slide-16" data-session="Sesión 2">
+    <div class="kicker">Skills del núcleo</div>
+    <h2>Cinco procedimientos, no cien prompts.</h2>
+    <table class="table">
+      <thead><tr><th>Skill</th><th>Cuándo</th><th>Qué produce</th></tr></thead>
+      <tbody>
+        <tr><td>dev-verify</td><td>después de un cambio</td><td>evidencia y veredicto</td></tr>
+        <tr><td>repro-first</td><td>al arreglar un bug</td><td>test rojo y luego verde</td></tr>
+        <tr><td>review-diff</td><td>antes de revisar</td><td>hallazgos con veredicto</td></tr>
+        <tr><td>correct</td><td>corrección repetida</td><td>lint, test o CI</td></tr>
+        <tr><td>query-readonly</td><td>pregunta de datos</td><td>consulta y evidencia</td></tr>
+      </tbody>
+    </table>
+    <div class="note">La skill no es una wish list: es un procedimiento con salida comprobable.</div>
+    <div class="footer"><span><b>Sesión 2</b> · martes</span><span>El perfil añade las skills de su lenguaje.</span></div>
+  </section>
+<section class="slide" id="slide-17" data-session="Sesión 2">
+    <div class="kicker">Skills de perfil</div>
+    <h2>Odoo 11 añade dominio; PHP aún es esqueleto.</h2>
+    <div class="cols">
+      <div class="card"><h3>Odoo 11</h3><ul><li>odoo-safe-change</li><li>odoo-11-code-review</li><li>factorlibre-mr-preflight</li><li>guard/odoo.sh: sudo, cr.commit, SQL, print</li></ul></div>
+      <div class="card"><h3>PHP</h3><ul><li>Contrato y plantilla.</li><li>PHPStan, PHPCS y PHPUnit: siguiente paso.</li><li>No se presenta como terminado.</li></ul></div>
+    </div>
+    <div class="note">Las skills de dominio se presentan aquí; el perfil se activa en la sesión 1 y se profundiza en la 3. El núcleo no importa Odoo ni PHP.</div>
+    <div class="footer"><span><b>Sesión 2</b> · martes</span><span>El núcleo no importa Odoo ni PHP.</span></div>
+  </section>
+<section class="slide" id="slide-18" data-session="Sesión 2">
+    <div class="kicker">Preparar una skill</div>
+    <h2>De una corrección repetida a un mecanismo.</h2>
+    <div class="flow">
+      <div class="node"><b>1. Detectar</b><span>dos veces la misma corrección</span></div><div class="arrow">→</div>
+      <div class="node"><b>2. Clasificar</b><span>naming, capas, tests, Odoo…</span></div><div class="arrow">→</div>
+      <div class="node"><b>3. Elegir</b><span>API, tipos, lint, CI, test</span></div><div class="arrow">→</div>
+      <div class="node"><b>4. Escribir</b><span>SKILL.md con pasos</span></div><div class="arrow">→</div>
+      <div class="node"><b>5. Probar</b><span>dry-run / K=3</span></div>
+    </div>
+    <div class="code">---
+name: mi-skill
+description: "Cuándo se usa, en una frase."
+version: 0.1.0
+---</div>
+    <div class="note">La descripción es el disparador. Si no cabe en una frase, la skill no está lista.</div>
+    <div class="footer"><span><b>Sesión 2</b> · martes</span><span>Documentación al final; primero el mecanismo.</span></div>
+  </section>
+<section class="slide" id="slide-19" data-session="Sesión 2">
+    <div class="kicker">Modelos</div>
+    <h2>El kit no elige el modelo; la empresa sí.</h2>
+    <div class="cols">
+      <div class="card"><h3>Reglas</h3><ul><li>Proveedor y modelo aprobados.</li><li>Claves en el entorno o gestor del agente.</li><li>Nunca en el repo, la config o una captura.</li><li>El juez es distinto del ejecutor.</li></ul></div>
+      <div class="card"><h3>Práctica</h3><ul><li>Claude: /model, /effort, /context, /cost.</li><li>OpenCode, Codex, pi, Hermes: su configuración.</li><li>Eval: &lt;modelo-aprobado&gt; y &lt;modelo-aprobado-distinto&gt;.</li><li>Primero --dry-run; después K=3.</li></ul></div>
+    </div>
+    <div class="warnbox">Una media alta con una corrida baja es una skill inestable. No se declara verde por la media sola.</div>
+    <div class="footer"><span><b>Sesión 2</b> · martes</span><span>Sin claves en el repo; sin nombres internos en la documentación.</span></div>
+  </section>
+<section class="slide" id="slide-20" data-session="Sesión 2">
+    <div class="kicker">Flujo diario</div>
+    <h2>Ocho pasos, siempre en el mismo orden.</h2>
+    <div class="flow">
+      <div class="node"><b>1. Rama</b><span>feat/fix/hotfix</span></div><div class="arrow">→</div>
+      <div class="node"><b>2. Leer</b><span>AGENTS + perfil</span></div><div class="arrow">→</div>
+      <div class="node"><b>3. Reproducir</b><span>test rojo</span></div><div class="arrow">→</div>
+      <div class="node"><b>4. Implementar</b><span>cambio + tests + docs</span></div><div class="arrow">→</div>
+      <div class="node"><b>5. Guard</b><span>staged</span></div><div class="arrow">→</div>
+      <div class="node"><b>6. Verify</b><span>evidencia</span></div><div class="arrow">→</div>
+      <div class="node"><b>7. Eval</b><span>si cambia skill/regla</span></div><div class="arrow">→</div>
+      <div class="node"><b>8. Revisión</b><span>humana</span></div>
+    </div>
+    <div class="note">El merge y el despliegue son humanos. El kit nunca toca producción.</div>
+    <div class="footer"><span><b>Sesión 2</b> · martes</span><span>Una rama, un cambio, un commit; sin secretos.</span></div>
+  </section>
+<section class="slide" id="slide-21" data-session="Sesión 2">
+    <div class="kicker">Laboratorio 2</div>
+    <h2>Reproducir, verificar y revisar.</h2>
+    <div class="cols">
+      <div class="card"><h3>Prompt 1</h3><p>“Usa repro-first: escribe el test que falla, conserva la salida y corrige después.”</p><p class="small">Después: bash verify/run.sh.</p></div>
+      <div class="card"><h3>Prompt 2</h3><p>“Usa review-diff sobre el diff; no edites.”</p><p class="small">Después: “Usa correct; convierte la regla en lint, test o CI.”</p></div>
+    </div>
+    <div class="note">Criterio de salida: test nuevo, salida de verify y una regla con mecanismo.</div>
+    <div class="footer"><span><b>Sesión 2</b> · martes</span><span>La skill se invoca por descripción; si no, se nombra.</span></div>
+  </section>
+<section class="slide" id="slide-22" data-session="Sesión 3">
+    <div class="kicker">Eval</div>
+    <h2>Medir una skill, no un cambio de producto.</h2>
+    <div class="code">python3 evals/harness.py \
+  --case-dir evals/cases/dev-verify/01-fix-failing-test \
+  --rubric evals/rubric.dev-verify.json \
+  --agent build \
+  --model &lt;modelo-aprobado&gt; \
+  --judge-model &lt;modelo-aprobado-distinto&gt; \
+  --k 3</div>
+    <div class="cols">
+      <div class="card"><h3>Qué hace</h3><ul><li>Worktree o copia desechable.</li><li>Juez con artefactos.</li><li>Media, dispersión, tokens y coste.</li><li>Umbral 8,5.</li></ul></div>
+      <div class="card"><h3>Deuda conocida</h3><ul><li>El harness y loop.sh todavía usan OpenCode.</li><li>El runner neutral está pendiente.</li><li>No es una puerta obligatoria todavía.</li></ul></div>
+    </div>
+    <div class="footer"><span><b>Sesión 3</b> · jueves</span><span>--dry-run primero; no gastar modelo en validar el caso.</span></div>
+  </section>
+<section class="slide" id="slide-23" data-session="Sesión 3">
+    <div class="kicker">Norma de empresa</div>
+    <h2>tech-doc es la fuente; el kit no la copia.</h2>
+    <div class="split">
+      <div>
+        <p>Su <b>AGENTS.md</b> es la norma canónica. Se enlaza en <b>~/.agents/AGENTS.md</b> y se comprueba con el script del kit.</p>
+        <div class="code">git clone git@github.com:ScalpersCompany/scalpers-tech-doc.git \
+  "$HOME/odoo-doodba-template/scalpers-tech-doc"
+mkdir -p "$HOME/.agents"
+ln -sfn "$HOME/odoo-doodba-template/scalpers-tech-doc/AGENTS.md" \
+  "$HOME/.agents/AGENTS.md"
+bash "$HOME/dev-agent-kit/scripts/check-techdoc.sh" \
+  --path "$HOME/odoo-doodba-template/scalpers-tech-doc" \
+  --branch main --require-link</div>
+      </div>
+      <div class="right-note"><h3>Regla</h3><ul><li>No es un submódulo.</li><li>No se copia dentro del perfil.</li><li>Si el árbol está sucio, el check falla cerrado.</li><li><span class="muted">--allow-dirty</span> solo para revisión local.</li><li>El kit no empuja tech-doc.</li></ul></div>
+    </div>
+    <div class="footer"><span><b>Sesión 3</b> · jueves</span><span>Si no hay acceso a tech-doc, se practica con el AGENTS local; en empresa gana tech-doc.</span></div>
+  </section>
+<section class="slide" id="slide-24" data-session="Sesión 3">
+    <div class="kicker">Laboratorio 3</div>
+    <h2>Perfil, eval y norma de empresa.</h2>
+    <div class="cols-3">
+      <div class="card"><h3>Perfil</h3><p>Activar .dev-agent/config; ver profile:odoo; meter un sudo() staged y ver el fallo.</p></div>
+      <div class="card"><h3>Eval</h3><p>Ejecutar --dry-run; explicar qué validó y qué no.</p></div>
+      <div class="card"><h3>tech-doc</h3><p>Ejecutar check-techdoc; leer remoto, rama y limpieza.</p></div>
+    </div>
+    <div class="note">Criterio de salida: el alumno distingue perfil, eval y norma; no confunde skipped con pass.</div>
+    <div class="footer"><span><b>Sesión 3</b> · jueves</span><span>Si tech-doc está sucio, se para; no se fuerza.</span></div>
+  </section>
+<section class="slide" id="slide-25" data-session="Cierre">
+    <div class="kicker">Problemas frecuentes</div>
+    <h2>Qué mirar antes de pedir ayuda.</h2>
+    <table class="table">
+      <thead><tr><th>Síntoma</th><th>Causa</th><th>Arreglo</th></tr></thead>
+      <tbody>
+        <tr><td>profile skipped</td><td>sin config o ruta</td><td>revisar DEV_AGENT_PROFILE</td></tr>
+        <tr><td>verify exit 2</td><td>sin TEST_CMD</td><td>rellenar verify/config.env</td></tr>
+        <tr><td>pre-push bloquea</td><td>falta .dev-agent/verify.env</td><td>copiar ejemplo y rellenar</td></tr>
+        <tr><td>comment_lint</td><td>prosa nueva</td><td>quitar; solo directivas</td></tr>
+        <tr><td>CLAUDE.md no carga</td><td>Claude lee CLAUDE.md</td><td>enlace a AGENTS.md</td></tr>
+        <tr><td>eval no corre</td><td>harness OpenCode-only</td><td>dry-run u OpenCode</td></tr>
+      </tbody>
+    </table>
+    <div class="footer"><span><b>Cierre</b></span><span>Un fallo repetido se convierte en lint, test o CI.</span></div>
+  </section>
+<section class="slide" id="slide-26" data-session="Cierre">
+    <div class="kicker">Checklist de salida</div>
+    <h2>Lo que el compañero debe poder demostrar.</h2>
+    <ul class="checklist">
+      <li>Clonar kit, perfiles y repo</li><li>Instalar en la raíz</li>
+      <li>Copiar perfil y configurar</li><li>Rellenar verify y hook</li>
+      <li>Explicar skipped y exit 2</li><li>Generar adaptadores Claude/OpenCode</li>
+      <li>Usar las cinco skills</li><li>Elegir modelo y juez</li>
+      <li>Reconocer la deuda de eval</li><li>No tocar producción ni secretos</li>
+      <li>Tech-doc como norma, no copia</li><li>Entregar con evidencia</li>
+    </ul>
+    <div class="footer"><span><b>Cierre</b></span><span>El objetivo es criterio, no memorizar comandos.</span></div>
+  </section>
+<section class="slide section" id="slide-27" data-session="Cierre">
+    <div class="num">02</div>
+    <div class="kicker">Siguiente paso</div>
+    <h2>Primero una puerta verde.<br>Después, más agentes.</h2>
+    <p class="lede">La formación termina cuando el compañero puede instalar, verificar y explicar. No cuando sabe recitar el README.</p>
+    <div class="pill-row"><span class="badge ok">guard</span><span class="badge ok">verify</span><span class="badge">skills</span><span class="badge">perfil</span><span class="badge warn">eval: deuda conocida</span><span class="badge hot">producción: humana</span></div>
+    <div class="footer"><span><b>DevAgentKit</b> · formación</span><span>Guía: docs/FORMACION-DEV-AGENT-KIT.md · Deck: docs/formacion/dev-agent-kit-formacion.html</span></div>
+  </section>
+</div>
+
+<div class="controls" aria-label="Navegación de diapositivas">
+  <span class="counter-inline" aria-live="polite" id="counter">01 / 27</span>
+  <button type="button" id="prev" aria-label="Diapositiva anterior">← Anterior</button>
+  <button type="button" id="next" aria-label="Diapositiva siguiente">Siguiente →</button>
+</div>
+<div class="progress" id="progress" aria-hidden="true"></div>
+<script>
+(() => {
+  const stage = document.getElementById('stage');
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const counter = document.getElementById('counter');
+  const progress = document.getElementById('progress');
+  const total = slides.length;
+  let index = 0;
+
+  const stored = Number(localStorage.getItem('devkit-training-slide'));
+  if (Number.isInteger(stored) && stored >= 0 && stored < total) index = stored;
+
+  function fit() {
+    const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    stage.style.transform = 'scale(' + scale + ')';
+    stage.style.left = Math.max(0, (window.innerWidth - 1920 * scale) / 2) + 'px';
+    stage.style.top = Math.max(0, (window.innerHeight - 1080 * scale) / 2) + 'px';
+  }
+
+  function show(next) {
+    index = Math.max(0, Math.min(total - 1, next));
+    slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
+    counter.textContent = String(index + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+    progress.style.width = ((index + 1) / total * 100) + '%';
+    localStorage.setItem('devkit-training-slide', String(index));
+    const id = slides[index].id;
+    if (id) history.replaceState(null, '', '#' + id);
+  }
+
+  document.getElementById('prev').addEventListener('click', () => show(index - 1));
+  document.getElementById('next').addEventListener('click', () => show(index + 1));
+
+  window.addEventListener('keydown', (event) => {
+    const key = event.key;
+    if (key === 'ArrowRight' || key === 'PageDown' || key === ' ') { event.preventDefault(); show(index + 1); }
+    else if (key === 'ArrowLeft' || key === 'PageUp') { event.preventDefault(); show(index - 1); }
+    else if (key === 'Home') { event.preventDefault(); show(0); }
+    else if (key === 'End') { event.preventDefault(); show(total - 1); }
+    else if (key.toLowerCase() === 'f') { if (!document.fullscreenElement) document.documentElement.requestFullscreen?.(); else document.exitFullscreen?.(); }
+    else if (key.toLowerCase() === 'p') { event.preventDefault(); window.print(); }
+  });
+
+  window.addEventListener('resize', fit);
+  fit();
+  show(index);
+})();
+</script>
+</body>
+</html>

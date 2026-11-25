@@ -6,6 +6,10 @@ A repo-local kit to make agents trustworthy on a development codebase. It implem
 
 Start here: `docs/INSTALACION-Y-FUNCIONAMIENTO.md` (Spanish) — install, daily flow, guard, verify, evals, GGA, profiles, security and the implemented-versus-pending status.
 
+For a new colleague, start with `docs/FORMACION-DEV-AGENT-KIT.md` and project
+`docs/formacion/dev-agent-kit-formacion.html`: a three-session, step-by-step onboarding
+with Claude Code or any compatible agent.
+
 ## Repositories that work together
 
 | Repository | Role | Relation |
@@ -146,7 +150,7 @@ The gates are plain bash/Python 3.8+ and git hooks, so Hermes, OpenCode, Claude 
 4. Fill `verify/config.env` with the boot, health and test commands.
 5. Run `bash guard/guard.sh`. Fix or disable each check explicitly, never by deleting it silently.
 6. Run `bash verify/run.sh` on a clean checkout. It must pass before you trust any agent.
-7. Install the hooks: `bash scripts/install-hooks.sh .` for the pre-commit guard; add `--with-verify` for the pre-push runtime gate and edit `.dev-agent/verify.env`. For OpenCode or Claude, run `bash scripts/install-agent-adapters.sh . --agents opencode,claude --profile /path/to/dev-agent-profiles/profiles/odoo11`; the generated directories are gitignored.
+7. Install the hooks: `bash scripts/install-hooks.sh .` for the pre-commit guard; add `--with-verify` for the pre-push runtime gate and edit `.dev-agent/verify.env`. For OpenCode or Claude, run `bash scripts/install-agent-adapters.sh . --agents opencode,claude --profile /path/to/dev-agent-profiles/profiles/odoo11`; the kit's own `.gitignore` ignores the generated directories, but the target repo does not get a `.gitignore` from that script: add them to `.git/info/exclude` or commit them intentionally.
 8. Copy one eval case, run `python3 evals/harness.py --case-dir evals/cases/dev-verify/01-fix-failing-test --rubric evals/rubric.dev-verify.json --dry-run`, then a real run with the approved model.
 
 ## What it does not do

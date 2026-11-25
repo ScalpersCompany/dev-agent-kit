@@ -78,4 +78,4 @@ for agent in "${LIST[@]}"; do
       ;;
   esac
 done
-echo "neutral source stays in skills/, commands/ and agents/; the generated adapter directories are gitignored"
+echo "neutral source stays in skills/, commands/ and agents/; the kit's own .gitignore ignores the generated adapter dirs, but the target repo must exclude or commit them intentionally"

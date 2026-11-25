@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.0] - 2026-11-19
+
+### Added
+
+- `docs/FORMACION-DEV-AGENT-KIT.md`: three-session onboarding guide for a colleague starting from zero, covering download, install, profiles, verify, skills, models, labs, assessment, troubleshooting and known gaps.
+- `docs/formacion/dev-agent-kit-formacion.html`: self-contained, keyboard-navigable 27-slide deck for the same material.
+
 ## [2.9.0] - 2026-11-19
 
 ### Changed

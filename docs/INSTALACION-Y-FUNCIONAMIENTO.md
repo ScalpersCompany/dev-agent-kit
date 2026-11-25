@@ -86,7 +86,7 @@ cp -a ~/dev-agent-kit/docs .
 
 No copies `verify/config.env`, `evidence/`, `guard-report.json` ni `evals/runs/`. Si el
 repo ya tiene `AGENTS.md`, fusiónalo. Los adaptadores `.opencode/` o `.claude/` se generan
-con `bash scripts/install-agent-adapters.sh . --agents opencode,claude --profile /ruta/dev-agent-profiles/profiles/odoo11`; no se versionan.
+con `bash scripts/install-agent-adapters.sh . --agents opencode,claude --profile /ruta/dev-agent-profiles/profiles/odoo11`; en el kit están ignorados, pero el repo destino no recibe un `.gitignore` del script: añádelos a `.git/info/exclude` o commitéalos a propósito.
 
 ### 3.3 Configurar verify
 
@@ -223,7 +223,14 @@ Diseño o migración pendiente:
 - cableado de `gentle-ai sync`, `rsc-harness` y `engram` en el flujo diario; `engram` en local hasta que exista la infraestructura AWS;
 - instalación automática del perfil desde el bootstrap.
 
-## 9. Seguridad
+## 9. Formación
+
+La guía paso a paso para un compañero que empieza de cero está en
+`docs/FORMACION-DEV-AGENT-KIT.md`; la presentación navegable está en
+`docs/formacion/dev-agent-kit-formacion.html`. Cubre descarga, instalación, perfiles,
+skills, modelos, laboratorios, evaluación y los límites conocidos.
+
+## 10. Seguridad
 
 - Producción no se toca; nada destructivo sin autorización.
 - Sin secretos, tokens ni datos de cliente en código, tests, logs, commits o documentación.
