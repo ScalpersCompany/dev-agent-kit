@@ -5,7 +5,7 @@
 ### Added
 
 - `evals/agent_runner.py`: agent-neutral executor and judge normalization for OpenCode, Claude Code, Codex, pi and Hermes. Claude print mode is verified locally; Codex remains supported but needs its own login.
-- `gga/REVIEW-RULES.md`: canonical blocking and advisory rules derived from the FactorLibre MR preflight, plus company and profile precedence.
+- `gga/REVIEW-RULES.md`: canonical blocking and advisory rules derived from the FactorLibre MR preflight, plus company and profile precedence. It now covers manifest/version/changelog evidence, flake8, mandatory pylint, check-xml, pre-commit, pipeline evidence, OCA/ORM N+1 patterns, route/token allowlists and real MR failure patterns.
 - `scripts/review-gga.sh`: blocking by default, requires `STATUS: PASSED`; `--advisory` and `GGA_ADVISORY=1` keep the report without blocking.
 - `scripts/install-gga.sh --profile` and `--with-pre-push`: append profile rules and optionally enable GGA after verify in the composite pre-push hook.
 - `dev-agent init` as an alias of `install.sh`; `install.sh` writes `.dev-agent/profiles.lock` with the profile source and commit, and `profile use` updates the active entry.
