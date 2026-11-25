@@ -14,8 +14,7 @@ Al terminar, el compañero debe poder:
 4. usar las cinco skills del núcleo y una skill de su perfil;
 5. elegir un modelo aprobado y un juez distinto para las evals;
 6. entregar un cambio sin secretos, sin producción y con evidencia;
-7. reconocer las deudas conocidas: el eval todavía usa OpenCode y `dev-agent init`/lock
-   siguen pendientes.
+7. reconocer las deudas conocidas: Codex necesita su propio login para el runner.
 
 La presentación para proyectar está en `docs/formacion/dev-agent-kit-formacion.html`.
 La referencia funcional completa está en `docs/SISTEMA-FUNCIONALIDADES.html`; la
@@ -487,9 +486,10 @@ python3 evals/harness.py \
 - Cada corrida va en un worktree o copia desechable.
 - El juez recibe los artefactos; el harness calcula la media ponderada.
 - Umbral 8,5; `--dry-run` valida el caso sin gastar modelo.
-- **Deuda conocida**: `evals/harness.py` y `evals/loop.sh` todavía usan OpenCode. El runner
-  neutral está pendiente. No se vende como agnóstico ni se usa como puerta obligatoria
-  hasta que esa deuda se cierre.
+- **Runner neutral**: `evals/agent_runner.py` ejecuta OpenCode, Claude, Codex, pi y Hermes.
+  El juez recibe la misma rúbrica y artefactos. Codex necesita su propio login.
+- **GGA**: la revisión es bloqueante por defecto; las reglas salen del preflight de
+  FactorLibre, el perfil activo y la norma de empresa. `--advisory` solo informa.
 
 ### 3.3 Tech-doc
 
@@ -518,14 +518,16 @@ practicar; en un repo real de la empresa, la norma de tech-doc gana.
 
 ### 3.4 GGA y revisión
 
-GGA es una revisión asesora opcional, no una puerta. `GGA_ADVISORY=1` informa sin bloquear;
-sin proveedor o sin `.gga`, no se declara verde. No ejecutar `gga install`: pisaría el
-pre-commit del kit.
+GGA es la segunda revisión, no la puerta determinista. `review-gga.sh` es bloqueante por
+defecto y exige `STATUS: PASSED`; `--advisory` o `GGA_ADVISORY=1` informa sin bloquear. Sin
+proveedor o sin `.gga`, la revisión bloqueante falla cerrada. No ejecutar `gga install`:
+pisaría el pre-commit del kit.
 
 ```bash
-bash scripts/install-gga.sh .
-# editar .gga y elegir el proveedor aprobado
-GGA_ADVISORY=1 bash scripts/review-gga.sh .
+bash scripts/install-gga.sh . --profile "$HOME/dev-agent-profiles/profiles/odoo11"
+bash scripts/review-gga.sh . --blocking --pr-mode --diff-only
+# o, para bloquear también el pre-push:
+bash scripts/install-gga.sh . --profile "$HOME/dev-agent-profiles/profiles/odoo11" --with-pre-push
 ```
 
 La revisión humana sigue siendo humana. El agente que escribió el cambio no es el que lo
@@ -554,8 +556,8 @@ aprueba. El merge y el despliegue no se delegan.
 - [ ] Sabe copiar skills a Codex, pi y Hermes, que no tienen adaptador.
 - [ ] Sabe invocar `dev-verify`, `repro-first`, `review-diff`, `correct` y una skill de perfil.
 - [ ] Sabe elegir un modelo aprobado y un juez distinto.
-- [ ] Sabe que la eval todavía es OpenCode-only.
-- [ ] Sabe que GGA es opcional y no sustituye a guard/verify.
+- [ ] Sabe que la eval tiene runner neutral para OpenCode, Claude, Codex, pi y Hermes.
+- [ ] Sabe que GGA es bloqueante cuando se ejecuta y no sustituye a guard/verify.
 - [ ] Sabe que no se toca producción, no se ponen secretos y no se empuja sin autorización.
 - [ ] Sabe que tech-doc es la norma canónica y no se copia.
 
@@ -573,7 +575,8 @@ aprueba. El merge y el despliegue no se delegan.
 | las skills no aparecen | adaptador no generado o sesión antigua | regenerar y reiniciar el agente |
 | `.dev-agent` no se ve en git | el hook lo excluyó localmente | es local; si quieres compartir el perfil, copiarlo a `profiles/` |
 | `check-techdoc` falla | remoto, rama o árbol sucio | cerrar el cambio en tech-doc; no forzar |
-| la eval no corre con Claude | el harness sigue atado a OpenCode | usar `--dry-run` o OpenCode; deuda conocida |
+| la eval no corre con Codex | Codex no tiene login en esta máquina | `codex login`; el runner ya está preparado |
+| GGA bloquea un falso positivo | la regla es demasiado amplia o falta evidencia | `--advisory` para revisar; ajustar la regla, no saltarse guard/verify |
 | `git push` rechazado | no hay autorización o el remoto no es el correcto | parar; no forzar el push |
 
 ## Seguridad y límites
@@ -606,12 +609,13 @@ Criterio: cada paso tiene una salida observable; si no, no se marca.
 - `.dev-agent/` queda local y excluido; si el perfil debe ir a CI, va en `profiles/` y se commitea.
 - El `.example` del perfil Odoo es una plantilla vacía; el `config.env` real de esta máquina no se copia.
 - El instalador ajusta la ruta del kit en los hooks; en una instalación manual, `DEV_AGENT_KIT` debe estar en el entorno de git.
-- `dev-agent init` y el lock de perfiles siguen pendientes; `install.sh` es el camino completo actual.
+- `dev-agent init` es alias de `install.sh` y escribe el lock; el lock de perfiles está en `.dev-agent/profiles.lock`.
 - El perfil PHP es un esqueleto.
-- `evals/harness.py` y `evals/loop.sh` todavía usan OpenCode.
+- `evals/agent_runner.py` soporta OpenCode, Claude, Codex, pi y Hermes; Codex necesita su propio login.
+- GGA tiene reglas bloqueantes y `--with-pre-push` opcional; no sustituye a guard/verify.
+- `comment_lint` ya cubre PHP, incluyendo `//`, `#` y docblocks.
 - `check-techdoc.sh` falla cerrado si tech-doc está sucio; el clon de esta máquina está en
   una rama de trabajo con cambios sin commitear.
-- GGA es opcional y asesor; no sustituye a `guard` ni a `verify`.
 
 ## Enlaces
 

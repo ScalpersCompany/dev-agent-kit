@@ -8,6 +8,7 @@ Comandos de cada día. El wrapper funciona desde la raíz del repo de desarrollo
 | `dev-agent guard` | Pasar las comprobaciones antes del commit. |
 | `dev-agent verify` | Ejecutar el comportamiento real y dejar evidencia. |
 | `dev-agent review` | Ver el diff y el prompt de la skill review-diff. |
+| `dev-agent review-gga` | Revisión GGA bloqueante; `--advisory` solo informa. |
 | `dev-agent eval --dry-run` | Validar un caso de eval sin gastar modelo. |
 | `dev-agent profile list` | Ver perfiles instalados y el activo. |
 | `dev-agent profile use odoo11` | Cambiar el perfil activo. |
@@ -56,19 +57,40 @@ dev-agent memory save "Decisión" "Qué se decidió y por qué" --type decision
 
 CodeGraph indexa el repo; Engram guarda decisiones, bugs y contexto. Ninguno es una puerta.
 
+## Revisión GGA
+
+```bash
+dev-agent review-gga
+dev-agent review-gga --advisory
+```
+
+La revisión es bloqueante por defecto: exige `STATUS: PASSED` y salida 0. Las reglas salen
+del preflight de FactorLibre, el perfil activo y la norma de empresa. Si no hay `gga` o
+`.gga`, falla cerrada. Para instalarlo:
+
+```bash
+bash scripts/install-gga.sh . --profile "$HOME/dev-agent-profiles/profiles/odoo11"
+bash scripts/install-gga.sh . --profile "$HOME/dev-agent-profiles/profiles/odoo11" --with-pre-push
+```
+
+`--with-pre-push` ejecuta GGA después de verify; el hook sigue siendo local y `--no-verify`
+no sustituye al CI.
+
 ## Evals
 
 ```bash
 dev-agent eval \
   --case-dir evals/cases/dev-verify/01-fix-failing-test \
   --rubric evals/rubric.dev-verify.json \
-  --agent build \
+  --agent claude \
+  --judge-agent opencode \
   --model <modelo-aprobado> \
   --judge-model <modelo-aprobado-distinto> \
   --k 3
 ```
 
-Empieza con `--dry-run`. El harness sigue atado a OpenCode; es una deuda conocida.
+`--agent` acepta `opencode`, `claude`, `codex`, `pi` o `hermes`. `--agent build` sigue
+funcionando como alias de OpenCode con el perfil `build`. Empieza con `--dry-run`.
 
 ## Documentación
 

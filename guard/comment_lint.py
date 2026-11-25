@@ -11,6 +11,7 @@ SKIP_DIRS = {".git", "node_modules", ".venv", "venv", "__pycache__", "dist", "bu
 PY_EXT = {".py", ".pyw"}
 XML_EXT = {".xml", ".html", ".htm", ".xslt"}
 JS_EXT = {".js", ".jsx", ".ts", ".tsx", ".css", ".scss"}
+PHP_EXT = {".php"}
 SH_EXT = {".sh", ".bash"}
 SQL_EXT = {".sql"}
 YAML_EXT = {".yml", ".yaml"}
@@ -262,6 +263,81 @@ def sql_comments(text):
     return found
 
 
+def php_comments(text):
+    found = []
+    index = 0
+    line = 1
+    state = None
+    start_line = 0
+    buffer = []
+    quote = None
+    while index < len(text):
+        char = text[index]
+        following = text[index + 1] if index + 1 < len(text) else ""
+        if state == "string":
+            if char == "\\":
+                index += 2
+                continue
+            if char == quote:
+                state = None
+            if char == "\n":
+                line += 1
+            index += 1
+            continue
+        if state == "line":
+            if char == "\n":
+                found.append((start_line, "".join(buffer)))
+                state = None
+                line += 1
+                buffer = []
+            else:
+                buffer.append(char)
+            index += 1
+            continue
+        if state == "block":
+            if char == "*" and following == "/":
+                if not "".join(buffer).startswith("*"):
+                    found.append((start_line, "".join(buffer)))
+                state = None
+                index += 2
+                continue
+            if char == "\n":
+                line += 1
+            buffer.append(char)
+            index += 1
+            continue
+        if char in "'\"":
+            state = "string"
+            quote = char
+            index += 1
+            continue
+        if char == "/" and following == "/":
+            state = "line"
+            start_line = line
+            buffer = []
+            index += 2
+            continue
+        if char == "#" and following != "[":
+            state = "line"
+            start_line = line
+            buffer = []
+            index += 1
+            continue
+        if char == "/" and following == "*":
+            state = "block"
+            start_line = line
+            buffer = []
+            index += 2
+            continue
+        if char == "\n":
+            line += 1
+        index += 1
+    if state in ("line", "block"):
+        if state == "line" or not "".join(buffer).startswith("*"):
+            found.append((start_line, "".join(buffer)))
+    return found
+
+
 def comments_for(path, text):
     suffix = path.suffix.lower()
     if suffix in PY_EXT:
@@ -270,6 +346,8 @@ def comments_for(path, text):
         return xml_comments(text)
     if suffix in JS_EXT:
         return js_comments(text)
+    if suffix in PHP_EXT:
+        return php_comments(text)
     if suffix in SH_EXT or suffix in YAML_EXT:
         return hash_comments(text)
     if suffix in SQL_EXT:

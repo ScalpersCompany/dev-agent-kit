@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.4.0] - 2026-11-25
+
+### Added
+
+- `evals/agent_runner.py`: agent-neutral executor and judge normalization for OpenCode, Claude Code, Codex, pi and Hermes. Claude print mode is verified locally; Codex remains supported but needs its own login.
+- `gga/REVIEW-RULES.md`: canonical blocking and advisory rules derived from the FactorLibre MR preflight, plus company and profile precedence.
+- `scripts/review-gga.sh`: blocking by default, requires `STATUS: PASSED`; `--advisory` and `GGA_ADVISORY=1` keep the report without blocking.
+- `scripts/install-gga.sh --profile` and `--with-pre-push`: append profile rules and optionally enable GGA after verify in the composite pre-push hook.
+- `dev-agent init` as an alias of `install.sh`; `install.sh` writes `.dev-agent/profiles.lock` with the profile source and commit, and `profile use` updates the active entry.
+- `dev-agent review-gga`; PHP support in `guard/comment_lint.py`, including `//`, `#` and docblocks.
+
+### Changed
+
+- `evals/harness.py` and `evals/loop.sh` use the neutral runner; `--agent build` remains an OpenCode alias.
+- README, operations, architecture, diagrams, install and training docs reflect the implemented runner, GGA gate and PHP lint.
+
 ## [3.3.0] - 2026-11-25
 
 ### Added

@@ -180,8 +180,9 @@ python3 /ruta/dev-agent-kit/evals/harness.py \
 ```
 
 K=3, umbral 8,5, juez distinto del ejecutor. `--dry-run` valida el caso sin gastar modelo.
-Un caso sin rúbrica o sin `context.json` no es una eval real. El harness y `evals/loop.sh`
-todavía ejecutan OpenCode; el runner neutral es una deuda conocida, no un gate neutral.
+Un caso sin rúbrica o sin `context.json` no es una eval real. `evals/agent_runner.py`
+ejecuta OpenCode, Claude, Codex, pi o Hermes; el juez recibe la misma rúbrica y artefactos.
+Codex necesita su propio login.
 
 ## 7. Tests y CI
 
@@ -251,5 +252,5 @@ hooks son los mismos para todos los perfiles.
 - Validador: `scripts/validate-profile.py`.
 - Odoo 11: `ScalpersCompany/dev-agent-profiles/profiles/odoo11`, público.
 - PHP: `ScalpersCompany/dev-agent-profiles/profiles/php`, esqueleto.
-- Instalador `install.sh`: implementado. `dev-agent init` y el lock: pendientes.
+- Instalador `install.sh` y alias `dev-agent init`: implementados; lock en `.dev-agent/profiles.lock`.
 - Mapa visual: `docs/DIAGRAMA-SISTEMA.md` y `docs/diagrams/sistema.html`.

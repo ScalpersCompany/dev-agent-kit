@@ -6,13 +6,18 @@ set -uo pipefail
 CASE_DIR="${1:?usage: loop.sh <case-dir> [max-iterations]}"
 MAX="${2:-3}"
 RUBRIC="${RUBRIC:-evals/rubric.example.json}"
+AGENT="${AGENT:-opencode}"
+AGENT_PROFILE="${AGENT_PROFILE:-}"
+JUDGE_AGENT="${JUDGE_AGENT:-}"
 MODEL="${MODEL:-}"
 JUDGE_MODEL="${JUDGE_MODEL:-}"
 
 for i in $(seq 1 "$MAX"); do
   echo "== iteration $i =="
   OUT="evals/runs/loop-$i-$(date +%H%M%S)"
-  ARGS=(--case-dir "$CASE_DIR" --rubric "$RUBRIC" --out "$OUT")
+  ARGS=(--case-dir "$CASE_DIR" --rubric "$RUBRIC" --out "$OUT" --agent "$AGENT")
+  [ -n "$AGENT_PROFILE" ] && ARGS+=(--agent-profile "$AGENT_PROFILE")
+  [ -n "$JUDGE_AGENT" ] && ARGS+=(--judge-agent "$JUDGE_AGENT")
   [ -n "$MODEL" ] && ARGS+=(--model "$MODEL")
   [ -n "$JUDGE_MODEL" ] && ARGS+=(--judge-model "$JUDGE_MODEL")
   python3 evals/harness.py "${ARGS[@]}"
@@ -35,7 +40,11 @@ for i in $(seq 1 "$MAX"); do
       echo "MODEL not set; refusing to edit the skill with an unapproved default model"
       exit 1
     fi
-    opencode run --standalone --agent build --model "$MODEL" "Read $OUT/score.json and the skill under skills/. Fix the failures by changing the skill or its supporting files. Do not weaken the rubric and do not change the judge. Stop after the edit."
+    python3 evals/agent_runner.py \
+      --agent "$AGENT" \
+      ${AGENT_PROFILE:+--profile "$AGENT_PROFILE"} \
+      --model "$MODEL" \
+      --prompt "Read $OUT/score.json and the skill under skills/. Fix the failures by changing the skill or its supporting files. Do not weaken the rubric and do not change the judge. Stop after the edit."
     echo "review the diff before keeping the skill edit"
   else
     echo "below threshold; improve the skill and run again (set AUTO_IMPROVE=1 to let the agent edit it)"

@@ -164,16 +164,18 @@ bash scripts/install-hooks.sh . --with-verify
 
 Copia `.dev-agent/verify.env` y falla cerrado hasta que tenga un `TEST_CMD` real.
 
-### 3.5 Instalar GGA (opcional)
+### 3.5 Instalar GGA (revisión bloqueante)
 
 ```bash
-bash scripts/install-gga.sh .
-# edita .gga y elige PROVIDER=claude, opencode, codex, ollama:<modelo>...
-bash scripts/review-gga.sh . --ci
+bash scripts/install-gga.sh . --profile "$HOME/dev-agent-profiles/profiles/odoo11"
+bash scripts/review-gga.sh . --blocking --pr-mode --diff-only
+# o, para bloquear también el pre-push:
+bash scripts/install-gga.sh . --profile "$HOME/dev-agent-profiles/profiles/odoo11" --with-pre-push
 ```
 
-`GGA_ADVISORY=1` informa sin bloquear. No ejecutes `gga install`: pisaría el pre-commit del
-kit. Sin proveedor o sin `.gga`, no se declara verde.
+Las reglas base son el preflight de FactorLibre, el perfil activo y la norma de empresa.
+`--advisory` o `GGA_ADVISORY=1` informa sin bloquear. No ejecutes `gga install`: pisaría el
+pre-commit del kit. Sin proveedor o sin `.gga`, la revisión bloqueante falla cerrada.
 
 ### 3.6 Skills en los agentes
 
@@ -223,7 +225,8 @@ python3 evals/harness.py \
 Cada ejecución va en un worktree o copia desechable. El juez recibe los artefactos y el
 `context.json`. El umbral es 8,5; `--dry-run` valida el caso sin gastar modelo. `score.json`
 incluye scores, media, mínimo, máximo, desviación, tokens, coste, aislamiento y `passed`.
-El harness y `evals/loop.sh` todavía invocan OpenCode; el runner neutral está pendiente.
+`evals/agent_runner.py` ejecuta OpenCode, Claude, Codex, pi o Hermes; el juez recibe la
+misma rúbrica y artefactos.
 
 La línea base del núcleo está en `docs/EVAL-BASELINE.md`; la del perfil Odoo, en
 `dev-agent-profiles/profiles/odoo11/docs/EVAL-BASELINE.md`.
@@ -241,8 +244,8 @@ El perfil vive en `dev-agent-profiles/profiles/odoo11`:
 Para usarlo, copia el perfil a `.dev-agent/profiles/odoo11` (o `profiles/odoo11`) y escribe
 `.dev-agent/config` con `DEV_AGENT_PROFILE=odoo11`. El `guard.sh` del núcleo ejecutará
 `guard/odoo.sh`. `scripts/bootstrap.sh --profile odoo11` ya copia el perfil y escribe
-`.dev-agent/config`; `install.sh` es el instalador completo actual; `dev-agent init` y el
-lock siguen pendientes.
+`.dev-agent/config`; `dev-agent init` es alias de `install.sh` y escribe
+`.dev-agent/profiles.lock`; el lock de perfiles está implementado.
 
 Para crear otro perfil: `profiles/_template`, `scripts/new-profile.sh <nombre> --language
 <lenguaje> --repo <repo-de-perfiles>` y `scripts/validate-profile.py <perfil>`; la guía
@@ -255,7 +258,7 @@ Implementado:
 
 - guard genérico, `comment_lint`, verify, evals y hooks;
 - cinco skills core;
-- GGA opcional;
+- GGA bloqueante cuando se ejecuta; reglas comunes + perfil + norma;
 - perfil Odoo extraído localmente con sus tests y casos;
 - `guard.sh` con carga de perfil.
 

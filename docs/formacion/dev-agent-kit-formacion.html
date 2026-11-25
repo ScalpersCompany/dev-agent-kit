@@ -554,13 +554,14 @@ version: 0.1.0
     <div class="code">python3 evals/harness.py \
   --case-dir evals/cases/dev-verify/01-fix-failing-test \
   --rubric evals/rubric.dev-verify.json \
-  --agent build \
+  --agent claude \
+  --judge-agent opencode \
   --model &lt;modelo-aprobado&gt; \
   --judge-model &lt;modelo-aprobado-distinto&gt; \
   --k 3</div>
     <div class="cols">
       <div class="card"><h3>Qué hace</h3><ul><li>Worktree o copia desechable.</li><li>Juez con artefactos.</li><li>Media, dispersión, tokens y coste.</li><li>Umbral 8,5.</li></ul></div>
-      <div class="card"><h3>Deuda conocida</h3><ul><li>El harness y loop.sh todavía usan OpenCode.</li><li>El runner neutral está pendiente.</li><li>No es una puerta obligatoria todavía.</li></ul></div>
+      <div class="card"><h3>Runner neutral</h3><ul><li>OpenCode, Claude, Codex, pi y Hermes.</li><li>El juez recibe la misma rúbrica y artefactos.</li><li>Codex necesita su propio login.</li></ul></div>
     </div>
     <div class="footer"><span><b>Sesión 3</b> · jueves</span><span>--dry-run primero; no gastar modelo en validar el caso.</span></div>
   </section>
@@ -702,7 +703,8 @@ dev-agent doctor</div>
         <tr><td>pre-push bloquea</td><td>falta .dev-agent/verify.env</td><td>copiar ejemplo y rellenar</td></tr>
         <tr><td>comment_lint</td><td>prosa nueva</td><td>quitar; solo directivas</td></tr>
         <tr><td>CLAUDE.md no carga</td><td>Claude lee CLAUDE.md</td><td>enlace a AGENTS.md</td></tr>
-        <tr><td>eval no corre</td><td>harness OpenCode-only</td><td>dry-run u OpenCode</td></tr>
+        <tr><td>eval no corre con Codex</td><td>falta login de Codex</td><td>codex login; el runner ya está preparado</td></tr>
+        <tr><td>GGA bloquea</td><td>regla bloqueante o falta evidencia</td><td>--advisory para revisar; corregir, no saltarse guard/verify</td></tr>
         <tr><td>tech-doc falla</td><td>clon sucio o remoto</td><td>limpiar o --allow-dirty local</td></tr>
       </tbody>
     </table>
@@ -728,7 +730,7 @@ dev-agent doctor</div>
     <div class="kicker">Siguiente paso</div>
     <h2>Primero una puerta verde.<br>Después, más agentes.</h2>
     <p class="lede">La formación termina cuando el compañero puede instalar, verificar y explicar. No cuando sabe recitar el README.</p>
-    <div class="pill-row"><span class="badge ok">install.sh</span><span class="badge ok">guard</span><span class="badge ok">verify</span><span class="badge">CodeGraph</span><span class="badge">Engram</span><span class="badge warn">eval: deuda conocida</span><span class="badge hot">producción: humana</span></div>
+    <div class="pill-row"><span class="badge ok">install.sh</span><span class="badge ok">guard</span><span class="badge ok">verify</span><span class="badge">CodeGraph</span><span class="badge">Engram</span><span class="badge ok">eval neutral</span><span class="badge ok">GGA bloqueante</span><span class="badge hot">producción: humana</span></div>
     <div class="footer"><span><b>DevAgentKit</b> · formación</span><span>Guía: docs/FORMACION-DEV-AGENT-KIT.md · Deck: docs/formacion/dev-agent-kit-formacion.html</span></div>
   </section>
 </div>

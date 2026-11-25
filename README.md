@@ -48,7 +48,8 @@ bin/dev-agent                 usage wrapper: doctor, guard, verify, review, eval
 AGENTS.md                     generic rules the agent reads first
 skills/                       five core skills: dev-verify, repro-first, review-diff, correct, query-readonly
 commands/                     neutral prompt templates; adapters install them per agent
-agents/                       eval judge prompt; adapters install it for OpenCode
+agents/                       strict eval judge prompt; the runner injects it into any agent
+evals/agent_runner.py         neutral executor/judge adapter for OpenCode, Claude, Codex, pi and Hermes
 scripts/install-agent-adapters.sh  generates .opencode/.claude adapters from the neutral source; --profile also merges the profile skills
 verify/run.sh                 boot, smoke, tests, evidence/
 guard/guard.sh                generic checks plus the active profile checks
@@ -61,9 +62,9 @@ profiles/_template/           contract, env, guard, verify, skills, evals and do
 scripts/new-profile.sh        creates a profile from the template with a backup
 scripts/validate-profile.py  validates profile.json, profile.env and the profile paths
 scripts/check-techdoc.sh      verifies the company norm clone, remote, branch/commit and link
-gga/                          optional AI review: .gga example and rules
-scripts/install-gga.sh        installs .gga and .gga-rules.md with backups
-scripts/review-gga.sh         runs gga on staged files, optional or blocking
+gga/                          blocking and advisory review rules: .gga example and canonical rules
+scripts/install-gga.sh        installs .gga and .gga-rules.md with backups; --profile/--with-pre-push
+scripts/review-gga.sh         GGA review, blocking by default; --advisory reports only
 scripts/bootstrap.sh          copies the core into a repo, installs a profile, hooks and optional tech-doc reference
 scripts/install-techdoc.sh    clones or links tech-doc, links AGENTS.md and writes docs/TECHDOC.md
 scripts/new-profile.sh        creates a profile from profiles/_template with a backup
@@ -153,24 +154,24 @@ The visual map of the system is in `docs/diagrams/sistema.html`; the detailed fl
 | PHP profile | skeleton moved to the profiles repository; PHPStan/PHPCS/PHPUnit not wired |
 | `install.sh` one-line installer | implemented; menu of profiles, agents, CodeGraph, Engram, tech-doc and doctor |
 | `bootstrap --profile` | implemented; lower-level path that copies the active profile and writes `.dev-agent/config` |
-| `dev-agent` wrapper | implemented; doctor, guard, verify, review, eval, profile, codegraph, memory |
-| `dev-agent init` and the profile lock | pending; `install.sh` is the complete path today |
+| `dev-agent` wrapper | implemented; doctor, guard, verify, review, review-gga, eval, profile, codegraph, memory |
+| `dev-agent init` and the profile lock | implemented: alias of `install.sh` plus `.dev-agent/profiles.lock` |
 | profile template, `new-profile.sh` and `validate-profile.py` | implemented and tested |
 | visual system map | `docs/diagrams/sistema.html` and `docs/DIAGRAMA-SISTEMA.md` |
 | detailed flow | `docs/diagrams/flujo-detallado.html` and the Mermaid section in `docs/DIAGRAMA-SISTEMA.md` |
-| eval runner agent-neutral | pending: `evals/harness.py` and `evals/loop.sh` still use OpenCode |
-| GGA advisory review | added; installation tested; no real review run |
-| `comment_lint` for PHP | pending; the generic checker does not scan `.php` yet |
+| eval runner agent-neutral | implemented in `evals/agent_runner.py`: OpenCode, Claude, Codex, pi and Hermes; Claude verified locally, Codex needs its own login |
+| GGA | rules, blocking review and optional pre-push gate; advisory override remains |
+| `comment_lint` for PHP | implemented, including `//`, `#` and docblock handling |
 | `gentle-ai`, `rsc-harness`, `engram` | documented boundaries; `engram` stays local until the AWS infrastructure exists |
 | Scalpers CI | not touched; local gates are the current hard check |
 
 ## Agents and shared rules
 
-The gates are plain bash/Python 3.8+ and git hooks, so Hermes, OpenCode, Claude Code, Codex and pi run the same commands. Skills are `SKILL.md` files under `skills/`; `scripts/install-agent-adapters.sh <repo> --agents opencode,claude` generates the project-level copies, and `gentle-ai sync` handles the global ones. The eval harness is the exception: it still runs through OpenCode, and that is a known gap. The shared rule is `~/.agents/AGENTS.md`, linked from `SOUL.md`, OpenCode's `AGENTS.md` and Claude's `CLAUDE.md`.
+The gates are plain bash/Python 3.8+ and git hooks, so OpenCode, Claude Code, Codex, pi and Hermes run the same commands. Skills are `SKILL.md` files under `skills/`; `scripts/install-agent-adapters.sh <repo> --agents opencode,claude` generates the project-level copies, and `gentle-ai sync` handles the global ones. The eval runner normalizes the five accepted agents through `evals/agent_runner.py`; the judge receives the same rubric and artifacts regardless of the executor. The shared rule is `~/.agents/AGENTS.md`, linked from `SOUL.md`, OpenCode's `AGENTS.md` and Claude's `CLAUDE.md`.
 
 ## GGA (optional)
 
-`scripts/install-gga.sh <repo>` copies `.gga` and `.gga-rules.md` with backups; `scripts/review-gga.sh <repo>` runs `gga` on staged files, `--ci` on the last commit, and `GGA_ADVISORY=1` reports without blocking. Do not run `gga install`: it would replace the kit's pre-commit. GGA is advice; `guard` and `verify` remain the hard gate.
+`scripts/install-gga.sh <repo> [--profile <profile-dir>] [--provider <name>] [--with-pre-push]` copies `.gga` and the canonical `.gga-rules.md` with backups. `scripts/review-gga.sh <repo>` is **blocking by default**: it requires `STATUS: PASSED` and exit 0; `--advisory` or `GGA_ADVISORY=1` reports without blocking. `--with-pre-push` installs the composite pre-push hook and enables the GGA gate in `.dev-agent/gga.env` after verify. Do not run `gga install`: it would replace the kit's pre-commit. The rules are the FactorLibre MR preflight as a base, plus the active profile and company norm.
 
 ## Manual install (fallback)
 

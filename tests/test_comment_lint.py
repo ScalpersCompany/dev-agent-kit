@@ -51,6 +51,18 @@ class CommentLintTest(unittest.TestCase):
         result = self.run_lint({"app.js": "const value = 1; // explanation\n"})
         self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
 
+    def test_php_comments_block(self):
+        result = self.run_lint({"app.php": "<?php\n// explanation\n$value = 1;\n"})
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+
+    def test_php_hash_comment_blocks(self):
+        result = self.run_lint({"app.php": "<?php\n# explanation\n$value = 1;\n"})
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+
+    def test_php_docblock_is_allowed(self):
+        result = self.run_lint({"app.php": "<?php\n/** Documented class. */\nclass Example {}\n"})
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
     def test_clean_file_passes(self):
         result = self.run_lint({"app.js": "const value = 1;\n"})
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)

@@ -30,6 +30,7 @@ if [ -f "$CONFIG" ]; then
   if [ -n "$PROFILE" ]; then
     ok "perfil activo: $PROFILE"
     if [ -f "$ROOT/.dev-agent/profiles/$PROFILE/profile.env" ]; then ok "perfil $PROFILE instalado"; else bad "perfil $PROFILE no está en .dev-agent/profiles"; fi
+    if [ -f "$ROOT/.dev-agent/profiles.lock" ]; then ok "lock de perfiles"; else warn "sin .dev-agent/profiles.lock; instala con dev-agent init"; fi
   else
     bad "config sin DEV_AGENT_PROFILE"
   fi

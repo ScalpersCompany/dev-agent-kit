@@ -46,7 +46,7 @@ dev-agent-kit/
     AGENTS.md
     verify/run.sh                  # BOOT_CMD, HEALTH_URL, SMOKE_CMD, TEST_CMD
     guard/guard.sh                # ejecuta checks core + perfil
-    guard/checks/comment_lint.py  # genérico: Python, JS/TS, XML, shell, SQL, YAML (PHP pendiente)
+    guard/checks/comment_lint.py  # genérico: Python, JS/TS, XML, shell, SQL, YAML y PHP
     guard/checks/secrets.sh
     evals/harness.py              # k runs, artifacts, judge, score.json
     hooks/                        # pre-commit y pre-push
@@ -203,27 +203,28 @@ infraestructura AWS para una memoria compartida queda para más adelante.
 - El kit sigue instalando los hooks del repo; gentle-ai no instala hooks de git.
 - La norma global se queda en `~/.agents/AGENTS.md`; gentle-ai no la duplica.
 
-## GGA (revisión opcional)
+## GGA (revisión bloqueante)
 
-`gga` (Gentleman Guardian Angel) es un revisor de código con IA, instalado por
-`gentle-ai`. No sustituye a `guard` ni a `verify`: es un segundo par de ojos, no
-determinista, que necesita un proveedor y tarda. Se añade como paso opcional, nunca
-como puerta dura.
+`gga` (Gentleman Guardian Angel) es un revisor de código con IA. `guard` y `verify` son
+la puerta determinista; GGA es la segunda revisión y puede bloquear cuando se ejecuta con
+`review-gga.sh --blocking`. Necesita proveedor y tarda, así que su uso normal es el
+preflight de MR; con `install-gga.sh --with-pre-push` se añade también al pre-push.
+Las reglas base son el preflight de FactorLibre, más el perfil activo y la norma de empresa.
 
 - `scripts/install-gga.sh <repo>` copia `.gga` y `.gga-rules.md`, con backup si ya
   existen. **No** ejecuta `gga install`: ese comando instalaría su propio pre-commit y
   pisaría el del kit.
-- `scripts/review-gga.sh <repo>` ejecuta `gga run` sobre lo staged. Con
-  `GGA_ADVISORY=1` informa y no bloquea; sin esa variable devuelve el código de GGA.
-  Para revisar un commit: `scripts/review-gga.sh <repo> --ci`.
+- `scripts/review-gga.sh <repo>` ejecuta `gga run` sobre lo staged. Es bloqueante por
+  defecto: exige `STATUS: PASSED`; con `--advisory` o `GGA_ADVISORY=1` informa y no
+  bloquea. Para revisar un commit: `scripts/review-gga.sh <repo> --ci`.
 - El `.gga` de ejemplo usa `PROVIDER=claude`; se puede cambiar a `opencode`, `codex`,
   `ollama:<modelo>`, `gemini` o el proveedor aprobado. Hermes y OpenCode lanzan el
   script como un comando; no hay API de agente.
-- `.gga-rules.md` es el contrato de revisión: sin comentarios de prosa, tests de
-  comportamiento, UdM correcta, retry terminal, `depends` directo, sin secretos. El
-  perfil puede añadir patrones de fichero, pero no duplicar las reglas del núcleo.
-- Si no hay proveedor o no hay `.gga`, el script lo dice y no se declara verde. El
-  `guard` determinista sigue siendo la garantía; GGA es consejo.
+- `.gga-rules.md` es el contrato de revisión: salen del preflight de FactorLibre y cubren
+  comentarios de prosa, tests de comportamiento, UdM, retry terminal, `depends` directo,
+  secretos, ACL, migraciones y alcance. El perfil añade sus reglas; no las debilita.
+- Si no hay proveedor o no hay `.gga`, la revisión bloqueante falla cerrada. El `guard`
+  determinista sigue siendo la garantía; GGA es la segunda revisión.
 
 ## Flujo de una tarea
 

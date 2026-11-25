@@ -102,7 +102,8 @@ El perfil `odoo11` está extraído en
 núcleo ya no contiene Odoo: `guard.sh` carga el perfil y ejecuta `guard/odoo.sh`.
 `scripts/bootstrap.sh --profile odoo11` copia el perfil a `.dev-agent/profiles/odoo11` y
 escribe `.dev-agent/config`; `install.sh` es el instalador completo actual, con menú de
-perfiles, agentes, CodeGraph, Engram y tech-doc. `dev-agent init` y el lock siguen pendientes.
+perfiles, agentes, CodeGraph, Engram y tech-doc. `dev-agent init` es alias de `install.sh` y
+escribe el lock de perfiles.
 
 ```text
 profile skills/       odoo-safe-change, odoo-11-code-review, factorlibre-mr-preflight
@@ -158,23 +159,23 @@ bash "$HOME/.dev-agent-kit/scripts/bootstrap.sh" /ruta/al/repo \
 `--with-techdoc` clona o enlaza tech-doc, enlaza `~/.agents/AGENTS.md` y crea
 `docs/TECHDOC.md`; `--build-techdoc-html` construye y enlaza el HTML local.
 
-## Instalador futuro
+## Interfaz actual
 
-El wrapper `dev-agent` ya existe para `doctor`, `guard`, `verify`, `review`, `eval`,
-`profile`, `codegraph` y `memory`. `dev-agent init`, `profiles update` y el lock siguen
-pendientes; `install.sh` es el camino completo actual.
+El wrapper `dev-agent` existe para `doctor`, `init`, `guard`, `verify`, `review`,
+`review-gga`, `eval`, `profile`, `codegraph` y `memory`. `dev-agent init` es alias de
+`install.sh`; el lock está en `.dev-agent/profiles.lock`. `profiles update` y `dev-agent
+use` no existen todavía: se usa `dev-agent profile list` y `dev-agent profile use`.
 
-El comando `dev-agent init` previsto sería:
+Ejemplos actuales:
 
 ```bash
-./dev-agent init --repo /ruta/al/repo --profile php
-./dev-agent init --repo /ruta/al/repo --profile odoo11
-./dev-agent init --repo /ruta/al/repo --all --select php
-./dev-agent use php
-./dev-agent profiles list
-./dev-agent profiles update
-./dev-agent doctor
+./install.sh --target /ruta/al/repo --profiles odoo11 --active odoo11 --yes
+dev-agent profile list
+dev-agent profile use odoo11
 ```
+
+`profiles update` y `use` siguen siendo trabajo futuro; no se presentan como hechos.
+
 
 - `init` copia el núcleo al repo, resuelve el perfil desde `profiles.index.json`, lo clona
   en `.dev-agent/profiles/<nombre>` y escribe `.dev-agent/config`.
@@ -280,8 +281,8 @@ El repo de destino queda así:
   guard y verify.
 - Los scripts son bash/Python 3.8+; Hermes, OpenCode y Claude Code los ejecutan igual. Las
   skills son `SKILL.md`; `gentle-ai` las distribuye.
-- GGA es opcional y se instala por repo; el perfil solo aporta patrones de fichero y reglas
-  adicionales.
+- GGA es bloqueante cuando se ejecuta y se instala por repo; el perfil aporta patrones de
+  fichero y reglas adicionales.
 - rsc-harness y engram no entran en el perfil: son capas del flujo, no comandos
   de un lenguaje. `engram` queda en local hasta la infraestructura AWS.
 

@@ -28,4 +28,22 @@ fi
 export VERIFY_ROOT="$ROOT"
 export VERIFY_CONFIG="$CONFIG"
 export VERIFY_EVIDENCE="$GIT_DIR/dev-agent-evidence"
-exec "$KIT/verify/run.sh"
+
+if [ -f "$ROOT/.dev-agent/gga.env" ]; then
+  set -a
+  . "$ROOT/.dev-agent/gga.env"
+  set +a
+fi
+
+"$KIT/verify/run.sh"
+CODE=$?
+if [ "$CODE" -ne 0 ]; then
+  exit "$CODE"
+fi
+
+if [ "${GGA_PRE_PUSH:-0}" = "1" ] && [ -x "$KIT/scripts/review-gga.sh" ]; then
+  read -r -a GGA_ARGS <<<"${GGA_PRE_PUSH_OPTS:---pr-mode --diff-only}"
+  "$KIT/scripts/review-gga.sh" "$ROOT" --blocking "${GGA_ARGS[@]}" || exit 1
+fi
+
+exit 0

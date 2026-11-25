@@ -25,6 +25,11 @@ from collections.abc import Callable
 from datetime import datetime, timezone
 from pathlib import Path
 
+try:
+    from evals.agent_runner import AGENTS, resolve_agent, run_agent
+except ImportError:
+    from agent_runner import AGENTS, resolve_agent, run_agent
+
 HEAVY = {
     ".git",
     "node_modules",
@@ -159,67 +164,8 @@ def run_opencode(
     model: str,
     timeout: int,
 ) -> tuple[list[dict], str, dict]:
-    cmd = ["opencode", "run", "--standalone", "--format", "json"]
-    if agent:
-        cmd += ["--agent", agent]
-    if model:
-        cmd += ["--model", model]
-    cmd.append(prompt)
-
-    started = time.time()
-    try:
-        proc = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            timeout=timeout,
-            cwd=str(cwd),
-        )
-    except subprocess.TimeoutExpired as exc:
-        return [], "", {
-            "exit": 124,
-            "elapsed_s": round(time.time() - started, 2),
-            "tokens": 0,
-            "cost": 0,
-            "timed_out": True,
-            "stderr_tail": str(exc)[-800:],
-        }
-
-    elapsed = round(time.time() - started, 2)
-    events: list[dict] = []
-    for line in proc.stdout.splitlines():
-        line = line.strip()
-        if not line.startswith("{"):
-            continue
-        try:
-            events.append(json.loads(line))
-        except json.JSONDecodeError:
-            continue
-
-    meta = {
-        "exit": proc.returncode,
-        "elapsed_s": elapsed,
-        "tokens": 0,
-        "cost": 0,
-        "timed_out": False,
-        "stderr_tail": proc.stderr[-800:],
-    }
-    for event in events:
-        if event.get("type") == "step_finish":
-            part = event.get("part") or {}
-            tokens = part.get("tokens") or {}
-            total = tokens.get("total")
-            if total is None:
-                total = sum(
-                    int(tokens.get(key) or 0)
-                    for key in ("input", "output", "reasoning")
-                )
-                cache = tokens.get("cache") or {}
-                total += int(cache.get("read") or 0) + int(cache.get("write") or 0)
-            meta["tokens"] += int(total or 0)
-            meta["cost"] += float(part.get("cost") or 0)
-
-    return events, collect_text(events), meta
+    result = run_agent("opencode", prompt, cwd, model, agent, timeout)
+    return result.events, result.text, result.meta
 
 
 def collect_artifacts(sandbox: Path, baseline: set[str]) -> dict:
@@ -354,11 +300,15 @@ def judge(
     cwd: Path,
     judge_agent: str,
     judge_model: str,
+    judge_profile: str | None,
     timeout: int,
 ) -> dict:
     criteria = json.dumps(rubric["criteria"], ensure_ascii=False)
+    judge_source = Path(__file__).resolve().parents[1] / "agents" / "judge.md"
+    judge_instructions = judge_source.read_text(encoding="utf-8")
     judge_prompt = (
-        "Rubric criteria (id, text, weight):\n"
+        judge_instructions
+        + "\n\n---\n\nRubric criteria (id, text, weight):\n"
         + criteria
         + "\n\nTask given to the agent:\n"
         + prompt
@@ -370,12 +320,17 @@ def judge(
         + "Return only the JSON object described in your instructions. "
         + "Do not compute the weighted average; the harness does it."
     )
-    judge_source = Path(__file__).resolve().parents[1] / "agents" / "judge.md"
     with tempfile.TemporaryDirectory(prefix="eval-judge-") as tmp:
         judge_root = Path(tmp)
-        (judge_root / ".opencode" / "agent").mkdir(parents=True, exist_ok=True)
-        shutil.copy2(judge_source, judge_root / ".opencode" / "agent" / "judge.md")
-        events, text, meta = run_opencode(judge_prompt, judge_root, judge_agent, judge_model, timeout)
+        result = run_agent(
+            judge_agent,
+            judge_prompt,
+            judge_root,
+            judge_model,
+            judge_profile,
+            timeout,
+        )
+    text = result.text
     data = extract_json(text)
     if not data:
         return {
@@ -385,8 +340,9 @@ def judge(
             "reasons": ["judge did not return JSON"],
             "missing": [],
             "judge_text": text[:500],
+            "judge_meta": result.meta,
         }
-    data["judge_meta"] = meta
+    data["judge_meta"] = result.meta
     return data
 
 
@@ -421,9 +377,11 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--case-dir", required=True)
     parser.add_argument("--rubric", default="evals/rubric.example.json")
-    parser.add_argument("--agent", default=None)
+    parser.add_argument("--agent", default="opencode")
+    parser.add_argument("--agent-profile", default=None)
     parser.add_argument("--model", default=None)
-    parser.add_argument("--judge-agent", default="judge")
+    parser.add_argument("--judge-agent", default=None)
+    parser.add_argument("--judge-agent-profile", default=None)
     parser.add_argument("--judge-model", default=None)
     parser.add_argument("--k", type=int, default=None)
     parser.add_argument("--out", default=None)
@@ -442,6 +400,15 @@ def main() -> int:
     k = args.k or int(rubric.get("k", 1))
     model = args.model or rubric.get("model")
     judge_model = args.judge_model or rubric.get("judge_model") or model
+
+    try:
+        agent_name, inferred_profile = resolve_agent(args.agent)
+        judge_name, inferred_judge_profile = resolve_agent(args.judge_agent or agent_name)
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
+    agent_profile = args.agent_profile or inferred_profile
+    judge_profile = args.judge_agent_profile or inferred_judge_profile
 
     if not args.dry_run and (not model or "REPLACE_WITH" in model):
         print("set --model or rubric.model to the company-approved provider/model", file=sys.stderr)
@@ -499,14 +466,22 @@ def main() -> int:
                     "missing": [],
                 }
             else:
-                events, output, meta = run_opencode(prompt, sandbox, args.agent, model, args.timeout)
+                result = run_agent(
+                    agent_name,
+                    prompt,
+                    sandbox,
+                    model,
+                    agent_profile,
+                    args.timeout,
+                )
+                events, output, meta = result.events, result.text, result.meta
                 artifacts = collect_artifacts(sandbox, baseline)
-                if meta.get("timed_out"):
+                if meta.get("timed_out") or meta.get("error"):
                     judged = {
                         "scores": {},
                         "pass": False,
                         "invalid": True,
-                        "reasons": ["executor timed out"],
+                        "reasons": [meta.get("error") or "executor timed out"],
                         "missing": [],
                     }
                 else:
@@ -516,8 +491,9 @@ def main() -> int:
                         artifacts,
                         rubric,
                         sandbox,
-                        args.judge_agent,
+                        judge_name,
                         judge_model,
+                        judge_profile,
                         args.timeout,
                     )
 
@@ -550,6 +526,9 @@ def main() -> int:
     result = {
         "case": case_dir.name,
         "skill": rubric.get("skill"),
+        "agent": agent_name,
+        "agent_profile": agent_profile,
+        "judge_agent": judge_name,
         "model": model,
         "judge_model": judge_model,
         "k": k,

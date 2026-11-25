@@ -389,7 +389,7 @@ bash scripts/check-techdoc.sh \
       <h2>Una skill se mejora cuando cambia el mecanismo que la demuestra.</h2>
       <div class="split">
         <div class="card"><h3>Qué mide</h3><ul class="list"><li>Corridas K=3 por caso, en worktree o copia desechable.</li><li>Juez separado del ejecutor.</li><li>Media, mínimo, dispersión, tokens y coste.</li><li>Umbral de referencia 8,5.</li></ul></div>
-        <div class="card"><h3>Qué falta</h3><ul class="list"><li>El harness y loop.sh siguen atados a OpenCode.</li><li>El runner neutral está pendiente.</li><li>No es una puerta obligatoria hasta tener casos y medición.</li><li>Una skill inestable no se declara verde por una media alta.</li></ul></div>
+        <div class="card"><h3>Qué falta</h3><ul class="list"><li>OpenCode, Claude, Codex, pi y Hermes están soportados por el runner.</li><li>Codex necesita su propio login.</li><li>No es una puerta obligatoria hasta tener casos y medición.</li><li>Una skill inestable no se declara verde por una media alta.</li></ul></div>
       </div>
       <div class="code">python3 evals/harness.py \
   --case-dir evals/cases/dev-verify/01-fix-failing-test \
@@ -424,10 +424,10 @@ bash scripts/check-techdoc.sh \
           <tr><td>Perfil PHP</td><td><span class="pill warn">esqueleto</span></td><td>PHPStan, PHPCS y PHPUnit pendientes.</td></tr>
           <tr><td>CodeGraph + Engram</td><td><span class="pill ok">integrados</span></td><td>Opcionales; el doctor informa si faltan.</td></tr>
           <tr><td>tech-doc + HTML local</td><td><span class="pill ok">implementado</span></td><td>El HTML privado no se copia ni se versiona.</td></tr>
-          <tr><td>dev-agent init + lock</td><td><span class="pill warn">pendiente</span></td><td>install.sh es el camino completo actual.</td></tr>
-          <tr><td>Runner de eval neutral</td><td><span class="pill warn">pendiente</span></td><td>Harness y loop.sh todavía usan OpenCode.</td></tr>
-          <tr><td>comment_lint para PHP</td><td><span class="pill warn">pendiente</span></td><td>El checker genérico no escanea .php todavía.</td></tr>
-          <tr><td>GGA</td><td><span class="pill neutral">opcional</span></td><td>Asesor, nunca la puerta; no se ejecuta gga install.</td></tr>
+          <tr><td>dev-agent init + lock</td><td><span class="pill ok">implementado</span></td><td>Alias de install.sh; lock en .dev-agent/profiles.lock.</td></tr>
+          <tr><td>Runner de eval neutral</td><td><span class="pill ok">implementado</span></td><td>OpenCode, Claude, Codex, pi y Hermes; Codex necesita login.</td></tr>
+          <tr><td>comment_lint para PHP</td><td><span class="pill ok">implementado</span></td><td>Cubre //, # y docblocks.</td></tr>
+          <tr><td>GGA</td><td><span class="pill ok">bloqueante</span></td><td>Reglas, revisión bloqueante y pre-push opcional; no sustituye guard/verify.</td></tr>
           <tr><td>Producción</td><td><span class="pill hot">humana</span></td><td>El kit no despliega ni decide el merge.</td></tr>
         </tbody>
       </table>

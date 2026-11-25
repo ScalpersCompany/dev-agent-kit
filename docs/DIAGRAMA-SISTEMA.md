@@ -55,7 +55,7 @@ flowchart TB
   end
 
   subgraph Salida
-    J[Revisión humana + GGA opcional]
+    J[Revisión humana + GGA bloqueante]
     K[Rama / MR / CI]
     L[Producción: autorización humana]
   end
@@ -129,23 +129,25 @@ flowchart TD
   M -.-> W[score.json]
 ```
 
-La deuda conocida está marcada en el mapa: `docs/CREAR-PERFIL.md` y el README
-explican que el **harness de eval** y `evals/loop.sh` todavía ejecutan OpenCode; la
-fuente de skills, comandos y juez ya es neutral, pero el runner de eval no. El flujo
-neutral de guard/verify no depende de OpenCode.
+El runner de eval es neutral: `docs/CREAR-PERFIL.md` y el README explican que
+`evals/agent_runner.py` ejecuta OpenCode, Claude, Codex, pi o Hermes, y el juez recibe la
+misma rúbrica y artefactos. La fuente de skills, comandos y juez también es neutral; el
+flujo de guard/verify no depende de OpenCode.
 
 ## Cómo leerlo
 
 - **Entrada**: la persona decide qué se hace y con qué prioridad.
-- **Agentes**: Hermes, OpenCode, Claude, Codex y pi ejecutan el mismo flujo; lo que cambia
-  es el cliente, no la puerta.
+- **Agentes**: OpenCode, Claude Code, Codex, pi y Hermes ejecutan el mismo flujo; lo que
+  cambia es el cliente, no la puerta. `evals/agent_runner.py` normaliza los cinco para el
+  harness.
 - **Proceso**: SDD es una skill; ODD es texto siempre activo; RDD es un binario; rsc-harness
   es la capa de spec/ASDD y es opcional. `gentle-ai` no sustituye a rsc-harness.
 - **Perfil**: el núcleo no sabe Odoo ni PHP. Odoo 11 aporta su linter, verify, skills y
   casos; PHP es un esqueleto.
 - **Puerta**: pre-commit y pre-push son los mismos hooks para todos los perfiles. La
-  evaluación se ejecuta cuando cambia una skill, un prompt, una regla o una rúbrica. El
-  harness de eval todavía ejecuta OpenCode; el runner neutral está pendiente.
+  evaluación se ejecuta cuando cambia una skill, un prompt, una regla o una rúbrica.
+- **Eval**: el harness y `evals/loop.sh` usan `evals/agent_runner.py`, que soporta OpenCode,
+  Claude, Codex, pi y Hermes; el juez recibe la misma rúbrica y artefactos.
 - **Salida**: la revisión, el merge y el despliegue son humanos. El kit no toca producción.
 - **Capas**: `gentle-ai` distribuye; `engram` recuerda en local hasta que exista la
   infraestructura AWS.
@@ -158,11 +160,12 @@ neutral de guard/verify no depende de OpenCode.
 | perfil Odoo 11 | extraído; repo público `ScalpersCompany/dev-agent-profiles` |
 | perfil PHP | esqueleto |
 | `install.sh` y `dev-agent` | implementados; instalador con menú y wrapper de uso |
-| `dev-agent init` y lock | pendientes; `install.sh` es el camino completo actual |
+| `dev-agent init` y lock | implementados: alias de `install.sh` y `.dev-agent/profiles.lock` |
 | `bootstrap --profile` y `--with-techdoc` | implementados |
 | `install-techdoc` y enlace HTML | implementado; el HTML privado no se copia |
 | plantilla y generador | implementados |
-| GGA | opcional, no es puerta |
+| GGA | revisión bloqueante con reglas; pre-push opcional |
+| `comment_lint` para PHP | implementado |
 | rsc-harness | opcional; no lo sustituye gentle-ai |
 | producción | humano |
 

@@ -12,10 +12,12 @@ usage() {
 usage: dev-agent <command> [args]
 
   doctor [repo]          diagnóstico de la instalación
+  init [args]            instalador interactivo; acepta las flags de install.sh
   guard [args]           guard determinista del repo actual
   verify [args]          verify del repo actual
   review                 muestra el diff y el prompt de revisión
-  eval [args]            eval harness (OpenCode; deuda conocida)
+  review-gga [repo]      revisión GGA blocking (o pasar --advisory)
+  eval [args]            eval harness neutral (OpenCode, Claude, Codex, pi, Hermes)
   profile list           perfiles instalados
   profile use <name>     cambia el perfil activo
   codegraph [args]       codegraph sync del repo actual, o pasa args
@@ -26,6 +28,7 @@ EOF
 case "$cmd" in
   help|-h|--help) usage ;;
   doctor) exec bash "$KIT/scripts/doctor.sh" "${1:-$PWD}" ;;
+  init) exec bash "$KIT/install.sh" "$@" ;;
   guard) exec bash "$KIT/guard/guard.sh" "$@" ;;
   verify) export VERIFY_ROOT="${VERIFY_ROOT:-$PWD}"; exec bash "$KIT/verify/run.sh" "$@" ;;
   eval) exec python3 "$KIT/evals/harness.py" "$@" ;;
@@ -34,6 +37,11 @@ case "$cmd" in
     echo
     echo "Pide a tu agente: usa la skill review-diff sobre este diff; no edites."
     echo "La skill está en $KIT/skills/review-diff/SKILL.md"
+    ;;
+  review-gga)
+    repo="$PWD"
+    if [ $# -gt 0 ] && [ "${1#--}" = "$1" ]; then repo="$1"; shift; fi
+    exec bash "$KIT/scripts/review-gga.sh" "$repo" "$@"
     ;;
   profile)
     action="${1:-list}"
@@ -56,6 +64,17 @@ case "$cmd" in
         cp -a "$PWD/.dev-agent/config" "$PWD/.dev-agent/config.bak-$(date +%Y%m%d-%H%M%S)"
       fi
       printf 'DEV_AGENT_PROFILE=%s\n' "$name" >"$PWD/.dev-agent/config"
+      if [ -f "$PWD/.dev-agent/profiles.lock" ]; then
+        python3 - "$PWD/.dev-agent/profiles.lock" "$name" <<'PY'
+import json
+import sys
+from pathlib import Path
+path = Path(sys.argv[1])
+data = json.loads(path.read_text(encoding="utf-8"))
+data["active"] = sys.argv[2]
+path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+PY
+      fi
       echo "perfil activo: $name"
     else
       usage

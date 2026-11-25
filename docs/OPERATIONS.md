@@ -9,8 +9,8 @@
 3. **Verify.** `bash verify/run.sh` boots, checks health, runs smoke and tests, and writes
    `evidence/<run-id>/summary.json`.
 4. **Eval.** Only when a skill, prompt, rule or rubric changes. K=3, a judge different from
-   the executor, threshold 8.5. The harness and `evals/loop.sh` still use OpenCode; the
-   neutral runner is pending.
+   the executor, threshold 8.5. `evals/agent_runner.py` runs OpenCode, Claude, Codex, pi or
+   Hermes; the judge receives the same rubric and artifacts.
 5. **Review and delivery.** A human reads the diff. The repository decides push, PR and CI.
 
 ## The gate
@@ -44,10 +44,13 @@ RDD is a skill.
 
 ## GGA
 
-GGA is an optional AI reviewer, not a gate. Install it with `scripts/install-gga.sh <repo>`
-and run it with `scripts/review-gga.sh <repo>`; `GGA_ADVISORY=1` reports without blocking.
+GGA is the second reviewer, not the deterministic gate. Install it with
+`scripts/install-gga.sh <repo>`; the rules are the FactorLibre MR preflight plus the active
+profile and company norm. `scripts/review-gga.sh <repo>` is blocking by default and requires
+`STATUS: PASSED`; `--advisory` or `GGA_ADVISORY=1` reports without blocking.
+`install-gga.sh --with-pre-push` enables the GGA gate after verify in `.dev-agent/gga.env`.
 Do not run `gga install`: it would replace the kit's pre-commit hook. If there is no
-provider or no `.gga`, the script says so; it is not green.
+provider or no `.gga`, the blocking review says so; it is not green.
 
 ## Layers
 
@@ -81,7 +84,8 @@ The agent is interchangeable; the gate is a command.
 | PHP profile | skeleton; no runtime yet |
 | `install.sh` | implemented; one-line installer with menu; `dev-agent` is the wrapper |
 | `bootstrap --profile` | implemented; lower-level path that copies the active profile and writes `.dev-agent/config` |
-| `dev-agent init` and the lock | pending; `install.sh` is the complete path today |
-| GGA | optional; installation tested; no real review run |
-| `comment_lint` for PHP | pending |
+| `dev-agent init` and the lock | implemented: alias of `install.sh`; lock written to `.dev-agent/profiles.lock` |
+| eval runner | implemented for OpenCode, Claude, Codex, pi and Hermes; Codex needs its own login |
+| GGA | rules, blocking review and optional pre-push gate |
+| `comment_lint` for PHP | implemented |
 | Scalpers CI | not touched |

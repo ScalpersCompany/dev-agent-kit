@@ -259,6 +259,35 @@ for name in "${SELECTED[@]}"; do
 done
 printf 'DEV_AGENT_PROFILE=%s\n' "$ACTIVE" >"$TARGET/.dev-agent/config"
 
+python3 - "$TARGET" "$PROFILES_REPO" "$ACTIVE" "${SELECTED[@]}" <<'PY'
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+target = Path(sys.argv[1])
+profiles_repo = Path(sys.argv[2])
+active = sys.argv[3]
+names = sys.argv[4:]
+entries = []
+for name in names:
+    source = profiles_repo / "profiles" / name
+    commit = "unknown"
+    result = subprocess.run(
+        ["git", "-C", str(profiles_repo), "rev-parse", "HEAD"],
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode == 0:
+        commit = result.stdout.strip()
+    entries.append({"name": name, "source": str(source), "commit": commit})
+lock = {"schema": 1, "active": active, "profiles": entries}
+(target / ".dev-agent" / "profiles.lock").write_text(
+    json.dumps(lock, indent=2, ensure_ascii=False) + "\n",
+    encoding="utf-8",
+)
+PY
+
 STAMP="$(date +%Y%m%d-%H%M%S)"
 for hook in pre-commit pre-push; do
   if [ -f "$TARGET/.git/hooks/$hook" ]; then
