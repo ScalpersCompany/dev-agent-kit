@@ -1,5 +1,28 @@
 # Changelog
 
+## [3.8.0] - 2026-11-26
+
+### Fixed
+
+- `scripts/install-agent-adapters.sh` installs the judge at `.opencode/agents/judge.md`, the
+  path OpenCode v2 documents; it wrote `.opencode/agent/judge.md`, the v1 path that v2 only
+  reads through its compatibility alias.
+- An existing `.opencode/agent/judge.md` is renamed to `judge.md.bak-<stamp>` before the plural
+  one is used, so a stale copy cannot shadow it. Nothing is deleted. Installs that are already
+  in place need one rerun of the script; until then OpenCode v2 still loads the old file through
+  the alias, with the default permissions.
+- `agents/judge.md` adds the OpenCode v2 `permissions` block (edit and shell denied). With only
+  the v1 `tools` map, OpenCode v2 loaded the judge with the default `* allow` permissions: the
+  read-only judge could edit and run commands.
+
+### Changed
+
+- `agents/README.md` documents the installed paths per agent (OpenCode v2, Claude Code, pi,
+  Codex, Hermes), the dual frontmatter and the legacy directory; it no longer says the eval
+  runner is OpenCode-only.
+- `tests/test_agent_adapters.py` asserts the plural path, the absence of the legacy directory,
+  the backup on migration and the v2 permissions block.
+
 ## [3.7.0] - 2026-11-26
 
 ### Added

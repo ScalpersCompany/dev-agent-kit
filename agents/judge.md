@@ -1,6 +1,13 @@
 ---
 description: Read-only eval judge. Returns strict JSON.
 mode: primary
+permissions:
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "*"
+    effect: deny
 tools:
   bash: false
   edit: false

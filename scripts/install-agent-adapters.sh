@@ -60,7 +60,12 @@ for agent in "${LIST[@]}"; do
     opencode)
       copy_tree "$ROOT/skills" "$TARGET/.opencode/skills"
       copy_tree "$ROOT/commands" "$TARGET/.opencode/commands"
-      copy_file "$ROOT/agents/judge.md" "$TARGET/.opencode/agent/judge.md"
+      copy_file "$ROOT/agents/judge.md" "$TARGET/.opencode/agents/judge.md"
+      if [ -f "$TARGET/.opencode/agent/judge.md" ]; then
+        mv "$TARGET/.opencode/agent/judge.md" "$TARGET/.opencode/agent/judge.md.bak-$STAMP"
+        echo "migrated: .opencode/agent/judge.md -> judge.md.bak-$STAMP; OpenCode v2 reads .opencode/agents/"
+        rmdir "$TARGET/.opencode/agent" 2>/dev/null || true
+      fi
       if [ -n "$PROFILE" ] && [ -d "$PROFILE/skills" ]; then
         merge_tree "$PROFILE/skills" "$TARGET/.opencode/skills"
       fi
@@ -78,4 +83,4 @@ for agent in "${LIST[@]}"; do
       ;;
   esac
 done
-echo "neutral source stays in skills/, commands/ and agents/; the kit's own .gitignore ignores the generated adapter dirs, but the target repo must exclude or commit them intentionally"
+echo "neutral source stays in skills/, commands/ and agents/; OpenCode v2 reads .opencode/skills, .opencode/commands and .opencode/agents, and Claude Code reads .claude/skills, .claude/commands and .claude/agents; the kit's own .gitignore ignores the generated adapter dirs, but the target repo must exclude or commit them intentionally"
