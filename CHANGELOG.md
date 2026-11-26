@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.7.0] - 2026-11-26
+
+### Added
+
+- `scripts/render-roles.py`: renders one agent per role from the team profile's `roles.json` for `claude` (`.claude/agents/`) and `opencode` v2 (`.opencode/agents/`), with the write surface, the reads, the exit commands and the forbidden list taken from the contract; `--check` fails when a rendered file is behind the contract and `--model-map` overrides the models.
+- `dev-agent roles <claude|opencode>`: wrapper for the renderer.
+- `docs/EQUIPO-MULTI-AGENTE.md`: one agent per role, generated from the neutral contract, with the read-only tools per agent and the commands that verify the result.
+- `tests/test_render_roles.py`: five tests for both frontmatter shapes, the model map, `--check` and a contract without roles.
+
+### Changed
+
+- `bin/dev-agent` usage lists `roles`.
+- README describes the renderer and points at the new document.
+
 ## [3.6.0] - 2026-11-25
 
 ### Added

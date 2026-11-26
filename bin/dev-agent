@@ -18,6 +18,7 @@ usage: dev-agent <command> [args]
   review                 muestra el diff y el prompt de revisión
   review-gga [repo]      revisión GGA blocking (o pasar --advisory)
   eval [args]            eval harness neutral (OpenCode, Claude, Codex, pi, Hermes)
+  roles <target> [args]  genera un agente por rol desde roles.json (claude, opencode)
   profile list           perfiles instalados
   profile use <name>     cambia el perfil activo
   codegraph [args]       codegraph sync del repo actual, o pasa args
@@ -32,6 +33,7 @@ case "$cmd" in
   guard) exec bash "$KIT/guard/guard.sh" "$@" ;;
   verify) export VERIFY_ROOT="${VERIFY_ROOT:-$PWD}"; exec bash "$KIT/verify/run.sh" "$@" ;;
   eval) exec python3 "$KIT/evals/harness.py" "$@" ;;
+  roles) exec python3 "$KIT/scripts/render-roles.py" --target "${1:?falta el target: claude u opencode}" "${@:2}" ;;
   review)
     git diff --stat
     echo
