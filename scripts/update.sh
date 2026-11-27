@@ -12,6 +12,7 @@ ASSUME_YES=0
 STAMP="$(date +%Y%m%d-%H%M%S)"
 
 usage() {
+  local code="${1:-2}"
   cat >&2 <<'EOF'
 usage: dev-agent update [options]
 
@@ -26,9 +27,9 @@ forzado, no descarta cambios y no actualiza un repo con cambios locales.
   -h, --help             esta ayuda
 
 Sin --core ni --profiles actualiza ambos. El remoto y la rama se leen de la
-configuración git del repo; si no hay upstream, usa origin/main.
+configuración git del repo; si no hay upstream, usa origin/<rama>.
 EOF
-  exit 2
+  exit "$code"
 }
 
 while [ $# -gt 0 ]; do
@@ -38,7 +39,7 @@ while [ $# -gt 0 ]; do
     --target) [ $# -ge 2 ] || usage; TARGET="$2"; shift 2 ;;
     --check) CHECK_ONLY=1; shift ;;
     --yes|-y) ASSUME_YES=1; shift ;;
-    -h|--help) usage ;;
+    -h|--help) usage 0 ;;
     *) echo "opción desconocida: $1" >&2; usage ;;
   esac
 done
