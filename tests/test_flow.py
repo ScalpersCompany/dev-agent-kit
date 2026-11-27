@@ -22,6 +22,7 @@ class FlowCommandTest(unittest.TestCase):
         runner.write_text('#!/usr/bin/env bash\nprintf "%s\\n" "$@"\n', encoding="utf-8")
         runner.chmod(0o755)
         self.env = {**os.environ, "DEV_AGENT_PROFILES": str(self.tmp)}
+        subprocess.run(["git", "-C", str(self.tmp), "init", "-q"], check=True)
 
     def tearDown(self):
         import shutil

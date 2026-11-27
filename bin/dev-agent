@@ -25,6 +25,7 @@ usage: dev-agent <command> [args]
   update [args]          actualiza core y/o perfiles con --check/--target
   flow list              flujos disponibles en dev-agent-profiles
   flow run <name> [args] ejecuta un flujo (por ejemplo team) sobre el repo actual
+  flow check <name> [args] valida el contrato o una tarea/evidencia del flujo
   codegraph [args]       codegraph sync del repo actual, o pasa args
   memory [args]          engram save/search/... del proyecto
 EOF
@@ -129,6 +130,16 @@ PY
         done
       fi
       [ "$found" = "1" ] || echo "no hay flujos en $flows_root"
+    elif [ "$action" = "check" ]; then
+      name="${1:-}"
+      [ -n "$name" ] || { echo "falta el nombre del flujo" >&2; exit 2; }
+      shift
+      flow_dir=""
+      for candidate in "$PWD/.dev-agent/flows/$name" "$flows_root/$name"; do
+        if [ -f "$candidate/flow.json" ]; then flow_dir="$candidate"; break; fi
+      done
+      [ -n "$flow_dir" ] || { echo "flujo no encontrado: $name" >&2; exit 2; }
+      exec python3 "$flow_dir/guard/team_lint.py" --flow "$flow_dir" "$@"
     elif [ "$action" = "run" ]; then
       name="${1:-}"
       [ -n "$name" ] || { echo "falta el nombre del flujo" >&2; exit 2; }
@@ -146,8 +157,10 @@ PY
 )"
       [ -n "$entrypoint" ] || { echo "flujo sin entrypoint: $name" >&2; exit 2; }
       [ -f "$flow_dir/$entrypoint" ] || { echo "falta el entrypoint: $flow_dir/$entrypoint" >&2; exit 2; }
+      repo="$PWD"
+      if git rev-parse --show-toplevel >/dev/null 2>&1; then repo="$(git rev-parse --show-toplevel)"; fi
       if [ $# -eq 0 ] || [[ "$1" == -* ]]; then
-        set -- "$PWD" "$@"
+        set -- "$repo" "$@"
       fi
       exec bash "$flow_dir/$entrypoint" "$@"
     else
