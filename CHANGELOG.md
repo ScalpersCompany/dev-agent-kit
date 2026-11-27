@@ -9,6 +9,9 @@
   and background subagents. It is never required by guard, verify or the team flow; it covers
   Hermes, OpenCode and pi, not Claude Code or Codex, and is not installed by default.
 - The technology reference lists RLM Agent with its URL, version and optional status.
+- `docs/formacion/guia-equipo.html` opens with a tools section that explains Gentle AI, RSC
+  (rsc-harness), RSC Brain (“Brime”, rsc-brain), Engram and CodeGraph: what each one is, what
+  it is for and what it does not replace.
 
 ## [3.10.0] - 2026-11-27
 

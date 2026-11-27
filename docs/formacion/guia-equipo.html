@@ -98,15 +98,16 @@
     <div class="sub">Guía del equipo · conceptos y ejemplos</div>
     <nav aria-label="Índice">
       <a href="#mapa"><strong>01</strong> El mapa</a>
-      <a href="#skills"><strong>02</strong> Skills</a>
-      <a href="#perfiles"><strong>03</strong> Perfiles</a>
-      <a href="#juez"><strong>04</strong> Juez</a>
-      <a href="#agentes"><strong>05</strong> Agentes</a>
-      <a href="#flujo"><strong>06</strong> El flujo</a>
-      <a href="#chuleta"><strong>07</strong> Chuleta</a>
-      <a href="#practica"><strong>08</strong> Para practicar</a>
+      <a href="#herramientas"><strong>02</strong> Herramientas</a>
+      <a href="#skills"><strong>03</strong> Skills</a>
+      <a href="#perfiles"><strong>04</strong> Perfiles</a>
+      <a href="#juez"><strong>05</strong> Juez</a>
+      <a href="#agentes"><strong>06</strong> Agentes</a>
+      <a href="#flujo"><strong>07</strong> El flujo</a>
+      <a href="#chuleta"><strong>08</strong> Chuleta</a>
+      <a href="#practica"><strong>09</strong> Para practicar</a>
     </nav>
-    <div class="foot">Sin secretos, sin datos de cliente, sin producción.<br>Versión de formación · 2026-11-26.</div>
+    <div class="foot">Sin secretos, sin datos de cliente, sin producción.<br>Versión de formación · 2026-11-27.</div>
   </aside>
 
   <main>
@@ -127,8 +128,22 @@
       <div class="note"><b>La puerta no es un agente.</b> Guard y verify son comandos; GGA es una segunda revisión; el juez evalúa skills. El agente es la herramienta que usas, no la garantía.</div>
     </section>
 
+    <section id="herramientas">
+      <div class="head"><div><div class="kicker">02 · Herramientas</div><h2>Qué es cada pieza y para qué la usamos.</h2></div><div class="num">02</div></div>
+      <p>No todas son puertas ni dependencias obligatorias. Esta sección sirve para que nadie confunda una herramienta de apoyo con la evidencia de un cambio: <code>guard</code> y <code>verify</code> siguen siendo los comandos que deciden; GGA y el juez añaden revisión; las demás ayudan a trabajar con mejor contexto.</p>
+      <div class="grid2">
+        <div class="card"><h3>Gentle AI</h3><p><b>Qué es.</b> El ecosistema que configura los agentes: skills, personas, MCP y el workspace <code>gentle-shell</code>. Incluye RDD como modo de revisión de candidatos.</p><p><b>Para qué.</b> Que Claude Code, OpenCode, Codex, pi y Hermes compartan configuración y skills sin copiar ficheros a mano.</p><p><b>Límite.</b> No es la puerta del repo; guard, verify y GGA siguen mandando. RDD no autoriza commits, pushes ni releases.</p><p><a href="https://github.com/Gentleman-Programming/gentle-ai">github.com/Gentleman-Programming/gentle-ai</a> · <a href="https://github.com/Gentleman-Programming/gentle-shell">gentle-shell</a></p></div>
+        <div class="card"><h3>RSC · rsc-harness</h3><p><b>Qué es.</b> Un harness para trabajar con especificación, tareas y verificación de forma ordenada.</p><p><b>Para qué.</b> Cuando el equipo decide convertir un requisito en tareas y criterios de aceptación antes de tocar código.</p><p><b>Límite.</b> Es opcional y no sustituye al flujo del kit ni a sus comandos de puerta.</p><p><a href="https://github.com/ericrisco/rsc-harness">github.com/ericrisco/rsc-harness</a></p></div>
+        <div class="card"><h3>RSC Brain · “Brime”</h3><p><b>Qué es.</b> <code>rsc-brain</code>: una wiki y memoria autoalojada con API y MCP, pensada para conservar contexto del proyecto.</p><p><b>Para qué.</b> Consultar páginas y decisiones de proyecto desde el agente sin depender de un servicio externo.</p><p><b>Límite.</b> No es Engram ni la norma de empresa; si no está levantado, no hay milagro. Es opcional.</p><p><a href="https://github.com/ericrisco/rsc-brain">github.com/ericrisco/rsc-brain</a></p></div>
+        <div class="card"><h3>Engram</h3><p><b>Qué es.</b> La memoria persistente del proyecto: decisiones, bugs, convenciones y contexto entre sesiones, expuesta por MCP.</p><p><b>Para qué.</b> Que el siguiente agente no empiece de cero y que una decisión quede registrada con su porqué.</p><p><b>Límite.</b> Guarda lo que se le dice; no es un índice de código ni una prueba de que algo funcione.</p><p><a href="https://github.com/Gentleman-Programming/engram">github.com/Gentleman-Programming/engram</a></p></div>
+        <div class="card"><h3>CodeGraph</h3><p><b>Qué es.</b> Un índice local de estructura, símbolos y llamadas del código.</p><p><b>Para qué.</b> Consultar el mapa antes de editar: quién llama a qué, dónde vive un símbolo y qué puede romperse.</p><p><b>Límite.</b> Un índice desactualizado no es contexto ni evidencia; hay que sincronizarlo. No decide si el cambio está bien.</p><p><a href="https://github.com/colbymchenry/codegraph">github.com/colbymchenry/codegraph</a></p></div>
+        <div class="card"><h3>Cómo encajan</h3><ul><li><b>Engram</b> recuerda decisiones.</li><li><b>Brain</b> conserva una wiki de proyecto.</li><li><b>CodeGraph</b> explica el código.</li><li><b>Gentle</b> configura el agente.</li><li><b>RSC</b> ordena especificación y tareas.</li><li><b>Guard + verify</b> deciden; <b>GGA</b> revisa.</li></ul></div>
+      </div>
+      <div class="note"><b>Nombres:</b> RSC es <code>rsc-harness</code>; “Brime” o Brain es <code>rsc-brain</code>; CodeGraph es <code>codegraph</code>. RLM Agent es otro extra opcional del instalador y no forma parte de esta lista. Ninguna de estas herramientas sustituye la evidencia de guard, verify y GGA.</div>
+    </section>
+
     <section id="skills">
-      <div class="head"><div><div class="kicker">02 · Skills</div><h2>Una skill es un procedimiento que se puede repetir.</h2></div><div class="num">02</div></div>
+      <div class="head"><div><div class="kicker">03 · Skills</div><h2>Una skill es un procedimiento que se puede repetir.</h2></div><div class="num">03</div></div>
       <p>No es un prompt suelto ni una colección de frases. Es un fichero <code>SKILL.md</code> con un nombre, una descripción que dice cuándo usarlo y una secuencia de pasos que termina en una salida verificable. El agente la lee; tú puedes leerla y discutirla.</p>
       <div class="grid2">
         <div class="card"><h3>Anatomía</h3><ul><li><code>name</code>: identificador corto.</li><li><code>description</code>: cuándo se usa y qué produce.</li><li>Cuerpo: pasos, criterios de salida, fallos y formato del informe.</li><li><code>references/</code>, <code>scripts/</code> y <code>templates/</code> cuando hacen falta.</li></ul></div>
@@ -155,7 +170,7 @@ bash scripts/install-agent-adapters.sh . --agents claude,opencode \
     </section>
 
     <section id="perfiles">
-      <div class="head"><div><div class="kicker">03 · Perfiles</div><h2>El perfil pone el lenguaje; el núcleo pone la puerta.</h2></div><div class="num">03</div></div>
+      <div class="head"><div><div class="kicker">04 · Perfiles</div><h2>El perfil pone el lenguaje; el núcleo pone la puerta.</h2></div><div class="num">04</div></div>
       <p>El kit no sabe Odoo ni PHP. Un perfil declara el lenguaje, sus checks, sus skills y sus reglas GGA. El repo tiene un perfil activo; las reglas de un stack no se heredan en otro.</p>
       <div class="grid2">
         <div class="card"><h3>Qué contiene</h3><ul><li><code>profile.json</code> y <code>profile.env</code>.</li><li><code>guard/</code> y <code>verify/</code>.</li><li><code>skills/</code> y <code>evals/</code>.</li><li><code>gga/REVIEW-RULES.md</code>: las reglas de revisión del perfil.</li></ul></div>
@@ -177,7 +192,7 @@ cat .dev-agent/config</pre></div>
     </section>
 
     <section id="juez">
-      <div class="head"><div><div class="kicker">04 · Juez</div><h2>El que ejecuta no se pone las notas.</h2></div><div class="num">04</div></div>
+      <div class="head"><div><div class="kicker">05 · Juez</div><h2>El que ejecuta no se pone las notas.</h2></div><div class="num">05</div></div>
       <p>El juez es un evaluador separado que lee una rúbrica, la salida de otro agente y los artefactos de la ejecución. Devuelve un JSON con una nota por criterio; el harness calcula la media ponderada y decide si la skill pasa.</p>
       <div class="grid2">
         <div class="card"><h3>Cómo funciona</h3><ul><li><code>agents/judge.md</code> es el prompt estricto; solo devuelve JSON.</li><li><code>evals/harness.py</code> ejecuta K copias en un entorno desechable.</li><li>El baseline usa K=3 y umbral 8,5; el rubric manda.</li><li>El juez debe ser un modelo distinto del que ejecutó la skill.</li></ul></div>
@@ -198,7 +213,7 @@ python3 evals/harness.py \
     </section>
 
     <section id="agentes">
-      <div class="head"><div><div class="kicker">05 · Agentes</div><h2>Una fuente, varios clientes.</h2></div><div class="num">05</div></div>
+      <div class="head"><div><div class="kicker">06 · Agentes</div><h2>Una fuente, varios clientes.</h2></div><div class="num">06</div></div>
       <p>OpenCode, Claude Code, Codex, pi y Hermes no tienen que usar el mismo formato. El kit mantiene una fuente neutral y genera los adaptadores que cada uno lee. Cambiar de agente no cambia el contrato.</p>
       <div class="grid2">
         <div class="card"><h3>Lo neutral</h3><ul><li><code>AGENTS.md</code>, <code>skills/</code>, <code>commands/</code>, <code>agents/</code>.</li><li>El juez y el runner neutral.</li><li>La puerta son comandos de shell y Python.</li></ul></div>
@@ -208,7 +223,7 @@ python3 evals/harness.py \
     </section>
 
     <section id="flujo">
-      <div class="head"><div><div class="kicker">06 · El flujo</div><h2>Qué se ejecuta y cuándo.</h2></div><div class="num">06</div></div>
+      <div class="head"><div><div class="kicker">07 · El flujo</div><h2>Qué se ejecuta y cuándo.</h2></div><div class="num">07</div></div>
       <div class="grid3">
         <div class="card"><h3>Cambio normal</h3><p>Skill → guard → verify → E2E si hay UI → revisión humana. GGA es la segunda revisión del diff. El juez no entra aquí.</p></div>
         <div class="card"><h3>Cambio de skill</h3><p>Se escribe o modifica la skill, se ejecuta el caso con <code>--dry-run</code>, luego K=3 con juez separado. Se compara con el baseline.</p></div>
@@ -225,7 +240,7 @@ python3 evals/harness.py \
     </section>
 
     <section id="chuleta">
-      <div class="head"><div><div class="kicker">07 · Chuleta</div><h2>Comandos que se usan de verdad.</h2></div><div class="num">07</div></div>
+      <div class="head"><div><div class="kicker">08 · Chuleta</div><h2>Comandos que se usan de verdad.</h2></div><div class="num">08</div></div>
       <table class="table">
         <thead><tr><th>Quiero…</th><th>Comando</th><th>Qué debo ver</th></tr></thead>
         <tbody>
@@ -241,7 +256,7 @@ python3 evals/harness.py \
     </section>
 
     <section id="practica">
-      <div class="head"><div><div class="kicker">08 · Para practicar</div><h2>Tres ejercicios para comprobar que se entiende.</h2></div><div class="num">08</div></div>
+      <div class="head"><div><div class="kicker">09 · Para practicar</div><h2>Tres ejercicios para comprobar que se entiende.</h2></div><div class="num">09</div></div>
       <div class="grid3">
         <div class="card"><h3>Leer una skill</h3><p>Abre <code>skills/repro-first/SKILL.md</code> y señala sus pasos, su salida y el fallo que evita. ¿Qué cambiarías si un bug se repite?</p></div>
         <div class="card"><h3>Separar juez y GGA</h3><p>Explica en dos frases qué evalúa cada uno y por qué no se sustituyen. ¿Qué evidencia produce cada uno?</p></div>
