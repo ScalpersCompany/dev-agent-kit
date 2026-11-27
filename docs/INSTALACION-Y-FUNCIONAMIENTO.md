@@ -106,12 +106,19 @@ bash scripts/bootstrap.sh /ruta/a/tu/repo --with-verify
 ```
 
 Copia `AGENTS.md`, `skills/`, `commands/`, `agents/`, `verify/`, `guard/`, `evals/`,
-`scripts/`, `docs/`, `profiles/` (plantilla) y `e2e/` (Playwright); respalda lo que
-reemplaza como `.bak-<fecha>`; crea `verify/config.env` desde el ejemplo e instala el
-`pre-commit`.
+`scripts/`, `docs/`, `profiles/` (plantilla), `e2e/` (Playwright) y `gga/` (núcleo de
+revisión); respalda lo que reemplaza como `.bak-<fecha>`; crea `verify/config.env` desde el
+ejemplo e instala el `pre-commit`.
 `--with-verify` añade el `pre-push` y `.dev-agent/verify.env`; `--with-gga` añade los
 ficheros de GGA; `--profile` instala el perfil activo. No toca producción, el historial de
 git ni un registro de perfiles.
+
+El instalador también pregunta si quieres instalar la toolchain de agentes: Engram, GGA,
+gentle-ai y Claude si faltan. Instala lo que falte, configura el MCP de Engram en los agentes
+elegidos, copia las skills del kit y del perfil a sus directorios globales y termina con un
+smoke de instalación. Después pregunta por las herramientas de guard (ruff, black, mypy,
+eslint, tsc y gitleaks); son opt-in y no crean configuración por su cuenta. Si un binario
+obligatorio no se puede instalar, para con el error; no declara la instalación correcta.
 
 ### 3.2 Manual (respaldo)
 
@@ -134,16 +141,22 @@ No copies `verify/config.env`, `evidence/`, `guard-report.json` ni `evals/runs/`
 repo ya tiene `AGENTS.md`, fusiónalo. Los adaptadores `.opencode/` o `.claude/` se generan
 con `bash scripts/install-agent-adapters.sh . --agents opencode,claude --profile /ruta/dev-agent-profiles/profiles/odoo11`; en el kit están ignorados, pero el repo destino no recibe un `.gitignore` del script: añádelos a `.git/info/exclude` o commitéalos a propósito.
 
-### 3.3 Configurar verify
+### 3.3 Configurar verify y E2E
+
+El instalador principal pregunta si quieres dependencias de E2E, escribe `E2E_CMD`,
+`E2E_BASE_URL` y `E2E_HEALTH_PATH` en `verify/config.env` y en `.dev-agent/verify.env`, y
+puede lanzar `verify` al final. No hay que ejecutar `install-e2e.sh` a mano en el camino
+normal.
+
+Si prefieres hacerlo por separado:
 
 ```bash
-cp verify/config.env.example verify/config.env
+( cd e2e && npm install )
+( cd e2e && npx playwright install chromium )
 ```
 
 Rellena `BOOT_CMD`, `HEALTH_URL`, `SMOKE_CMD`, `TEST_CMD`, `E2E_CMD`, `E2E_BASE_URL` y
-`HEALTH_TIMEOUT`. El E2E de Playwright se instala con `bash scripts/install-e2e.sh .` y se
-ejecuta con `E2E_CMD="npm --prefix e2e test"`; necesita `npm install` y
-`npx playwright install chromium` una vez. Después:
+`HEALTH_TIMEOUT` con los comandos reales. Después:
 
 ```bash
 bash verify/run.sh
@@ -154,6 +167,8 @@ HTML, JUnit/JSON y trazas o capturas. Sale 0 si todo pasa, 1 si falla y 2 si no 
 configuración. Un 2 no es verde.
 
 ### 3.4 Instalar hooks
+
+El instalador principal los deja instalados. Para reinstalarlos o hacerlo a mano:
 
 ```bash
 bash scripts/install-hooks.sh .
@@ -168,15 +183,25 @@ Para el `pre-push`:
 bash scripts/install-hooks.sh . --with-verify
 ```
 
-Copia `.dev-agent/verify.env` y falla cerrado hasta que tenga un `TEST_CMD` o un `E2E_CMD` real.
+Copia `.dev-agent/verify.env` y falla cerrado hasta que tenga un `SMOKE_CMD`, `TEST_CMD` o
+`E2E_CMD` real.
 
 ### 3.5 Instalar GGA (revisión bloqueante)
 
+El instalador principal pregunta si quieres GGA, compone las reglas del perfil y pregunta
+por el pre-push. La revisión se lanza después:
+
 ```bash
-bash scripts/install-gga.sh . --profile "$HOME/dev-agent-profiles/profiles/odoo11"
 bash scripts/review-gga.sh . --blocking --pr-mode --diff-only
-# o, para bloquear también el pre-push:
-bash scripts/install-gga.sh . --profile "$HOME/dev-agent-profiles/profiles/odoo11" --with-pre-push
+# o, para bloquear también el pre-push desde el instalador principal:
+# responde "s" a la pregunta de pre-push
+```
+
+Si lo haces por separado:
+
+```bash
+bash "$HOME/.dev-agent-kit/scripts/install-gga.sh" . --profile "$HOME/dev-agent-profiles/profiles/odoo11"
+bash "$HOME/.dev-agent-kit/scripts/install-gga.sh" . --profile "$HOME/dev-agent-profiles/profiles/odoo11" --with-pre-push
 ```
 
 Las reglas base del núcleo son agnósticas de lenguaje. El perfil activo añade su

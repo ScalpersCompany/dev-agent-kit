@@ -40,8 +40,11 @@ flowchart TD
   E --> F[CodeGraph: indexar]
   F --> G[Engram: guardar instalación]
   G --> H[Tech-doc: enlace y HTML opcional]
-  H --> I[Doctor y resumen]
-  I --> J[Scripts de uso listos]
+  H --> I[E2E: preguntar, instalar npm/Chromium y configurar]
+  I --> J[GGA: reglas del perfil y pre-push opcional]
+  J --> K[Verify opcional]
+  K --> L[Doctor y resumen]
+  L --> M[Scripts de uso listos]
 ```
 
 ### 0. Preflight
@@ -79,6 +82,11 @@ Agentes:
 ¿Engram? [S/n]
 ¿Tech-doc? [S/n] (repo privado)
 ¿Construir HTML de tech-doc? [s/N]
+¿Instalar dependencias de E2E (npm + Chromium)? [s/N]
+¿Configurar E2E en verify/config.env? [S/n]
+¿Instalar GGA con las reglas del perfil? [S/n]
+¿Bloquear GGA en pre-push? [s/N]
+¿Ejecutar verify ahora? [s/N]
 ```
 
 - Instalar varios perfiles no obliga a activarlos todos: se elige uno activo y los demás

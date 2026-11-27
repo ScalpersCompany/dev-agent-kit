@@ -222,8 +222,9 @@ E2E_BASE_URL='http://127.0.0.1:8000'
 Para Odoo 11, el `TEST_CMD` depende de la base y del módulo. El `.example` del perfil es
 la misma plantilla vacía; el `config.env` real de esta máquina tiene un comando local que
 no se copia. Escribe el tuyo contra una base desechable y un módulo concreto; nunca la base
-compartida, nunca producción, nunca datos de cliente. El E2E de Playwright necesita
-`bash scripts/install-e2e.sh .`, `npm install` y `npx playwright install chromium` una vez.
+compartida, nunca producción, nunca datos de cliente. El instalador principal pregunta si
+quieres instalar las dependencias de Playwright y Chromium; si aceptas, lo hace él. Si lo
+haces a mano, ejecuta `npm install` y `npx playwright install chromium` dentro de `e2e/`.
 
 `verify` sale 2 cuando no hay `SMOKE_CMD`, `TEST_CMD` ni `E2E_CMD`: no es verde, es una
 configuración incompleta.
@@ -525,13 +526,14 @@ GGA es la segunda revisión, no la puerta determinista. `review-gga.sh` es bloqu
 defecto y exige `STATUS: PASSED`; `--advisory` o `GGA_ADVISORY=1` informa sin bloquear. Sin
 proveedor o sin `.gga`, la revisión bloqueante falla cerrada. No ejecutar `gga install`:
 pisaría el pre-commit del kit. Las reglas del núcleo son agnósticas; el perfil activo añade
-`gga/REVIEW-RULES.md` (Odoo 11, PHP 8 o hexagonal).
+`gga/REVIEW-RULES.md` (Odoo 11, PHP 8 o hexagonal). El instalador principal pregunta si
+quieres GGA y copia las reglas; para rehacerlo:
 
 ```bash
-bash scripts/install-gga.sh . --profile "$HOME/dev-agent-profiles/profiles/odoo11"
+bash "$HOME/.dev-agent-kit/scripts/install-gga.sh" . --profile "$HOME/dev-agent-profiles/profiles/odoo11"
 bash scripts/review-gga.sh . --blocking --pr-mode --diff-only
 # o, para bloquear también el pre-push:
-bash scripts/install-gga.sh . --profile "$HOME/dev-agent-profiles/profiles/odoo11" --with-pre-push
+bash "$HOME/.dev-agent-kit/scripts/install-gga.sh" . --profile "$HOME/dev-agent-profiles/profiles/odoo11" --with-pre-push
 ```
 
 La revisión humana sigue siendo humana. El agente que escribió el cambio no es el que lo
@@ -631,4 +633,18 @@ Criterio: cada paso tiene una salida observable; si no, no se marca.
 - `docs/EVAL-BASELINE.md`
 - `docs/diagrams/sistema.html`
 - `docs/diagrams/flujo-detallado.html`
-- `docs/formacion/dev-agent-kit-formacion.html`
+- `docs/formacion/plan-formacion-equipo.html` — presentación con flechas para el equipo.
+- `docs/formacion/guia-paso-a-paso.html` — descarga, instalación, CodeGraph, primera prueba y cómo enseñarlo.
+- `docs/REFERENCIAS-TECNOLOGIAS.md` y `docs/REFERENCIAS-TECNOLOGIAS.html` — URL oficial, versión local y papel de cada tecnología.
+- `docs/formacion/guia-equipo.html` — guía conceptual: skills, perfiles y juez.
+- `docs/formacion/plan-formacion-tecnico.html` — runbook del formador, paso a paso y demos.
+- `docs/formacion/dev-agent-kit-formacion.html` — taller anterior, si se reutiliza.
+
+## Estado de las ramas que afecta a la formación
+
+La presentación y la guía distinguen lo que está en `origin/main` de lo que está en una rama local. En el momento de preparar este material:
+
+- `dev-agent-kit`: `main` público en `34093d5`; la rama local `fix/opencode-agents-dir` (`c44903b`) añade `scripts/render-roles.py`, `dev-agent roles` y el juez de OpenCode v2 en `.opencode/agents/`.
+- `dev-agent-profiles`: `main` público en `7ac589d`; la rama local `feat/team-profile` (`28fc70d`) añade el perfil `team` y su runner.
+
+Mientras no se integren, no se presentan como disponibles en el clon de GitHub: se explican como propuesta y la sesión 4 queda condicionada a su integración.

@@ -11,7 +11,20 @@ WITH_CODEGRAPH=""
 WITH_ENGRAM=""
 WITH_TECHDOC=""
 WITH_HTML=0
+WITH_E2E_DEPS=""
+WITH_E2E_CONFIG=""
+WITH_TOOLCHAIN=""
+TOOLCHAIN_SMOKE=""
+WITH_DEV_DEPS=""
+E2E_CMD=""
+E2E_BASE_URL=""
+E2E_HEALTH_PATH=""
+WITH_GGA=""
+GGA_PROVIDER=""
+GGA_PRE_PUSH=""
+RUN_VERIFY=""
 ASSUME_YES=0
+STAMP="$(date +%Y%m%d-%H%M%S)"
 
 usage() {
   cat >&2 <<'EOF'
@@ -29,6 +42,24 @@ Interactive by default. Options for automation:
   --with-techdoc           clone or link scalpers-tech-doc
   --no-techdoc             skip tech-doc
   --build-techdoc-html     build and link the single HTML
+  --with-e2e-deps          install E2E npm dependencies and Chromium (network)
+  --no-e2e-deps            skip E2E dependencies
+  --with-e2e-config        write E2E_CMD/E2E_BASE_URL/E2E_HEALTH_PATH
+  --no-e2e-config          leave verify/config.env untouched
+  --with-toolchain         install Engram, GGA, gentle-ai, Claude if needed and configure MCP
+  --no-toolchain           skip the external toolchain
+  --with-dev-deps          install ruff, black, mypy, eslint, tsc and gitleaks
+  --no-dev-deps            skip the guard linters and scanners
+  --skip-toolchain-smoke   do not run the post-install smoke checks
+  --e2e-cmd <command>      E2E command, for example npm --prefix e2e test
+  --e2e-base-url <url>     local application URL, never production
+  --e2e-health-path <path> health path, default /
+  --with-gga               install the active profile's GGA rules
+  --no-gga                 skip GGA
+  --gga-provider <name>    provider written to .gga (no credentials)
+  --with-gga-pre-push      run GGA after verify in pre-push
+  --no-gga-pre-push        leave GGA out of pre-push
+  --verify-now             run verify once at the end
   --yes                    accept defaults, no prompts
 EOF
   exit 2
@@ -47,6 +78,24 @@ while [ $# -gt 0 ]; do
     --with-techdoc) WITH_TECHDOC=1; shift ;;
     --no-techdoc) WITH_TECHDOC=0; WITH_HTML=0; shift ;;
     --build-techdoc-html) WITH_HTML=1; WITH_TECHDOC=1; shift ;;
+    --with-e2e-deps) WITH_E2E_DEPS=1; shift ;;
+    --no-e2e-deps) WITH_E2E_DEPS=0; shift ;;
+    --with-e2e-config) WITH_E2E_CONFIG=1; shift ;;
+    --no-e2e-config) WITH_E2E_CONFIG=0; shift ;;
+    --with-toolchain) WITH_TOOLCHAIN=1; shift ;;
+    --no-toolchain) WITH_TOOLCHAIN=0; shift ;;
+    --with-dev-deps) WITH_DEV_DEPS=1; shift ;;
+    --no-dev-deps) WITH_DEV_DEPS=0; shift ;;
+    --skip-toolchain-smoke) TOOLCHAIN_SMOKE=0; shift ;;
+    --e2e-cmd) [ $# -ge 2 ] || usage; E2E_CMD="$2"; WITH_E2E_CONFIG=1; shift 2 ;;
+    --e2e-base-url) [ $# -ge 2 ] || usage; E2E_BASE_URL="$2"; WITH_E2E_CONFIG=1; shift 2 ;;
+    --e2e-health-path) [ $# -ge 2 ] || usage; E2E_HEALTH_PATH="$2"; WITH_E2E_CONFIG=1; shift 2 ;;
+    --with-gga) WITH_GGA=1; shift ;;
+    --no-gga) WITH_GGA=0; shift ;;
+    --gga-provider) [ $# -ge 2 ] || usage; GGA_PROVIDER="$2"; shift 2 ;;
+    --with-gga-pre-push) GGA_PRE_PUSH=1; shift ;;
+    --no-gga-pre-push) GGA_PRE_PUSH=0; shift ;;
+    --verify-now) RUN_VERIFY=1; shift ;;
     --yes) ASSUME_YES=1; shift ;;
     -h|--help) usage ;;
     *) usage ;;
@@ -63,6 +112,53 @@ ask_yes() {
   read -r answer
   answer="${answer:-$default}"
   [ "$answer" = "s" ] || [ "$answer" = "S" ] || [ "$answer" = "si" ] || [ "$answer" = "sí" ]
+}
+
+ask_value() {
+  local prompt="$1" default="$2" answer
+  if [ "$ASSUME_YES" = "1" ]; then
+    printf '%s\n' "$default"
+    return
+  fi
+  printf '%s [%s]: ' "$prompt" "$default" >&2
+  read -r answer
+  printf '%s\n' "${answer:-$default}"
+}
+
+write_verify_config() {
+  local file="$1"
+  mkdir -p "$(dirname "$file")"
+  [ -f "$file" ] && cp -a "$file" "$file.bak-$STAMP"
+  python3 - "$file" "$E2E_CMD" "$E2E_BASE_URL" "$E2E_HEALTH_PATH" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+values = {
+    "E2E_CMD": sys.argv[2],
+    "E2E_BASE_URL": sys.argv[3],
+    "E2E_HEALTH_PATH": sys.argv[4] or "/",
+}
+
+def quote(value):
+    return '"' + value.replace("\\", "\\\\").replace('"', '\\"').replace("$", "\\$").replace("`", "\\`") + '"'
+
+lines = path.read_text(encoding="utf-8").splitlines() if path.exists() else []
+for key, value in values.items():
+    pattern = re.compile(r"^\s*" + re.escape(key) + r"=")
+    replacement = key + "=" + quote(value)
+    for index, line in enumerate(lines):
+        if pattern.match(line):
+            lines[index] = replacement
+            break
+    else:
+        lines.append(replacement)
+if not lines or lines[0].strip() != "# dev-agent-kit verify config (local, never commit)":
+    lines.insert(0, "# dev-agent-kit verify config (local, never commit)")
+path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
+PY
+  echo "configured: $file"
 }
 
 profile_description() {
@@ -288,7 +384,109 @@ lock = {"schema": 1, "active": active, "profiles": entries}
 )
 PY
 
-STAMP="$(date +%Y%m%d-%H%M%S)"
+if [ "$ASSUME_YES" = "1" ]; then
+  [ -n "$WITH_E2E_DEPS" ] || WITH_E2E_DEPS=0
+  [ -n "$WITH_E2E_CONFIG" ] || WITH_E2E_CONFIG=0
+  [ -n "$WITH_TOOLCHAIN" ] || WITH_TOOLCHAIN=1
+  [ -n "$TOOLCHAIN_SMOKE" ] || TOOLCHAIN_SMOKE=1
+  [ -n "$WITH_DEV_DEPS" ] || WITH_DEV_DEPS=1
+  [ -n "$WITH_GGA" ] || WITH_GGA=1
+  [ -n "$GGA_PRE_PUSH" ] || GGA_PRE_PUSH=0
+  [ -n "$RUN_VERIFY" ] || RUN_VERIFY=0
+fi
+
+if [ -z "$WITH_TOOLCHAIN" ]; then
+  if ask_yes "¿Instalar Engram, GGA, gentle-ai, Claude si faltan y configurar su MCP?" "s"; then
+    WITH_TOOLCHAIN=1
+  else
+    WITH_TOOLCHAIN=0
+  fi
+fi
+if [ "$WITH_TOOLCHAIN" = "1" ]; then
+  AGENT_CSV="$(IFS=,; echo "${SELECTED_AGENTS[*]:-}")"
+  TOOLCHAIN_ARGS=("$TARGET" --agents "${AGENT_CSV:-none}")
+  [ "${TOOLCHAIN_SMOKE:-1}" = "0" ] && TOOLCHAIN_ARGS+=(--skip-smoke)
+  DEV_AGENT_PROFILE="$PROFILES_REPO/profiles/$ACTIVE" \
+    bash "$KIT/scripts/install-toolchain.sh" "${TOOLCHAIN_ARGS[@]}"
+fi
+
+if [ -z "$WITH_DEV_DEPS" ]; then
+  if ask_yes "¿Instalar herramientas de guard (ruff, black, mypy, eslint, tsc, gitleaks)?" "s"; then
+    WITH_DEV_DEPS=1
+  else
+    WITH_DEV_DEPS=0
+  fi
+fi
+if [ "$WITH_DEV_DEPS" = "1" ]; then
+  bash "$KIT/scripts/install-dev-deps.sh"
+fi
+
+if [ -z "$WITH_E2E_DEPS" ]; then
+  if ask_yes "¿Instalar dependencias de E2E (npm + Chromium)? Requiere red" "n"; then
+    WITH_E2E_DEPS=1
+  else
+    WITH_E2E_DEPS=0
+  fi
+fi
+if [ "$WITH_E2E_DEPS" = "1" ]; then
+  command -v npm >/dev/null 2>&1 || { echo "npm no está instalado; no se pueden instalar las dependencias de E2E" >&2; exit 1; }
+  command -v npx >/dev/null 2>&1 || { echo "npx no está instalado; no se puede instalar Chromium" >&2; exit 1; }
+  [ -f "$TARGET/e2e/package.json" ] || { echo "falta $TARGET/e2e/package.json; el instalador no copió el harness" >&2; exit 1; }
+  echo "E2E: instalando dependencias npm"
+  ( cd "$TARGET/e2e" && npm install )
+  echo "E2E: instalando Chromium"
+  ( cd "$TARGET/e2e" && npx playwright install chromium )
+fi
+
+if [ -z "$WITH_E2E_CONFIG" ]; then
+  if ask_yes "¿Configurar E2E en verify/config.env?" "s"; then
+    WITH_E2E_CONFIG=1
+  else
+    WITH_E2E_CONFIG=0
+  fi
+fi
+if [ "$WITH_E2E_CONFIG" = "1" ]; then
+  [ -n "$E2E_CMD" ] || E2E_CMD="$(ask_value 'Comando E2E (vacío = no E2E)' 'npm --prefix e2e test')"
+  [ -n "$E2E_BASE_URL" ] || E2E_BASE_URL="$(ask_value 'URL base E2E (vacío = no E2E)' '')"
+  [ -n "$E2E_HEALTH_PATH" ] || E2E_HEALTH_PATH="$(ask_value 'Ruta de health E2E' '/')"
+  if [ -z "$E2E_BASE_URL" ]; then
+    echo "E2E: sin E2E_BASE_URL; la suite no se ejecutará hasta que la configures" >&2
+  fi
+  write_verify_config "$TARGET/verify/config.env"
+  write_verify_config "$TARGET/.dev-agent/verify.env"
+fi
+
+if [ -z "$WITH_GGA" ]; then
+  if ask_yes "¿Instalar GGA con las reglas del perfil?" "s"; then WITH_GGA=1; else WITH_GGA=0; fi
+fi
+if [ "$WITH_GGA" = "1" ]; then
+  if [ -z "$GGA_PROVIDER" ]; then
+    GGA_PROVIDER="$(ask_value 'Proveedor GGA (vacío = no configurar)' '')"
+  fi
+  if [ -z "$GGA_PRE_PUSH" ]; then
+    if ask_yes "¿Bloquear GGA en pre-push?" "n"; then GGA_PRE_PUSH=1; else GGA_PRE_PUSH=0; fi
+  fi
+  GGA_ARGS=("$TARGET" --profile "$PROFILES_REPO/profiles/$ACTIVE")
+  [ -n "$GGA_PROVIDER" ] && GGA_ARGS+=(--provider "$GGA_PROVIDER")
+  [ "$GGA_PRE_PUSH" = "1" ] && GGA_ARGS+=(--with-pre-push)
+  bash "$KIT/scripts/install-gga.sh" "${GGA_ARGS[@]}"
+  if [ -z "$GGA_PROVIDER" ]; then
+    echo "GGA: sin proveedor configurado; review-gga fallará hasta que pongas uno" >&2
+  fi
+  command -v gga >/dev/null 2>&1 || echo "GGA: reglas instaladas, pero el binario gga no está en PATH" >&2
+fi
+
+if [ -z "$RUN_VERIFY" ]; then
+  if ask_yes "¿Ejecutar verify ahora?" "n"; then RUN_VERIFY=1; else RUN_VERIFY=0; fi
+fi
+if [ "$RUN_VERIFY" = "1" ]; then
+  if bash "$TARGET/verify/run.sh"; then
+    echo "verify: completado"
+  else
+    echo "verify: no completado; revisa la salida y la evidencia" >&2
+  fi
+fi
+
 for hook in pre-commit pre-push; do
   if [ -f "$TARGET/.git/hooks/$hook" ]; then
     sed -i "s#/home/scalpers/dev-agent-kit#$KIT#g" "$TARGET/.git/hooks/$hook"
@@ -331,6 +529,8 @@ install_global_skills() {
 }
 for name in "${SELECTED_AGENTS[@]}"; do
   case "$name" in
+    claude) install_global_skills "$HOME/.claude/skills" ;;
+    opencode) install_global_skills "$HOME/.config/opencode/skills" ;;
     codex) install_global_skills "$HOME/.codex/skills" ;;
     pi) install_global_skills "$HOME/.pi/agent/skills" ;;
     hermes) install_global_skills "$HOME/.hermes/skills" ;;
@@ -339,7 +539,7 @@ done
 
 EXCLUDE="$TARGET/.git/info/exclude"
 touch "$EXCLUDE"
-for entry in '.opencode/' '.claude/skills/' '.claude/commands/' '.claude/agents/' '.codegraph/' '.engram/'; do
+for entry in '.opencode/' '.claude/skills/' '.claude/commands/' '.claude/agents/' '.codegraph/' '.engram/' '.dev-agent/' 'evidence/' 'guard-report.json' 'verify/config.env' 'verify/config.env.bak-*' '.gga' '.gga.bak-*' '.gga-rules.md' '.gga-rules.md.bak-*' 'e2e/node_modules/' 'e2e/report/' 'e2e/test-results/' '*.bak-*'; do
   grep -qxF "$entry" "$EXCLUDE" || printf '%s\n' "$entry" >>"$EXCLUDE"
 done
 
@@ -376,10 +576,25 @@ fi
 ln -sfn "$KIT/bin/dev-agent" "$HOME/.local/bin/dev-agent"
 
 if [ -x "$KIT/scripts/doctor.sh" ] || [ -f "$KIT/scripts/doctor.sh" ]; then
-  bash "$KIT/scripts/doctor.sh" "$TARGET" || true
+  DOCTOR_RC=0
+  bash "$KIT/scripts/doctor.sh" "$TARGET" || DOCTOR_RC=$?
+  if [ "$DOCTOR_RC" -ne 0 ]; then
+    echo "doctor: FAIL (exit $DOCTOR_RC); revisa los checks antes de usar el repo" >&2
+    exit "$DOCTOR_RC"
+  fi
 fi
 
 echo
+echo "Resumen de instalación:"
+echo "  perfiles: ${SELECTED[*]} (activo: $ACTIVE)"
+echo "  agentes: ${SELECTED_AGENTS[*]:-ninguno}"
+echo "  E2E deps: $([ "$WITH_E2E_DEPS" = 1 ] && echo sí || echo no)"
+echo "  E2E config: $([ "$WITH_E2E_CONFIG" = 1 ] && echo sí || echo no)"
+echo "  toolchain (Engram/GGA/gentle/Claude): $([ "$WITH_TOOLCHAIN" = 1 ] && echo sí || echo no)"
+echo "  herramientas de guard: $([ "$WITH_DEV_DEPS" = 1 ] && echo sí || echo no)"
+echo "  GGA por perfil: $([ "$WITH_GGA" = 1 ] && echo sí || echo no)"
+echo "  verify ahora: $([ "$RUN_VERIFY" = 1 ] && echo sí || echo no)"
+echo
 echo "Instalación terminada."
-echo "Siguiente: dev-agent doctor"
+echo "Siguiente: revisa verify/config.env y ejecuta dev-agent guard / dev-agent verify"
 echo "Si $HOME/.local/bin no está en PATH, usa $KIT/bin/dev-agent o añade la ruta."

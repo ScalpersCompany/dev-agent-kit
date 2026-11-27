@@ -46,7 +46,7 @@ backup() {
   fi
 }
 
-for item in AGENTS.md skills commands agents verify guard evals scripts docs profiles e2e; do
+for item in AGENTS.md skills commands agents verify guard evals scripts docs profiles e2e gga; do
   backup "$REPO/$item"
   if [ -d "$KIT/$item" ]; then
     mkdir -p "$REPO/$item"

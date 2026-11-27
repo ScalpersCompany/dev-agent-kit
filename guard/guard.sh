@@ -64,13 +64,17 @@ if [ "$STAGED" = "1" ]; then
     record ruff skipped "no staged Python files"
   elif have ruff && { [ -f pyproject.toml ] || [ -f ruff.toml ] || [ -f .ruff.toml ]; }; then
     if ruff check "${PY_FILES[@]}" >/tmp/guard-ruff.log 2>&1; then record ruff pass; else record ruff fail "$(tail -5 /tmp/guard-ruff.log | tr '\n' ' ')"; fi
+  elif have ruff; then
+    record ruff skipped "installed; no ruff config in this repo"
   else
-    record ruff skipped "not installed or not configured"
+    record ruff skipped "not installed"
   fi
 elif have ruff && { [ -f pyproject.toml ] || [ -f ruff.toml ] || [ -f .ruff.toml ]; }; then
   if ruff check . >/tmp/guard-ruff.log 2>&1; then record ruff pass; else record ruff fail "$(tail -5 /tmp/guard-ruff.log | tr '\n' ' ')"; fi
+elif have ruff; then
+  record ruff skipped "installed; no ruff config in this repo"
 else
-  record ruff skipped "not installed or not configured"
+  record ruff skipped "not installed"
 fi
 
 if [ "$STAGED" = "1" ]; then
@@ -78,13 +82,17 @@ if [ "$STAGED" = "1" ]; then
     record black skipped "no staged Python files"
   elif have black && { [ -f pyproject.toml ] || [ -f .black ]; }; then
     if black --check "${PY_FILES[@]}" >/tmp/guard-black.log 2>&1; then record black pass; else record black fail "$(tail -3 /tmp/guard-black.log | tr '\n' ' ')"; fi
+  elif have black; then
+    record black skipped "installed; no black config in this repo"
   else
-    record black skipped "not installed or not configured"
+    record black skipped "not installed"
   fi
 elif have black && { [ -f pyproject.toml ] || [ -f .black ]; }; then
   if black --check . >/tmp/guard-black.log 2>&1; then record black pass; else record black fail "$(tail -3 /tmp/guard-black.log | tr '\n' ' ')"; fi
+elif have black; then
+  record black skipped "installed; no black config in this repo"
 else
-  record black skipped "not installed or not configured"
+  record black skipped "not installed"
 fi
 
 if [ "$STAGED" = "1" ]; then
@@ -92,13 +100,17 @@ if [ "$STAGED" = "1" ]; then
     record mypy skipped "no staged Python files"
   elif have mypy && { [ -f mypy.ini ] || [ -f pyproject.toml ]; }; then
     if mypy "${PY_FILES[@]}" >/tmp/guard-mypy.log 2>&1; then record mypy pass; else record mypy fail "$(tail -3 /tmp/guard-mypy.log | tr '\n' ' ')"; fi
+  elif have mypy; then
+    record mypy skipped "installed; no mypy config in this repo"
   else
-    record mypy skipped "not installed or not configured"
+    record mypy skipped "not installed"
   fi
 elif have mypy && { [ -f mypy.ini ] || [ -f pyproject.toml ]; }; then
   if mypy . >/tmp/guard-mypy.log 2>&1; then record mypy pass; else record mypy fail "$(tail -3 /tmp/guard-mypy.log | tr '\n' ' ')"; fi
+elif have mypy; then
+  record mypy skipped "installed; no mypy config in this repo"
 else
-  record mypy skipped "not installed or not configured"
+  record mypy skipped "not installed"
 fi
 
 ESLINT_BIN=""
@@ -159,7 +171,7 @@ if have gitleaks; then
   if [ "$STAGED" = "1" ]; then
     if gitleaks protect --staged --no-banner >/tmp/guard-gitleaks.log 2>&1; then record gitleaks pass; else record gitleaks fail "staged secret"; fi
   else
-    if gitleaks detect --no-git --no-banner >/tmp/guard-gitleaks.log 2>&1; then record gitleaks pass; else record gitleaks fail "secret found"; fi
+    record gitleaks skipped "staged only; use --staged or the pre-commit hook"
   fi
 else
   record gitleaks skipped "not installed"

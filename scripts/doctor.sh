@@ -40,10 +40,13 @@ fi
 
 for cfg in "$ROOT/verify/config.env" "$ROOT/.dev-agent/verify.env"; do
   if [ -f "$cfg" ]; then
-    if grep -qE '^(SMOKE_CMD|TEST_CMD)=' "$cfg"; then
-      if grep -qE '^(SMOKE_CMD|TEST_CMD)=["'\'' ]*$' "$cfg"; then warn "$cfg existe pero está vacío"; else ok "$cfg tiene comando"; fi
+    if grep -qE '^(SMOKE_CMD|TEST_CMD|E2E_CMD)=.*[^"'\'' ]' "$cfg"; then
+      ok "$cfg tiene comando"
+      if grep -qE '^E2E_CMD=.*[^"'\'' ]' "$cfg" && ! grep -qE '^E2E_BASE_URL=.*[^"'\'' ]' "$cfg"; then
+        warn "$cfg tiene E2E_CMD pero no E2E_BASE_URL"
+      fi
     else
-      warn "$cfg sin SMOKE_CMD/TEST_CMD"
+      warn "$cfg no tiene SMOKE_CMD, TEST_CMD ni E2E_CMD"
     fi
   else
     warn "falta $cfg"
@@ -51,7 +54,11 @@ for cfg in "$ROOT/verify/config.env" "$ROOT/.dev-agent/verify.env"; do
 done
 
 if [ -f "$ROOT/.dev-agent/verify.env" ]; then
-  if grep -qE '^TEST_CMD=.*[^"'\'' ]' "$ROOT/.dev-agent/verify.env"; then ok "pre-push con TEST_CMD"; else warn "pre-push fallará hasta que TEST_CMD tenga valor"; fi
+  if grep -qE '^(SMOKE_CMD|TEST_CMD|E2E_CMD)=.*[^"'\'' ]' "$ROOT/.dev-agent/verify.env"; then
+    ok "pre-push con comando configurado"
+  else
+    warn "pre-push fallará hasta que TEST_CMD o E2E_CMD tenga valor"
+  fi
 fi
 
 if [ -d "$ROOT/.claude/skills" ] || [ -d "$ROOT/.opencode/skills" ]; then
@@ -73,6 +80,13 @@ if command -v engram >/dev/null 2>&1; then
   if [ -f "$ROOT/.engram/config.json" ]; then ok "Engram configurado"; else warn "Engram instalado pero sin .engram/config.json"; fi
 else
   warn "Engram no instalado"
+fi
+
+if [ -f "$ROOT/.gga" ]; then
+  GGA_PROVIDER="$(sed -n 's/^PROVIDER=//p' "$ROOT/.gga" | head -1)"
+  if [ -n "$GGA_PROVIDER" ]; then ok "GGA con proveedor configurado"; else warn "GGA sin PROVIDER; review-gga fallará"; fi
+else
+  warn "sin .gga; GGA no está configurado"
 fi
 
 if [ -f "$ROOT/docs/TECHDOC.md" ]; then ok "referencia tech-doc"; else warn "sin docs/TECHDOC.md"; fi

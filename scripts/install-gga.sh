@@ -10,6 +10,7 @@ profile's gga/REVIEW-RULES.md. A profile with only AGENTS.fragment.md is accepte
 a compatibility fallback and reported as such.
 Existing .gga and .gga-rules.md are backed up; nothing is deleted.
 The provider is only written to .gga; credentials stay in the agent environment.
+Without --provider, PROVIDER is left empty and the review fails closed until configured.
 EOF
   exit 2
 }
@@ -35,6 +36,13 @@ KIT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 REPO="$(cd "$REPO_ARG" && pwd)" || exit 2
 STAMP="$(date +%Y%m%d-%H%M%S)"
 
+for source in "$KIT/gga/project.gga.example" "$KIT/gga/REVIEW-RULES.md"; do
+  [ -f "$source" ] || {
+    echo "core GGA files are not installed in $KIT/gga; rerun bootstrap or reinstall the kit" >&2
+    exit 2
+  }
+done
+
 for name in .gga .gga-rules.md; do
   if [ -f "$REPO/$name" ]; then
     cp -a "$REPO/$name" "$REPO/$name.bak-$STAMP"
@@ -44,9 +52,17 @@ done
 
 cp "$KIT/gga/project.gga.example" "$REPO/.gga"
 cp "$KIT/gga/REVIEW-RULES.md" "$REPO/.gga-rules.md"
+for target in "$REPO/.gga" "$REPO/.gga-rules.md"; do
+  [ -s "$target" ] || {
+    echo "could not install GGA file: $target" >&2
+    exit 2
+  }
+done
 
 if [ -n "$PROVIDER" ]; then
   sed -i "s/^PROVIDER=.*/PROVIDER=$PROVIDER/" "$REPO/.gga"
+else
+  sed -i 's/^PROVIDER=.*/PROVIDER=/' "$REPO/.gga"
 fi
 
 if [ -n "$PROFILE" ]; then

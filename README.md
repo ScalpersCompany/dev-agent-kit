@@ -10,6 +10,8 @@ For a new colleague, start with `docs/INSTALADOR.md` (one line), then
 `docs/FORMACION-DEV-AGENT-KIT.md` and `docs/formacion/dev-agent-kit-formacion.html`.
 The complete functional reference is `docs/SISTEMA-FUNCIONALIDADES.html`; the short
 peer presentation is `docs/formacion/dev-agent-kit-para-companeros.html`.
+The URL, version and role of every external technology: `docs/REFERENCIAS-TECNOLOGIAS.md`
+and `docs/REFERENCIAS-TECNOLOGIAS.html`.
 Daily commands: `docs/USO-RAPIDO.md`. Improving a skill: `docs/MEJORAR-SKILLS.md`.
 
 ## Repositories that work together
@@ -43,7 +45,9 @@ This kit is for the development base, not production. Production receives only c
 ## Core
 
 ```text
-install.sh                    one-line installer: profile menu, agents, CodeGraph, Engram, tech-doc and doctor
+install.sh                    one-line installer: profile menu, agents, toolchain, guard tools, MCP, skills, CodeGraph, Engram, tech-doc, E2E, GGA, verify and smoke
+scripts/install-toolchain.sh  installs Engram, GGA, gentle-ai and Claude when missing; configures Engram MCP and global skills
+scripts/install-dev-deps.sh   installs ruff, black, mypy, eslint, tsc and gitleaks for guard
 bin/dev-agent                 usage wrapper: doctor, guard, verify, review, eval, profile, codegraph, memory
 AGENTS.md                     generic rules the agent reads first
 skills/                       five core skills: dev-verify, repro-first, review-diff, correct, query-readonly
@@ -83,6 +87,8 @@ docs/INSTALADOR.md            one-line install, menu and recovery
 docs/USO-RAPIDO.md            daily commands
 docs/MEJORAR-SKILLS.md        skill improvement loop
 docs/FORMACION-DEV-AGENT-KIT.md  three-session training guide
+docs/REFERENCIAS-TECNOLOGIAS.md  official URLs, local versions and role of external technologies
+docs/REFERENCIAS-TECNOLOGIAS.html  readable reference page for the same table
 docs/formacion/dev-agent-kit-formacion.html  37-slide training deck with simulations
 docs/SISTEMA-FUNCIONALIDADES.html  complete functional reference: components, installer, gates, memory, status
 docs/formacion/dev-agent-kit-para-companeros.html  16-slide peer presentation, informative, no trainer cues
@@ -105,16 +111,23 @@ git clone https://github.com/ScalpersCompany/dev-agent-kit.git "$HOME/.dev-agent
   && "$HOME/.dev-agent-kit/install.sh"
 ```
 
-The installer asks for the target repository, profile or profiles, active profile, agents
-and optional CodeGraph, Engram and tech-doc. It installs the kit, all skills, the hooks,
-guard/verify, the selected profiles and the local references; see `docs/INSTALADOR.md`.
+The installer asks for the target repository, profile or profiles, active profile, agents,
+the external toolchain (Engram, GGA, gentle-ai, Claude), Engram MCP, global skills, the
+optional CodeGraph, Engram, tech-doc, E2E and GGA steps, and the local verify configuration.
+It installs the kit, the toolchain, the global skills, the hooks, guard/verify and the local
+references; E2E dependencies, Chromium and GGA are installed only after a yes. It ends with a
+smoke that checks binaries, MCP and skills. See `docs/INSTALADOR.md`.
 
 Non-interactive:
 
 ```bash
 ./install.sh --target /path/to/development-repo \
   --profiles all --active odoo11 --agents all \
-  --with-codegraph --with-engram --with-techdoc --yes
+  --with-codegraph --with-engram --with-techdoc \
+  --with-gga --with-e2e-deps --with-e2e-config \
+  --e2e-cmd "npm --prefix e2e test" \
+  --e2e-base-url "http://127.0.0.1:8000" --e2e-health-path / \
+  --verify-now --yes
 ```
 
 The bootstrap remains the lower-level path:
@@ -155,7 +168,7 @@ The visual map of the system is in `docs/diagrams/sistema.html`; the detailed fl
 | core `guard`, `verify`, evals, pre-commit/pre-push | implemented and covered by tests |
 | Odoo 11 profile | extracted to `ScalpersCompany/dev-agent-profiles/profiles/odoo11`; public |
 | PHP profile | skeleton moved to the profiles repository; PHPStan/PHPCS/PHPUnit not wired |
-| `install.sh` one-line installer | implemented; menu of profiles, agents, CodeGraph, Engram, tech-doc and doctor |
+| `install.sh` one-line installer | implemented; profile menu, agents, toolchain, MCP, global skills, CodeGraph, Engram, tech-doc, E2E, GGA, verify and smoke |
 | `bootstrap --profile` | implemented; lower-level path that copies the active profile and writes `.dev-agent/config` |
 | `dev-agent` wrapper | implemented; doctor, guard, verify, review, review-gga, eval, profile, codegraph, memory |
 | `dev-agent init` and the profile lock | implemented: alias of `install.sh` plus `.dev-agent/profiles.lock` |

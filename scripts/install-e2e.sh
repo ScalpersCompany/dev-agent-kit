@@ -7,6 +7,8 @@ usage: install-e2e.sh <repo> [--install] [--force]
 
 Copies the Playwright harness to <repo>/e2e with a backup of an existing e2e/.
 --install runs npm install inside e2e; it needs network and is never implicit.
+When e2e/ already exists (for example after install.sh), --install keeps it and only
+installs its dependencies; --force is required to replace the harness.
 The harness is a baseline, not the complete flow suite: add one spec per user flow.
 EOF
   exit 2
@@ -32,6 +34,13 @@ STAMP="$(date +%Y%m%d-%H%M%S)"
 
 if [ -e "$TARGET/e2e" ]; then
   if [ "$FORCE" != "1" ]; then
+    if [ "$INSTALL" = "1" ]; then
+      echo "e2e/ already exists in $TARGET; keeping it and installing dependencies"
+      (cd "$TARGET/e2e" && npm install)
+      echo "installed npm dependencies in $TARGET/e2e"
+      echo "next: set E2E_BASE_URL and E2E_CMD in verify/config.env"
+      exit 0
+    fi
     echo "e2e/ already exists in $TARGET; use --force to replace it (a backup is kept)" >&2
     exit 2
   fi

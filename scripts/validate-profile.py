@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Validate a dev-agent-kit profile contract."""
 
+from __future__ import annotations
+
 import argparse
 import json
 import re
