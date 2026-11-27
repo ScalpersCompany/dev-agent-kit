@@ -139,7 +139,14 @@ PY
         if [ -f "$candidate/flow.json" ]; then flow_dir="$candidate"; break; fi
       done
       [ -n "$flow_dir" ] || { echo "flujo no encontrado: $name" >&2; exit 2; }
-      exec python3 "$flow_dir/guard/team_lint.py" --flow "$flow_dir" "$@"
+      check="$(python3 - "$flow_dir/flow.json" <<'PY'
+import json, sys
+from pathlib import Path
+print(json.loads(Path(sys.argv[1]).read_text(encoding="utf-8")).get("check", "guard/team_lint.py"))
+PY
+)"
+      [ -f "$flow_dir/$check" ] || { echo "falta el check del flujo: $flow_dir/$check" >&2; exit 2; }
+      exec python3 "$flow_dir/$check" --flow "$flow_dir" "$@"
     elif [ "$action" = "run" ]; then
       name="${1:-}"
       [ -n "$name" ] || { echo "falta el nombre del flujo" >&2; exit 2; }
