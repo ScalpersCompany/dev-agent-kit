@@ -134,6 +134,7 @@ Agentes: Claude, OpenCode, Codex, pi, Hermes, todos
 ¿CodeGraph? [S/n]
 ¿Engram? [S/n]
 ¿Tech-doc? [S/n]
+¿RLM Agent opcional? [s/N]
 ```
 
 Qué hace:
@@ -147,6 +148,8 @@ Qué hace:
   se eligen;
 - indexa con CodeGraph y guarda la instalación en Engram si están disponibles;
 - enlaza tech-doc y, si se pide, construye el HTML local;
+- si se pide, instala RLM Agent como extra opcional; no es una puerta y no cubre Claude ni
+  Codex;
 - termina con `dev-agent doctor` y un resumen de lo instalado, lo opcional y lo omitido;
 - **no** crea la base de datos, no configura el modelo y no empuja.
 

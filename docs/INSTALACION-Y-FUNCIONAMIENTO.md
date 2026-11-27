@@ -117,7 +117,9 @@ El instalador también pregunta si quieres instalar la toolchain de agentes: Eng
 gentle-ai y Claude si faltan. Instala lo que falte, configura el MCP de Engram en los agentes
 elegidos, copia las skills del kit y del perfil a sus directorios globales y termina con un
 smoke de instalación. Después pregunta por las herramientas de guard (ruff, black, mypy,
-eslint, tsc y gitleaks); son opt-in y no crean configuración por su cuenta. Si un binario
+eslint, tsc y gitleaks); son opt-in y no crean configuración por su cuenta. También puede
+preguntar por RLM Agent (`--with-rlm`), una integración opcional para Hermes, OpenCode y pi
+que no es requisito de guard, verify ni del flujo `team`. Si un binario
 obligatorio no se puede instalar, para con el error; no declara la instalación correcta.
 
 ### 3.2 Manual (respaldo)

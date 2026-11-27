@@ -140,6 +140,7 @@
         <div class="step"><b>CodeGraph, Engram y tech-doc.</b><p>CodeGraph indexa estructura y llamadas; Engram guarda decisiones; tech-doc enlaza la norma de empresa. Si no tienes acceso a tech-doc, se puede omitir y queda pendiente, no verde.</p></div>
         <div class="step"><b>Confirmar y toolchain.</b><p>El instalador muestra el resumen y pide continuar. Después pregunta por la toolchain: Engram, GGA, gentle-ai y Claude si faltan, jq, MCP de Engram y skills globales. Termina con un smoke.</p></div>
         <div class="step"><b>Herramientas de guard.</b><p>La siguiente pregunta instala ruff, black, mypy, eslint, tsc y gitleaks. Son opt-in en guard: ruff/black/mypy solo corren si el repo tiene su configuración; eslint/tsc solo si hay package.json/tsconfig; gitleaks y el perfil activo sí se ejecutan.</p></div>
+        <div class="step"><b>RLM Agent (opcional).</b><p>El instalador pregunta si quieres el kernel Python persistente y el contexto fuera del prompt. No es una puerta de calidad: guard, verify y el flujo team funcionan sin él. Solo cubre Hermes, OpenCode y pi; si usas Claude Code o Codex, se omite. Responde no si no lo necesitas.</p></div>
         <div class="step"><b>E2E y GGA.</b><p>E2E pregunta por dependencias npm, Chromium, comando, URL local y health path. GGA instala las reglas del perfil y pregunta por el pre-push. La URL nunca es producción.</p></div>
         <div class="step"><b>Verify ahora.</b><p>Si ya tienes un comando de tests o E2E, puedes lanzarlo al final. Si no, se configura después; no se inventa un comando.</p></div>
       </div>
@@ -281,6 +282,7 @@ bash scripts/review-gga.sh . --advisory --pr-mode --diff-only</pre></div>
           <tr><td>OpenCode no ve Engram</td><td>Plugin/MCP no instalado en su configuración.</td><td><code>engram setup opencode</code> y <code>opencode mcp list</code>; reinicia OpenCode.</td></tr>
           <tr><td>Falta una skill</td><td>Se instaló solo el repo del kit, no la copia global.</td><td>Reinstala con toolchain o copia <code>skills/</code> y el perfil a la ruta global del agente.</td></tr>
           <tr><td>GGA falla sin proveedor</td><td>El proveedor está vacío a propósito.</td><td>Configura uno aprobado en <code>.gga</code>; no lo saltes con <code>gga install</code>.</td></tr>
+          <tr><td>RLM no aparece en el agente</td><td>No se instaló, el agente no tiene adaptador o falta reiniciar.</td><td>Opcional: <code>bash scripts/install-rlm.sh --check</code>; si se instaló, reinicia el agente o usa <code>/reset</code> en Hermes. No es una puerta.</td></tr>
           <tr><td>Playwright no arranca</td><td>Faltan npm, Chromium o la URL local.</td><td><code>(cd e2e &amp;&amp; npm install)</code>, <code>npx playwright install chromium</code> y revisa <code>E2E_BASE_URL</code>.</td></tr>
         </tbody>
       </table>
@@ -289,7 +291,7 @@ bash scripts/review-gga.sh . --advisory --pr-mode --diff-only</pre></div>
     <section id="checklist">
       <div class="head"><div><div class="kicker">Antes de decirlo</div><h2>Checklist de instalación y primera prueba.</h2></div><div class="num">10</div></div>
       <div class="grid2">
-        <div class="card"><h3>Instalación</h3><ul><li>Repo correcto y rama de trabajo.</li><li>Perfil activo correcto.</li><li>Toolchain y smoke sin errores.</li><li>MCP de Engram en el agente que se usa.</li><li>Skills globales presentes.</li><li>CodeGraph indexado y sincronizado.</li><li>Hooks instalados.</li></ul></div>
+        <div class="card"><h3>Instalación</h3><ul><li>Repo correcto y rama de trabajo.</li><li>Perfil activo correcto.</li><li>Toolchain y smoke sin errores.</li><li>MCP de Engram en el agente que se usa.</li><li>Skills globales presentes.</li><li>CodeGraph indexado y sincronizado.</li><li>Hooks instalados.</li><li>RLM solo si se pidió: no es requisito de la puerta.</li></ul></div>
         <div class="card"><h3>Primera prueba</h3><ul><li>Cambio pequeño con test y documentación.</li><li>Guard sobre staged.</li><li>Verify con summary 0.</li><li>E2E si hay flujo web, con informe y trazas.</li><li>GGA revisado o fallo explicado.</li><li>Evidencia localizada; no una captura del chat.</li><li>Sin push, sin producción, sin secretos.</li></ul></div>
       </div>
       <div class="note"><b>Material relacionado:</b> <a href="guia-equipo.html">guía conceptual del equipo</a> · <a href="guia-paso-a-paso.html">guía paso a paso</a> · <a href="plan-formacion-equipo.html">presentación para proyectar</a> · <a href="plan-formacion-tecnico.html">runbook técnico del formador</a> · <a href="../REFERENCIAS-TECNOLOGIAS.html">referencias de tecnologías</a>.</div>
