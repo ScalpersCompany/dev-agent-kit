@@ -23,6 +23,8 @@ usage: dev-agent <command> [args]
   profile use <name>     cambia el perfil activo
   profiles update        actualiza dev-agent-profiles (alias de update --profiles)
   update [args]          actualiza core y/o perfiles con --check/--target
+  flow list              flujos disponibles en dev-agent-profiles
+  flow run <name> [args] ejecuta un flujo (por ejemplo team) sobre el repo actual
   codegraph [args]       codegraph sync del repo actual, o pasa args
   memory [args]          engram save/search/... del proyecto
 EOF
@@ -40,12 +42,12 @@ case "$cmd" in
     shift
     roles_file="${DEV_AGENT_ROLES:-}"
     if [ -z "$roles_file" ]; then
-      for candidate in "$PWD/.dev-agent/profiles/team/roles.json" "$PWD/profiles/team/roles.json" "$PROFILES/profiles/team/roles.json"; do
+      for candidate in "$PWD/.dev-agent/flows/team/roles.json" "$PWD/.dev-agent/profiles/team/roles.json" "$PWD/profiles/team/roles.json" "$PROFILES/flows/team/roles.json" "$PROFILES/profiles/team/roles.json"; do
         if [ -f "$candidate" ]; then roles_file="$candidate"; break; fi
       done
     fi
     if [ -z "$roles_file" ] && [[ " $* " != *" --roles "* ]]; then
-      echo "roles: no encuentro roles.json del perfil team; pasa --roles <roles.json> o define DEV_AGENT_ROLES" >&2
+      echo "roles: no encuentro roles.json del flujo team; pasa --roles <roles.json> o define DEV_AGENT_ROLES" >&2
       exit 2
     fi
     args=(--target "$target")
@@ -106,6 +108,52 @@ PY
     [ "$action" = "update" ] || { usage; exit 2; }
     shift
     exec bash "$KIT/scripts/update.sh" --profiles "$@"
+    ;;
+  flow)
+    action="${1:-list}"
+    shift || true
+    flows_root="${DEV_AGENT_FLOWS:-$PROFILES/flows}"
+    if [ "$action" = "list" ]; then
+      found=0
+      if [ -d "$flows_root" ]; then
+        for flow_dir in "$flows_root"/*; do
+          [ -f "$flow_dir/flow.json" ] || continue
+          found=1
+          python3 - "$flow_dir" <<'PY'
+import json, sys
+from pathlib import Path
+path = Path(sys.argv[1])
+data = json.loads((path / "flow.json").read_text(encoding="utf-8"))
+print("%-12s %-8s %s" % (data.get("name", path.name), data.get("version", "?"), data.get("description", "")))
+PY
+        done
+      fi
+      [ "$found" = "1" ] || echo "no hay flujos en $flows_root"
+    elif [ "$action" = "run" ]; then
+      name="${1:-}"
+      [ -n "$name" ] || { echo "falta el nombre del flujo" >&2; exit 2; }
+      shift
+      flow_dir=""
+      for candidate in "$PWD/.dev-agent/flows/$name" "$flows_root/$name"; do
+        if [ -f "$candidate/flow.json" ]; then flow_dir="$candidate"; break; fi
+      done
+      [ -n "$flow_dir" ] || { echo "flujo no encontrado: $name" >&2; exit 2; }
+      entrypoint="$(python3 - "$flow_dir/flow.json" <<'PY'
+import json, sys
+from pathlib import Path
+print(json.loads(Path(sys.argv[1]).read_text(encoding="utf-8")).get("entrypoint", ""))
+PY
+)"
+      [ -n "$entrypoint" ] || { echo "flujo sin entrypoint: $name" >&2; exit 2; }
+      [ -f "$flow_dir/$entrypoint" ] || { echo "falta el entrypoint: $flow_dir/$entrypoint" >&2; exit 2; }
+      if [ $# -eq 0 ] || [[ "$1" == -* ]]; then
+        set -- "$PWD" "$@"
+      fi
+      exec bash "$flow_dir/$entrypoint" "$@"
+    else
+      usage
+      exit 2
+    fi
     ;;
   update) exec bash "$KIT/scripts/update.sh" "$@" ;;
   codegraph)

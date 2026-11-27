@@ -40,5 +40,5 @@ not a contract. When the installer finds `agent/judge.md`, it renames it to
 
 Skills and commands are agent-neutral; `.opencode/` and `.claude/` are generated adapters, not
 source. `scripts/render-roles.py` writes one agent per role for Claude Code and OpenCode v2 from
-the team profile's `roles.json`; this script installs the judge and the neutral skills and
+the team flow's `roles.json`; this script installs the judge and the neutral skills and
 commands, and neither replaces the other.

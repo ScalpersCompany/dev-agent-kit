@@ -645,6 +645,6 @@ Criterio: cada paso tiene una salida observable; si no, no se marca.
 La presentación y la guía distinguen lo que está en `origin/main` de lo que está en una rama local. En el momento de preparar este material:
 
 - `dev-agent-kit`: `main` público en `34093d5`; la rama local `fix/opencode-agents-dir` (`c44903b`) añade `scripts/render-roles.py`, `dev-agent roles` y el juez de OpenCode v2 en `.opencode/agents/`.
-- `dev-agent-profiles`: `main` público en `7ac589d`; la rama local `feat/team-profile` (`28fc70d`) añade el perfil `team` y su runner.
+- `dev-agent-profiles`: `main` público en `28fc70d`; añade el flujo `team` y su runner. La copia instalada que venía de `profiles/team` se conserva hasta reinstalar.
 
 Mientras no se integren, no se presentan como disponibles en el clon de GitHub: se explican como propuesta y la sesión 4 queda condicionada a su integración.

@@ -13,6 +13,7 @@ peer presentation is `docs/formacion/dev-agent-kit-para-companeros.html`.
 The URL, version and role of every external technology: `docs/REFERENCIAS-TECNOLOGIAS.md`
 and `docs/REFERENCIAS-TECNOLOGIAS.html`.
 Daily commands: `docs/USO-RAPIDO.md`. Improving a skill: `docs/MEJORAR-SKILLS.md`.
+A team flow runs over one active language profile with `dev-agent flow run team --spec <task-file>`.
 
 ## Repositories that work together
 
@@ -53,7 +54,7 @@ AGENTS.md                     generic rules the agent reads first
 skills/                       five core skills: dev-verify, repro-first, review-diff, correct, query-readonly
 commands/                     neutral prompt templates; adapters install them per agent
 agents/                       strict eval judge prompt; the runner injects it into any agent
-scripts/render-roles.py      one agent per team role from the team profile's roles.json (claude, opencode)
+scripts/render-roles.py      one agent per team role from the team flow's roles.json (claude, opencode)
 evals/agent_runner.py         neutral executor/judge adapter for OpenCode, Claude, Codex, pi and Hermes
 scripts/install-agent-adapters.sh  generates .opencode/.claude adapters from the neutral source; --profile also merges the profile skills
 guard/guard.sh                generic checks plus the active profile checks
@@ -183,7 +184,7 @@ The visual map of the system is in `docs/diagrams/sistema.html`; the detailed fl
 
 ## Agents and shared rules
 
-The gates are plain bash/Python 3.8+ and git hooks, so OpenCode, Claude Code, Codex, pi and Hermes run the same commands. Skills are `SKILL.md` files under `skills/`; `scripts/install-agent-adapters.sh <repo> --agents opencode,claude` generates the project-level copies, and `gentle-ai sync` handles the global ones. The eval runner normalizes the five accepted agents through `evals/agent_runner.py`; the judge receives the same rubric and artifacts regardless of the executor. The shared rule is `~/.agents/AGENTS.md`, linked from `SOUL.md`, OpenCode's `AGENTS.md` and Claude's `CLAUDE.md`. A team that splits work by role renders one agent per role from the profile's `roles.json` with `dev-agent roles <claude|opencode>`; see `docs/EQUIPO-MULTI-AGENTE.md`.
+The gates are plain bash/Python 3.8+ and git hooks, so OpenCode, Claude Code, Codex, pi and Hermes run the same commands. Skills are `SKILL.md` files under `skills/`; `scripts/install-agent-adapters.sh <repo> --agents opencode,claude` generates the project-level copies, and `gentle-ai sync` handles the global ones. The eval runner normalizes the five accepted agents through `evals/agent_runner.py`; the judge receives the same rubric and artifacts regardless of the executor. The shared rule is `~/.agents/AGENTS.md`, linked from `SOUL.md`, OpenCode's `AGENTS.md` and Claude's `CLAUDE.md`. A team that splits work by role renders one agent per role from the flow's `roles.json` with `dev-agent roles <claude|opencode>`; see `docs/EQUIPO-MULTI-AGENTE.md`.
 
 ## GGA (optional)
 

@@ -191,7 +191,7 @@
         <thead><tr><th>Repo</th><th>origin/main</th><th>Rama local</th><th>Qué añade la rama</th></tr></thead>
         <tbody>
           <tr><td>dev-agent-kit</td><td><code>34093d5</code></td><td><code>fix/opencode-agents-dir</code> · <code>c44903b</code></td><td>Un agente por rol desde <code>roles.json</code>; juez de OpenCode v2 en <code>.opencode/agents/</code>, con permisos de solo lectura.</td></tr>
-          <tr><td>dev-agent-profiles</td><td><code>7ac589d</code></td><td><code>feat/team-profile</code> · <code>28fc70d</code></td><td>Perfil <code>team</code> 0.1.3: contrato de cinco roles, guard, GGA, <code>team-run.sh</code> y tests.</td></tr>
+          <tr><td>dev-agent-profiles</td><td><code>7ac589d</code></td><td><code>main</code> · <code>28fc70d</code></td><td>Flujo <code>team</code>: contrato de cinco roles, GGA, <code>team-run.sh</code> y tests; se ejecuta con <code>dev-agent flow run team</code>.</td></tr>
         </tbody>
       </table>
       <div class="callout"><b>No está integrado.</b> Si la formación se hace desde el clon de GitHub, no presentes <code>team</code> ni <code>dev-agent roles</code> como disponibles: están en la rama local. Se integran o se explican como propuesta, nunca como verde.</div>
@@ -210,7 +210,7 @@
       <div class="section-head"><div><div class="kicker">05 · Arquitectura</div><h2>Mapa técnico</h2></div><div class="num">05</div></div>
       <div class="grid3">
         <div class="card"><h3>dev-agent-kit</h3><p>Contrato neutral: AGENTS, skills, comandos, juez, guard, verify, hooks, evals, e2e, instalador. No contiene Odoo ni PHP.</p></div>
-        <div class="card"><h3>dev-agent-profiles</h3><p>Odoo 11, PHP 8, hexagonal y team. Cada perfil aporta guard, verify, skills, evals y su <code>gga/REVIEW-RULES.md</code>.</p></div>
+        <div class="card"><h3>dev-agent-profiles</h3><p>Odoo 11, PHP 8, hexagonal y el flujo team. Cada perfil aporta guard, verify, skills, evals y su <code>gga/REVIEW-RULES.md</code>.</p></div>
         <div class="card"><h3>scalpers-tech-doc</h3><p>Norma de empresa canónica. Se enlaza en <code>~/.agents/AGENTS.md</code>; no se copia. El check falla cerrado si el clon no está limpio.</p></div>
       </div>
       <div class="code-wrap"><button class="copy" data-copy="#tree">Copiar</button><pre id="tree">repo-de-desarrollo/
@@ -369,7 +369,7 @@ bash scripts/install-gga.sh . --profile "$HOME/dev-agent-profiles/profiles/odoo1
         <div class="card"><h3>Trabajo repartido</h3><p>El perfil <code>team</code> fija quién escribe, quién revisa y quién verifica. Los roles se generan desde <code>roles.json</code>; el contrato es la fuente de verdad y <code>--check</code> detecta un agente atrasado.</p></div>
         <div class="code-wrap"><button class="copy" data-copy="#team">Copiar</button><pre id="team">dev-agent roles claude --check
 dev-agent roles opencode --check
-.dev-agent/profiles/team/bin/team-run.sh . --spec odd/tasks/&lt;feature&gt;.md --dry-run</pre></div>
+dev-agent flow run team --spec odd/tasks/&lt;feature&gt;.md --dry-run</pre></div>
       </div>
     </section>
 
@@ -423,7 +423,7 @@ E2E_BASE_URL="http://127.0.0.1:9" bash verify/run.sh
       <div class="grid2">
         <div class="card"><h3>Documentación</h3><ul><li><code>docs/INSTALACION-Y-FUNCIONAMIENTO.md</code></li><li><code>docs/USO-RAPIDO.md</code></li><li><code>docs/OPERATIONS.md</code></li><li><code>docs/FORMACION-DEV-AGENT-KIT.md</code></li><li><code>docs/CREAR-PERFIL.md</code></li><li><code>docs/EQUIPO-MULTI-AGENTE.md</code></li><li><code>docs/formacion/guia-equipo.html</code> — guía conceptual para el equipo.</li></ul></div>
         <div class="card"><h3>Presentaciones</h3><ul><li><code>docs/formacion/plan-formacion-equipo.html</code> — la que se proyecta al equipo.</li><li><code>docs/formacion/dev-agent-kit-formacion.html</code> — taller anterior, si se reutiliza.</li></ul></div>
-        <div class="card"><h3>Repositorios</h3><ul><li><code>https://github.com/ScalpersCompany/dev-agent-kit</code></li><li><code>https://github.com/ScalpersCompany/dev-agent-profiles</code></li><li><code>https://github.com/ScalpersCompany/scalpers-tech-doc</code></li><li><code>dev-agent-profiles/profiles/team</code> — contrato de roles, team-run y tests.</li></ul></div>
+        <div class="card"><h3>Repositorios</h3><ul><li><code>https://github.com/ScalpersCompany/dev-agent-kit</code></li><li><code>https://github.com/ScalpersCompany/dev-agent-profiles</code></li><li><code>https://github.com/ScalpersCompany/scalpers-tech-doc</code></li><li><code>dev-agent-profiles/flows/team</code> — contrato de roles, team-run y tests.</li></ul></div>
         <div class="card"><h3>Antes de la sesión</h3><ul><li>Probar la instalación en el repo desechable.</li><li>Probar guard, verify y E2E una vez.</li><li>Comprobar que el proveedor aprobado responde.</li><li>Preparar un fallo real y su artefacto.</li><li>Revisar que no hay secretos en la pantalla compartida.</li></ul></div>
       </div>
       <div class="footer"><span><b>DevAgentKit</b> · guía técnica del formador</span><span>Documento de preparación · sin datos de producción</span></div>

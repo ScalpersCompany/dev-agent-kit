@@ -16,6 +16,8 @@ Comandos de cada día. El wrapper funciona desde la raíz del repo de desarrollo
 | `dev-agent update --check` | Ver si hay actualización de core/perfiles sin aplicarla. |
 | `dev-agent update` | Actualizar core y perfiles con confirmación y backup local. |
 | `dev-agent update --profiles --target .` | Actualizar solo perfiles y sincronizar `.dev-agent/profiles`. |
+| `dev-agent flow list` | Ver los flujos disponibles; `team` es uno de ellos. |
+| `dev-agent flow run team --spec odd/tasks/<feature>.md` | Ejecutar el flujo multi-rol sobre el repo actual. |
 | `dev-agent memory save "..." "..."` | Guardar una decisión o un bug en Engram. |
 
 ## Un cambio normal
@@ -98,6 +100,22 @@ dev-agent eval \
 
 `--agent` acepta `opencode`, `claude`, `codex`, `pi` o `hermes`. `--agent build` sigue
 funcionando como alias de OpenCode con el perfil `build`. Empieza con `--dry-run`.
+
+## Flujo `team`
+
+`team` ya no es un perfil activable: es un flujo que corre sobre el perfil de lenguaje activo
+(o el declarado en `.dev-agent/team.env`). Los perfiles siguen siendo `odoo11`, `php` y
+`hexagonal`; el flujo añade los roles y las puertas.
+
+```bash
+dev-agent flow list
+dev-agent flow run team --spec odd/tasks/<feature>.md --dry-run
+dev-agent flow run team --spec odd/tasks/<feature>.md
+```
+
+El runner ejecuta plan, dev, review y verify, y para en la primera etapa roja. La instalación
+antigua que tenga `profiles/team` en `.dev-agent/profiles/team` sigue funcionando; al
+reinstalar, se queda como legado y el flujo se usa desde `dev-agent-profiles/flows/team`.
 
 ## Documentación
 

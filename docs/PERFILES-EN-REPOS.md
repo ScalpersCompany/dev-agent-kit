@@ -269,6 +269,20 @@ El repo de destino queda así:
 - `gentle-ai sync` distribuye `skills/core` y `profiles/<activo>/skills` a los agentes;
   `install-hooks.sh` instala los hooks. Son dos responsabilidades distintas.
 
+## Perfiles y flujos
+
+Los perfiles describen un stack: `odoo11`, `php` y `hexagonal`. Los flujos describen una
+orquestación sobre un perfil activo. `team` es un flujo, no un perfil:
+
+```bash
+dev-agent flow list
+dev-agent flow run team --spec odd/tasks/<feature>.md --dry-run
+```
+
+`flows/team/flow.json` declara el entrypoint y el contrato de roles; `dev-agent flow run` lo
+resuelve desde `dev-agent-profiles/flows`. Una instalación anterior con
+`.dev-agent/profiles/team` se conserva como legado y no se sobrescribe al actualizar perfiles.
+
 ## Instalar uno, otro o todos
 
 - **Un perfil**: `--profile php`. El repo no descarga Odoo ni sus skills.

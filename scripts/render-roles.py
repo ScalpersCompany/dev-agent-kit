@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Render one agent definition per team role from the neutral role contract.
 
-The team profile declares its roles in `roles.json`. This script reads that file
+The team flow declares its roles in `roles.json`. This script reads that file
 and writes one Markdown agent per role for the requested agent, so several
 people can run the same team on different agents without hand-copying the
 contract. The contract stays the source of truth: every rendered file says so,

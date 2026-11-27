@@ -1,5 +1,24 @@
 # Changelog
 
+## [3.10.0] - 2026-11-27
+
+### Added
+
+- `dev-agent flow list|run`: a flow is orchestration over the active language profile, not an
+  activatable profile. `flows/team/flow.json` declares the entrypoint, the role contract and
+  the stages; `dev-agent flow run team --spec <task-file>` runs plan, dev, review and verify
+  from the repository, with `--dry-run` available before any model call.
+- `dev-agent roles` locates `roles.json` in `flows/team` first and keeps the old
+  `.dev-agent/profiles/team` lookup for installations that still have the legacy profile.
+
+### Changed
+
+- The team profile moved to `dev-agent-profiles/flows/team` and is no longer installed or
+  activated as a language profile. Existing target copies of `profiles/team` remain
+  untouched by `update --profiles --target` when the source no longer has that profile.
+- `team_lint.py` reads `flow.json` and `roles.json` with a `flow` key; `--profile` remains an
+  alias for `--flow`, and `entrypoint` replaces `runner`.
+
 ## [3.9.0] - 2026-11-26
 
 ### Added

@@ -1,9 +1,9 @@
-# Equipo multiagente sobre el perfil `team`
+# Equipo multiagente sobre el flujo `team`
 
-El perfil `team` (`ScalpersCompany/dev-agent-profiles`) declara los roles de un equipo de
-desarrollo en `roles.json`, y la puerta (`guard/team.sh`, `guard/team_lint.py`) lee ese
-fichero. Nadie tiene que usar el mismo agente: la puerta son comandos, y cada rol corre en el
-agente que tenga su dueño.
+El flujo `team` (`ScalpersCompany/dev-agent-profiles`) declara los roles de un equipo de
+desarrollo en `roles.json`, y el runner (`guard/team_lint.py`) lee ese fichero. No es un perfil
+activable: corre sobre el perfil de lenguaje activo. Nadie tiene que usar el mismo agente: la
+puerta son comandos, y cada rol corre en el agente que tenga su dueño.
 
 ## La puerta no depende de ningún agente
 
@@ -19,7 +19,7 @@ dev-agent roles claude   [--roles <roles.json>] [--out <dir>] [--model-map <json
 dev-agent roles opencode [--roles <roles.json>] [--out <dir>] [--model-map <json>] [--check]
 ```
 
-`scripts/render-roles.py` lee `roles.json` y escribe un fichero Markdown por rol, con la
+`scripts/render-roles.py` lee `roles.json` del flujo y escribe un fichero Markdown por rol, con la
 superficie de escritura, las lecturas, el comando de cierre y lo prohibido tomados del
 contrato. El contrato sigue siendo la fuente de verdad: cada fichero generado lo dice y
 `--check` falla si el fichero quedó atrás.
