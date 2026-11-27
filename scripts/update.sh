@@ -74,7 +74,7 @@ upstream_ref() {
     printf '%s/%s\n' "$remote" "${merge#refs/heads/}"
     return
   fi
-  printf 'origin/main\n'
+  printf 'origin/%s\n' "$branch"
 }
 
 update_repo() {
