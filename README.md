@@ -14,6 +14,9 @@ The URL, version and role of every external technology: `docs/REFERENCIAS-TECNOL
 and `docs/REFERENCIAS-TECNOLOGIAS.html`.
 Daily commands: `docs/USO-RAPIDO.md`. Improving a skill: `docs/MEJORAR-SKILLS.md`.
 A team flow runs over one active language profile with `dev-agent flow run team --spec <task-file>`.
+The supporting tools and their limits are explained in
+`docs/formacion/guia-equipo.html#herramientas` and listed with URLs in
+`docs/REFERENCIAS-TECNOLOGIAS.md`.
 
 ## Repositories that work together
 

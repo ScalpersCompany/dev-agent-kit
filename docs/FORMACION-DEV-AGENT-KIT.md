@@ -50,6 +50,19 @@ inventa credenciales ni crea entornos.
 Son repos separados, no submódulos. El repo de producto no es uno fijo: es el repo en el
 que se está trabajando. El kit no despliega ni toca producción.
 
+## Herramientas de apoyo
+
+No son la puerta del kit; explican el contexto y la configuración que rodea al cambio. La guía
+del equipo las desarrolla en <a href="formacion/guia-equipo.html#herramientas">Herramientas</a>.
+
+| Herramienta | Qué es | Para qué | Límite |
+|---|---|---|---|
+| Gentle AI | Configura agentes, skills, MCP y gentle-shell; incluye RDD | Compartir configuración entre agentes | No sustituye guard, verify ni GGA |
+| RSC / rsc-harness | Harness de especificación, tareas y verificación | Ordenar el trabajo antes de código | Opcional |
+| RSC Brain / “Brime” | Wiki y memoria autoalojada con API y MCP | Conservar contexto de proyecto | No es Engram ni la norma |
+| Engram | Memoria persistente de decisiones y bugs, por MCP | Que la siguiente sesión no empiece de cero | No es índice de código ni prueba |
+| CodeGraph | Índice local de estructura, símbolos y llamadas | Consultar el mapa antes de editar | Un índice viejo no es contexto ni evidencia |
+
 ## Mapa de las tres sesiones
 
 | Sesión | Día | Qué se enseña | Laboratorio |

@@ -11,7 +11,9 @@
 - The technology reference lists RLM Agent with its URL, version and optional status.
 - `docs/formacion/guia-equipo.html` opens with a tools section that explains Gentle AI, RSC
   (rsc-harness), RSC Brain (“Brime”, rsc-brain), Engram and CodeGraph: what each one is, what
-  it is for and what it does not replace.
+  it is for and what it does not replace. The same map is referenced from the step-by-step
+  guide, the facilitator runbook, the peer deck, the formation guide and the installation
+  guide.
 
 ## [3.10.0] - 2026-11-27
 

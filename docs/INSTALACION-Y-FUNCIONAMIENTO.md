@@ -52,6 +52,19 @@ completa está en `docs/INTEGRACION-TECHDOC.md`.
 
 ## 3. Instalación del núcleo
 
+### Herramientas de apoyo
+
+La guía del equipo explica estas piezas en
+<a href="formacion/guia-equipo.html#herramientas">Herramientas</a>; ninguna es la puerta:
+
+| Herramienta | Qué es | Para qué | Límite |
+|---|---|---|---|
+| Gentle AI | Configura agentes, skills, MCP y gentle-shell; incluye RDD | Compartir configuración | No decide el cambio |
+| RSC / rsc-harness | Especificación, tareas y verificación | Ordenar el trabajo | Opcional |
+| RSC Brain / “Brime” | Wiki y memoria autoalojada con MCP | Contexto de proyecto | No es Engram |
+| Engram | Memoria de decisiones y bugs | Continuidad entre sesiones | No es un índice de código |
+| CodeGraph | Índice de estructura y llamadas | Contexto antes de editar | Un índice viejo no es evidencia |
+
 ### 3.1 Instalador único (recomendada)
 
 El instalador pregunta el repo, el perfil o perfiles, el perfil activo, los agentes y los
