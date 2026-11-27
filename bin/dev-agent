@@ -21,6 +21,8 @@ usage: dev-agent <command> [args]
   roles <target> [args]  genera un agente por rol desde roles.json (claude, opencode)
   profile list           perfiles instalados
   profile use <name>     cambia el perfil activo
+  profiles update        actualiza dev-agent-profiles (alias de update --profiles)
+  update [args]          actualiza core y/o perfiles con --check/--target
   codegraph [args]       codegraph sync del repo actual, o pasa args
   memory [args]          engram save/search/... del proyecto
 EOF
@@ -30,10 +32,26 @@ case "$cmd" in
   help|-h|--help) usage ;;
   doctor) exec bash "$KIT/scripts/doctor.sh" "${1:-$PWD}" ;;
   init) exec bash "$KIT/install.sh" "$@" ;;
-  guard) exec bash "$KIT/guard/guard.sh" "$@" ;;
+  guard) export GUARD_ROOT="${GUARD_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"; exec bash "$KIT/guard/guard.sh" "$@" ;;
   verify) export VERIFY_ROOT="${VERIFY_ROOT:-$PWD}"; exec bash "$KIT/verify/run.sh" "$@" ;;
   eval) exec python3 "$KIT/evals/harness.py" "$@" ;;
-  roles) exec python3 "$KIT/scripts/render-roles.py" --target "${1:?falta el target: claude u opencode}" "${@:2}" ;;
+  roles)
+    target="${1:?falta el target: claude u opencode}"
+    shift
+    roles_file="${DEV_AGENT_ROLES:-}"
+    if [ -z "$roles_file" ]; then
+      for candidate in "$PWD/.dev-agent/profiles/team/roles.json" "$PWD/profiles/team/roles.json" "$PROFILES/profiles/team/roles.json"; do
+        if [ -f "$candidate" ]; then roles_file="$candidate"; break; fi
+      done
+    fi
+    if [ -z "$roles_file" ] && [[ " $* " != *" --roles "* ]]; then
+      echo "roles: no encuentro roles.json del perfil team; pasa --roles <roles.json> o define DEV_AGENT_ROLES" >&2
+      exit 2
+    fi
+    args=(--target "$target")
+    [ -n "$roles_file" ] && args+=(--roles "$roles_file")
+    exec python3 "$KIT/scripts/render-roles.py" "${args[@]}" "$@"
+    ;;
   review)
     git diff --stat
     echo
@@ -83,6 +101,13 @@ PY
       exit 2
     fi
     ;;
+  profiles)
+    action="${1:-}"
+    [ "$action" = "update" ] || { usage; exit 2; }
+    shift
+    exec bash "$KIT/scripts/update.sh" --profiles "$@"
+    ;;
+  update) exec bash "$KIT/scripts/update.sh" "$@" ;;
   codegraph)
     if [ $# -eq 0 ]; then exec codegraph sync "$PWD"; else exec codegraph "$@"; fi
     ;;

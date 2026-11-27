@@ -162,9 +162,10 @@ bash "$HOME/.dev-agent-kit/scripts/bootstrap.sh" /ruta/al/repo \
 ## Interfaz actual
 
 El wrapper `dev-agent` existe para `doctor`, `init`, `guard`, `verify`, `review`,
-`review-gga`, `eval`, `profile`, `codegraph` y `memory`. `dev-agent init` es alias de
-`install.sh`; el lock está en `.dev-agent/profiles.lock`. `profiles update` y `dev-agent
-use` no existen todavía: se usa `dev-agent profile list` y `dev-agent profile use`.
+`review-gga`, `eval`, `profile`, `profiles update`, `update`, `roles`, `codegraph` y
+`memory`. `dev-agent init` es alias de `install.sh`; el lock está en
+`.dev-agent/profiles.lock`. `dev-agent update` actualiza el núcleo y los perfiles desde su
+remoto configurado, y `dev-agent profiles update` es el alias de solo perfiles.
 
 Ejemplos actuales:
 
@@ -172,9 +173,15 @@ Ejemplos actuales:
 ./install.sh --target /ruta/al/repo --profiles odoo11 --active odoo11 --yes
 dev-agent profile list
 dev-agent profile use odoo11
+dev-agent update --check
+dev-agent update --yes
+dev-agent update --profiles --target /ruta/al/repo --yes
 ```
 
-`profiles update` y `use` siguen siendo trabajo futuro; no se presentan como hechos.
+`update` falla cerrado si el repo tiene cambios locales tracked, si la rama ha divergido o
+si el remoto no responde; no hace `reset`, no descarta trabajo y deja un tag local
+`dev-agent-update-backup-<fecha>-<core|profiles>` antes del avance. Con `--target` sincroniza
+las copias de `.dev-agent/profiles/<nombre>` y respalda cada una como `.bak-<fecha>`.
 
 
 - `init` copia el núcleo al repo, resuelve el perfil desde `profiles.index.json`, lo clona

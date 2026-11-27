@@ -13,6 +13,9 @@ Comandos de cada día. El wrapper funciona desde la raíz del repo de desarrollo
 | `dev-agent profile list` | Ver perfiles instalados y el activo. |
 | `dev-agent profile use odoo11` | Cambiar el perfil activo. |
 | `dev-agent codegraph` | Sincronizar el índice con el repo. |
+| `dev-agent update --check` | Ver si hay actualización de core/perfiles sin aplicarla. |
+| `dev-agent update` | Actualizar core y perfiles con confirmación y backup local. |
+| `dev-agent update --profiles --target .` | Actualizar solo perfiles y sincronizar `.dev-agent/profiles`. |
 | `dev-agent memory save "..." "..."` | Guardar una decisión o un bug en Engram. |
 
 ## Un cambio normal
@@ -69,11 +72,12 @@ dev-agent review-gga --advisory
 La revisión es bloqueante por defecto: exige `STATUS: PASSED` y salida 0. Las reglas del
 núcleo son agnósticas de lenguaje; el perfil activo añade su `gga/REVIEW-RULES.md` (Odoo 11,
 PHP 8 o hexagonal), y la norma de empresa sigue ganando. Si no hay `gga` o `.gga`, falla
-cerrada. Para instalarlo:
+cerrada. El instalador principal pregunta si quieres GGA y, si dices que sí, copia las reglas
+del perfil; para rehacerlo:
 
 ```bash
-bash scripts/install-gga.sh . --profile "$HOME/dev-agent-profiles/profiles/odoo11"
-bash scripts/install-gga.sh . --profile "$HOME/dev-agent-profiles/profiles/odoo11" --with-pre-push
+bash "$HOME/.dev-agent-kit/scripts/install-gga.sh" . --profile "$HOME/dev-agent-profiles/profiles/odoo11"
+bash "$HOME/.dev-agent-kit/scripts/install-gga.sh" . --profile "$HOME/dev-agent-profiles/profiles/odoo11" --with-pre-push
 ```
 
 `--with-pre-push` ejecuta GGA después de verify; el hook sigue siendo local y `--no-verify`

@@ -1,5 +1,54 @@
 # Changelog
 
+## [3.9.0] - 2026-11-26
+
+### Added
+
+- `dev-agent update [--core|--profiles] [--target <repo>] [--check] [--yes]` updates the
+  installed kit and/or `dev-agent-profiles` from their configured remote with
+  `merge --ff-only`, refuses dirty tracked trees and diverged branches, leaves a local
+  `dev-agent-update-backup-<date>-<core|profiles>` tag, and can sync a target repository's
+  `.dev-agent/profiles` copies with per-profile backups. `dev-agent profiles update` is the
+  profiles-only alias. Tests cover fast-forward, dirty refusal and target profile sync.
+- `install.sh` now runs the whole installation and configuration flow: after the core it
+  asks whether to install the external toolchain (Engram, GGA, gentle-ai, Claude), installs
+  missing binaries, configures the Engram MCP, copies the kit and profile skills to the global
+  agent directories, asks whether to install the guard linters and scanners (ruff, black,
+  mypy, eslint, tsc, gitleaks), asks for E2E dependencies and Chromium, writes both
+  `verify/config.env` and `.dev-agent/verify.env`, installs the active profile's GGA rules and
+  optionally enables the pre-push gate and runs `verify` once. The new flags make the same flow
+  non-interactive.
+- `scripts/install-dev-deps.sh` installs ruff, black and mypy with pipx/pip, eslint and tsc
+  with npm, and gitleaks from its official release. It does not create repository-specific
+  config files: guard still reports those checks as opt-in when the repo has no config.
+- `dev-agent guard` sets `GUARD_ROOT` to the current repository; before, it ran the kit's
+  guard and could report `profile: skipped` even when the target repo had an active profile.
+- `scripts/install-toolchain.sh` resolves and installs missing Engram, GGA, gentle-ai and
+  Claude, installs jq for the Claude plugin, configures Engram MCP for the selected agents,
+  copies global skills and runs an installation smoke test.
+- `docs/REFERENCIAS-TECNOLOGIAS.md` and `docs/REFERENCIAS-TECNOLOGIAS.html` collect the
+  official URL, local version and role of each external technology (Engram, GGA, gentle-ai,
+  CodeGraph, agents, Playwright, linters, Odoo, Docker and the internal repositories).
+- `docs/formacion/guia-paso-a-paso.html` is the new facilitator/participant walkthrough:
+  download, installer menu, toolchain/MCP/skills, CodeGraph, guard, verify/E2E, GGA and a
+  25-minute teaching script. `plan-formacion-equipo.html` and `guia-equipo.html` link to it.
+- The smoke checks binaries, versions, Engram doctor, the Engram MCP in Claude/OpenCode and
+  the presence of `SKILL.md` files in each selected agent's global skills directory.
+- `dev-agent roles` finds `roles.json` in the installed `team` profile (or `DEV_AGENT_ROLES`)
+  instead of always failing for a missing `--roles` argument.
+
+### Changed
+
+- `install-gga.sh` leaves `PROVIDER` empty when no `--provider` is given; the sample value is
+  no longer mistaken for an approved provider.
+- `doctor` recognises `E2E_CMD` as a valid verify command in both config files, warns when
+  `E2E_CMD` lacks `E2E_BASE_URL`, and no longer calls an E2E-only config empty.
+- The installer excludes generated E2E, evidence, GGA and backup paths in
+  `.git/info/exclude`, so a successful install does not leave the target repo dirty.
+- `docs/INSTALADOR.md`, `README.md`, `docs/INSTALACION-Y-FUNCIONAMIENTO.md`,
+  `docs/USO-RAPIDO.md`, `docs/OPERATIONS.md` and the training runbook describe the main
+  installer as the primary path; the component scripts remain as fallbacks.
+
 ## [3.8.0] - 2026-11-26
 
 ### Fixed
@@ -36,6 +85,14 @@
 
 - `bin/dev-agent` usage lists `roles`.
 - README describes the renderer and points at the new document.
+
+## [3.6.1] - 2026-11-26
+
+### Fixed
+
+- `scripts/bootstrap.sh` copies the core `gga/` directory; before, a fresh install had no `gga/project.gga.example` or core rules, so `scripts/install-gga.sh` failed silently after copying nothing.
+- `scripts/install-gga.sh` fails closed when the core GGA files are missing or the installed files are empty, instead of printing a false "installed".
+- `scripts/install-e2e.sh --install` keeps an existing `e2e/` (for example the one copied by `install.sh`) and installs its npm dependencies instead of refusing to run.
 
 ## [3.6.0] - 2026-11-25
 
