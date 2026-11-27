@@ -49,7 +49,8 @@ This kit is for the development base, not production. Production receives only c
 install.sh                    one-line installer: profile menu, agents, toolchain, guard tools, MCP, skills, CodeGraph, Engram, tech-doc, E2E, GGA, verify and smoke
 scripts/install-toolchain.sh  installs Engram, GGA, gentle-ai and Claude when missing; configures Engram MCP and global skills
 scripts/install-dev-deps.sh   installs ruff, black, mypy, eslint, tsc and gitleaks for guard
-bin/dev-agent                 usage wrapper: doctor, guard, verify, review, eval, profile, codegraph, memory
+scripts/install-rlm.sh        optional RLM Agent: persistent kernel and context lake; not a gate
+bin/dev-agent                 usage wrapper: doctor, guard, verify, review, eval, profile, flow, update, codegraph, memory
 AGENTS.md                     generic rules the agent reads first
 skills/                       five core skills: dev-verify, repro-first, review-diff, correct, query-readonly
 commands/                     neutral prompt templates; adapters install them per agent
@@ -114,7 +115,7 @@ git clone https://github.com/ScalpersCompany/dev-agent-kit.git "$HOME/.dev-agent
 
 The installer asks for the target repository, profile or profiles, active profile, agents,
 the external toolchain (Engram, GGA, gentle-ai, Claude), Engram MCP, global skills, the
-optional CodeGraph, Engram, tech-doc, E2E and GGA steps, and the local verify configuration.
+optional CodeGraph, RLM Agent, Engram, tech-doc, E2E and GGA steps, and the local verify configuration.
 It installs the kit, the toolchain, the global skills, the hooks, guard/verify and the local
 references; E2E dependencies, Chromium and GGA are installed only after a yes. It ends with a
 smoke that checks binaries, MCP and skills. See `docs/INSTALADOR.md`.

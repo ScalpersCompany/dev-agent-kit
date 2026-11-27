@@ -27,18 +27,21 @@ El instalador pregunta antes de instalar dependencias que necesitan red y respal
 4. Agentes: Claude Code, OpenCode, Codex, pi, Hermes o todos.
 5. Toolchain: Engram, GGA, gentle-ai, Claude si falta, dependencias de Claude y MCP de Engram; después ejecuta el smoke.
 6. Herramientas de guard: ruff, black, mypy, eslint, tsc y gitleaks; son opt-in y no crean configuración por su cuenta.
-7. CodeGraph y Engram, si están instalados.
-8. Tech-doc: sí/no; HTML solo si se pide.
-9. E2E: dependencias npm y Chromium; comando, URL base y health path. Escribe la
+7. RLM Agent: opcional; kernel Python persistente, contexto fuera del prompt y subagentes. No es una puerta de calidad y no se instala por defecto.
+8. CodeGraph y Engram, si están instalados.
+9. Tech-doc: sí/no; HTML solo si se pide.
+10. E2E: dependencias npm y Chromium; comando, URL base y health path. Escribe la
    configuración en `verify/config.env` y en `.dev-agent/verify.env`.
-10. GGA: reglas del perfil, proveedor opcional y pre-push opcional.
-11. Ejecutar `verify` ahora, si hay comandos configurados.
+11. GGA: reglas del perfil, proveedor opcional y pre-push opcional.
+12. Ejecutar `verify` ahora, si hay comandos configurados.
 
 ## Qué instala
 
 - kit, perfiles y perfil activo en `.dev-agent/`;
 - Engram, GGA, gentle-ai y Claude si faltan; jq para el plugin de Claude;
 - herramientas de guard: ruff, black, mypy, eslint, tsc y gitleaks;
+- RLM Agent opcional (`--with-rlm`): kernel persistente y adaptadores para Hermes, OpenCode
+  y pi; no es requisito de guard, verify ni del flujo `team` y no cubre Claude Code ni Codex;
 - MCP de Engram configurado en los agentes elegidos;
 - skills del kit y del perfil copiadas al directorio global de cada agente;
 - pre-commit, pre-push, guard, verify, comment_lint y `.dev-agent/verify.env`;
@@ -104,7 +107,7 @@ primero el core, después los perfiles y, si hace falta, vuelve a ejecutar `doct
 
 ```bash
 ./install.sh --target /ruta/al/repo --profiles all --active odoo11 \
-  --agents all --with-toolchain --with-dev-deps --with-codegraph --with-engram --with-techdoc \
+  --agents all --with-toolchain --with-dev-deps --with-rlm --with-codegraph --with-engram --with-techdoc \
   --with-gga --with-e2e-deps --with-e2e-config \
   --e2e-cmd "npm --prefix e2e test" \
   --e2e-base-url "http://127.0.0.1:8000" --e2e-health-path / \

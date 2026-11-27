@@ -33,6 +33,7 @@
 | **Codex** | CLI de OpenAI; skills globales y MCP. | https://github.com/openai/codex | 0.167.0 | Instalación del agente; el kit copia skills |
 | **pi** | Agent harness extensible; workspace Gentle Shell. | https://github.com/earendil-works/pi | 1.5.0 | Instalación del agente; el kit copia skills |
 | **Hermes Agent** | Agente de Nous Research; MCP y skills. | https://hermes-agent.nousresearch.com/docs | 0.23.3 | Instalación del agente; el kit copia skills |
+| **RLM Agent** | Opcional: kernel Python persistente, contexto fuera del prompt y subagentes; no es una puerta de calidad. | https://github.com/nicolasramos/rlm-agent | 0.1.1 | `install-rlm.sh` o `install.sh --with-rlm`; solo Hermes, OpenCode y pi; proyecto personal MIT |
 | **Claude Code CLI** | Ver Claude Code; el binario se llama `claude`. | https://docs.anthropic.com/en/docs/claude-code/overview | 2.1.325 | Ver arriba |
 
 ## Calidad, pruebas y utilidades del repo
@@ -95,6 +96,7 @@ opencode --version
 codex --version
 pi --version
 hermes --version
+npm list -g rlm-agent --depth=0
 node --version
 npm --version
 python3 --version

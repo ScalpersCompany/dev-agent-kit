@@ -18,6 +18,7 @@ Comandos de cada día. El wrapper funciona desde la raíz del repo de desarrollo
 | `dev-agent update --profiles --target .` | Actualizar solo perfiles y sincronizar `.dev-agent/profiles`. |
 | `dev-agent flow list` | Ver los flujos disponibles; `team` es uno de ellos. |
 | `dev-agent flow run team --spec odd/tasks/<feature>.md` | Ejecutar el flujo multi-rol sobre el repo actual. |
+| `npm list -g rlm-agent --depth=0` | Verificar la integración opcional RLM; no es una puerta. |
 | `dev-agent memory save "..." "..."` | Guardar una decisión o un bug en Engram. |
 
 ## Un cambio normal
@@ -123,3 +124,5 @@ reinstalar, se queda como legado y el flujo se usa desde `dev-agent-profiles/flo
 - `docs/FORMACION-DEV-AGENT-KIT.md`: formación de tres sesiones.
 - `docs/MEJORAR-SKILLS.md`: cómo mejorar una skill sin romper el flujo.
 - `docs/PERFILES-EN-REPOS.md`: contrato de perfiles.
+- `docs/REFERENCIAS-TECNOLOGIAS.md`: URL, versión y papel de las tecnologías, incluido RLM
+  Agent como extra opcional.

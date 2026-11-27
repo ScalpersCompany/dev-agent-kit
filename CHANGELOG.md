@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.11.0] - 2026-11-27
+
+### Added
+
+- Optional `--with-rlm` and `scripts/install-rlm.sh` for RLM Agent (`rlm-agent@0.1.1` by
+  default), a personal MIT project that provides a persistent Python kernel, a context lake
+  and background subagents. It is never required by guard, verify or the team flow; it covers
+  Hermes, OpenCode and pi, not Claude Code or Codex, and is not installed by default.
+- The technology reference lists RLM Agent with its URL, version and optional status.
+
 ## [3.10.0] - 2026-11-27
 
 ### Added

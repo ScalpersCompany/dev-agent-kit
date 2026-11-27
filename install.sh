@@ -16,6 +16,8 @@ WITH_E2E_CONFIG=""
 WITH_TOOLCHAIN=""
 TOOLCHAIN_SMOKE=""
 WITH_DEV_DEPS=""
+WITH_RLM=""
+RLM_ARGS=()
 E2E_CMD=""
 E2E_BASE_URL=""
 E2E_HEALTH_PATH=""
@@ -50,6 +52,8 @@ Interactive by default. Options for automation:
   --no-toolchain           skip the external toolchain
   --with-dev-deps          install ruff, black, mypy, eslint, tsc and gitleaks
   --no-dev-deps            skip the guard linters and scanners
+  --with-rlm               install the optional RLM Agent (persistent kernel, not a gate)
+  --no-rlm                 skip RLM Agent
   --skip-toolchain-smoke   do not run the post-install smoke checks
   --e2e-cmd <command>      E2E command, for example npm --prefix e2e test
   --e2e-base-url <url>     local application URL, never production
@@ -86,6 +90,8 @@ while [ $# -gt 0 ]; do
     --no-toolchain) WITH_TOOLCHAIN=0; shift ;;
     --with-dev-deps) WITH_DEV_DEPS=1; shift ;;
     --no-dev-deps) WITH_DEV_DEPS=0; shift ;;
+    --with-rlm) WITH_RLM=1; shift ;;
+    --no-rlm) WITH_RLM=0; shift ;;
     --skip-toolchain-smoke) TOOLCHAIN_SMOKE=0; shift ;;
     --e2e-cmd) [ $# -ge 2 ] || usage; E2E_CMD="$2"; WITH_E2E_CONFIG=1; shift 2 ;;
     --e2e-base-url) [ $# -ge 2 ] || usage; E2E_BASE_URL="$2"; WITH_E2E_CONFIG=1; shift 2 ;;
@@ -420,6 +426,20 @@ fi
 if [ "$WITH_DEV_DEPS" = "1" ]; then
   bash "$KIT/scripts/install-dev-deps.sh"
 fi
+if [ -z "$WITH_RLM" ]; then
+  if [ "$ASSUME_YES" = "1" ]; then
+    WITH_RLM=0
+  elif ask_yes "¿Instalar RLM Agent opcional (kernel persistente, contexto fuera del prompt)?" "n"; then
+    WITH_RLM=1
+  else
+    WITH_RLM=0
+  fi
+fi
+if [ "$WITH_RLM" = "1" ]; then
+  RLM_ARGS=(--agents "$AGENTS")
+  [ "$AGENTS" = "none" ] && RLM_ARGS=(--agents "")
+  bash "$KIT/scripts/install-rlm.sh" "${RLM_ARGS[@]}"
+fi
 
 if [ -z "$WITH_E2E_DEPS" ]; then
   if ask_yes "¿Instalar dependencias de E2E (npm + Chromium)? Requiere red" "n"; then
@@ -592,6 +612,7 @@ echo "  E2E deps: $([ "$WITH_E2E_DEPS" = 1 ] && echo sí || echo no)"
 echo "  E2E config: $([ "$WITH_E2E_CONFIG" = 1 ] && echo sí || echo no)"
 echo "  toolchain (Engram/GGA/gentle/Claude): $([ "$WITH_TOOLCHAIN" = 1 ] && echo sí || echo no)"
 echo "  herramientas de guard: $([ "$WITH_DEV_DEPS" = 1 ] && echo sí || echo no)"
+echo "  RLM Agent opcional: $([ "$WITH_RLM" = 1 ] && echo sí || echo no)"
 echo "  GGA por perfil: $([ "$WITH_GGA" = 1 ] && echo sí || echo no)"
 echo "  verify ahora: $([ "$RUN_VERIFY" = 1 ] && echo sí || echo no)"
 echo
