@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Referencias de tecnologías — DevAgentKit</title>
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #000000;
+    --paper: #ffffff;
+    --muted: #555555;
+    --line: #d7d7d7;
+    --soft: #f4f4f4;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --serif: ui-serif, Georgia, "Times New Roman", serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); line-height: 1.55; }
+  a { color: var(--ink); text-decoration-color: #999; }
+  .shell { display: grid; grid-template-columns: 270px minmax(0, 1fr); max-width: 1480px; margin: 0 auto; }
+  .side { position: sticky; top: 0; height: 100vh; overflow: auto; padding: 30px 20px 30px 26px; border-right: 1px solid var(--line); background: var(--soft); }
+  .brand { font-family: var(--serif); font-size: 27px; line-height: 1.03; letter-spacing: -.04em; }
+  .brand span { display: block; font-size: 18px; letter-spacing: -.01em; margin-top: 3px; }
+  .sub { color: var(--muted); font-size: 12px; margin-top: 9px; }
+  nav { display: grid; gap: 2px; margin-top: 25px; }
+  nav a { display: block; text-decoration: none; color: var(--muted); font-size: 13px; padding: 7px 8px; border-radius: 6px; }
+  nav a:hover { background: #e7e7e7; color: var(--ink); }
+  nav a strong { color: var(--ink); font-weight: 700; }
+  .side .foot { margin-top: 28px; padding-top: 15px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; }
+  main { min-width: 0; padding: 42px 54px 80px; }
+  .hero { border-bottom: 1px solid var(--line); padding-bottom: 32px; }
+  .kicker { font-size: 11px; letter-spacing: .17em; text-transform: uppercase; color: #000; font-weight: 750; }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; letter-spacing: -.03em; margin: 0; }
+  h1 { font-size: clamp(40px, 5vw, 68px); line-height: .98; max-width: 19ch; margin-top: 12px; }
+  h2 { font-size: clamp(29px, 3vw, 39px); line-height: 1.08; margin-bottom: 10px; }
+  h3 { font-size: 21px; line-height: 1.16; }
+  p { color: var(--muted); font-size: 16px; margin: 0 0 12px; }
+  .lede { color: var(--ink); font-size: 19px; max-width: 76ch; margin-top: 16px; }
+  .meta { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 21px; }
+  .badge { border: 1px solid var(--line); background: var(--paper); border-radius: 999px; padding: 5px 10px; font-size: 12px; color: var(--muted); }
+  .badge.hot { border-color: #000; color: #000; }
+  section { padding: 32px 0 8px; border-bottom: 1px solid var(--line); }
+  .head { display: flex; justify-content: space-between; gap: 20px; align-items: start; margin-bottom: 16px; }
+  .head .num { font-family: var(--mono); font-size: 11px; color: #000; padding-top: 8px; white-space: nowrap; }
+  .table { width: 100%; border-collapse: collapse; margin: 13px 0 8px; font-size: 14px; }
+  .table th { text-align: left; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #000; border-bottom: 2px solid #000; padding: 0 8px 8px 0; vertical-align: bottom; }
+  .table td { border-bottom: 1px solid var(--line); padding: 9px 8px 9px 0; vertical-align: top; color: var(--muted); overflow-wrap: anywhere; }
+  .table td:first-child { color: var(--ink); font-weight: 650; min-width: 105px; }
+  .table td:nth-child(3) { font-family: var(--mono); font-size: 11px; }
+  .note { border-left: 3px solid #000; padding: 10px 0 10px 16px; margin: 15px 0; color: var(--muted); font-size: 15px; }
+  .note b { color: var(--ink); }
+  .code-wrap { position: relative; margin: 12px 0 16px; }
+  pre { background: #000; color: #fff; border-radius: 9px; padding: 15px 17px; overflow: auto; font: 13px/1.55 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
+  .copy { position: absolute; top: 8px; right: 8px; border: 1px solid #666; background: #111; color: #fff; border-radius: 6px; padding: 4px 8px; font: 10px var(--sans); cursor: pointer; }
+  .copy:hover { background: #222; }
+  .footer { margin-top: 34px; display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; color: var(--muted); font-size: 12px; }
+  .top-link { position: fixed; right: 18px; bottom: 16px; background: #000; color: #fff; border-radius: 999px; padding: 8px 12px; text-decoration: none; font-size: 12px; z-index: 4; }
+  @media (max-width: 980px) {
+    .shell { display: block; }
+    .side { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+    nav { grid-template-columns: 1fr 1fr; }
+    main { padding: 30px 22px 60px; }
+    .table { display: block; overflow-x: auto; white-space: nowrap; }
+  }
+  @media print {
+    @page { size: A4; margin: 12mm; }
+    .side, .top-link, .copy { display: none; }
+    .shell { display: block; }
+    main { padding: 0; }
+    section { break-inside: avoid; }
+    .table { font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <div class="brand">DevAgentKit<span>referencias</span></div>
+    <div class="sub">Tecnologías que usamos, URL oficial, versión y papel en el flujo</div>
+    <nav aria-label="Índice">
+      <a href="#nucleo"><strong>01</strong> Núcleo y agentes</a>
+      <a href="#clis"><strong>02</strong> Agentes y CLIs</a>
+      <a href="#calidad"><strong>03</strong> Calidad y pruebas</a>
+      <a href="#stack"><strong>04</strong> Stack de producto</a>
+      <a href="#repos"><strong>05</strong> Repositorios</a>
+      <a href="#opcional"><strong>06</strong> Opcionales</a>
+      <a href="#comprobar"><strong>07</strong> Comprobar versiones</a>
+      <a href="#limites"><strong>08</strong> Límites</a>
+    </nav>
+    <div class="foot">Solo desarrollo.<br>Sin tokens, sin datos de cliente, sin producción.<br>Foto local: 2026-11-27.</div>
+  </aside>
+
+  <main>
+    <header class="hero">
+      <div class="kicker">Referencia interna · stack de desarrollo</div>
+      <h1>Las tecnologías que usamos, con su fuente.</h1>
+      <p class="lede">Qué es cada pieza, para qué la usamos, dónde está su documentación oficial y qué versión había en la máquina de formación. No es la lista de dependencias transitivas de Python: son las herramientas, agentes y servicios que aparecen en el kit, la guía y el instalador.</p>
+      <div class="meta"><span class="badge hot">URL oficial</span><span class="badge">versión local</span><span class="badge">instalación y límites</span></div>
+    </header>
+
+    <section id="nucleo">
+      <div class="head"><div><div class="kicker">01 · Núcleo del kit</div><h2>Memoria, revisión y contexto.</h2></div><div class="num">01</div></div>
+      <table class="table">
+        <thead><tr><th>Tecnología</th><th>Para qué la usamos</th><th>URL oficial</th><th>Versión local</th><th>Instalación</th></tr></thead>
+        <tbody>
+          <tr><td>Engram</td><td>Memoria persistente de decisiones, bugs y contexto; MCP para los agentes.</td><td><a href="https://github.com/Gentleman-Programming/engram">https://github.com/Gentleman-Programming/engram</a></td><td>3.7.2</td><td>install-toolchain.sh; release oficial</td></tr>
+          <tr><td>GGA · Gentleman Guardian Angel</td><td>Segunda revisión del diff, bloqueante; reglas del núcleo y del perfil.</td><td><a href="https://github.com/Gentleman-Programming/gentleman-guardian-angel">https://github.com/Gentleman-Programming/gentleman-guardian-angel</a></td><td>v2.10.1</td><td>install-toolchain.sh; instalador oficial</td></tr>
+          <tr><td>gentle-ai</td><td>Instala y sincroniza skills, agentes y MCP entre herramientas.</td><td><a href="https://github.com/Gentleman-Programming/gentle-ai">https://github.com/Gentleman-Programming/gentle-ai</a></td><td>4.5.0</td><td>install-toolchain.sh; instalador oficial</td></tr>
+          <tr><td>gentle-shell</td><td>Workspace de terminal para el agente pi; no es la puerta del kit.</td><td><a href="https://github.com/Gentleman-Programming/gentle-shell">https://github.com/Gentleman-Programming/gentle-shell</a></td><td>4.7.0</td><td>Opcional; no lo instala el kit</td></tr>
+          <tr><td>CodeGraph</td><td>Índice local de estructura, símbolos y llamadas; contexto antes de editar.</td><td><a href="https://github.com/colbymchenry/codegraph">https://github.com/colbymchenry/codegraph</a></td><td>1.6.2</td><td>install.sh lo indexa si está; npm/curl</td></tr>
+          <tr><td>Model Context Protocol</td><td>Protocolo que conecta Engram con Claude, OpenCode, Codex, pi y Hermes.</td><td><a href="https://modelcontextprotocol.io/">https://modelcontextprotocol.io/</a></td><td>—</td><td>engram setup o fallback del instalador</td></tr>
+        </tbody>
+      </table>
+      <div class="note"><b>No confundir instalar con configurar.</b> Engram necesita su MCP; GGA necesita proveedor y reglas; CodeGraph necesita un índice. El smoke del instalador comprueba binarios, MCP y skills, no que el agente ya haya usado una herramienta en una sesión.</div>
+    </section>
+
+    <section id="clis">
+      <div class="head"><div><div class="kicker">02 · Agentes</div><h2>La misma puerta, varias herramientas.</h2></div><div class="num">02</div></div>
+      <table class="table">
+        <thead><tr><th>Tecnología</th><th>Para qué la usamos</th><th>URL oficial</th><th>Versión local</th><th>Instalación</th></tr></thead>
+        <tbody>
+          <tr><td>Claude Code</td><td>Agente de Anthropic; skills globales y MCP de Engram.</td><td><a href="https://www.anthropic.com/claude-code">https://www.anthropic.com/claude-code</a></td><td>2.1.325</td><td>install-toolchain.sh; npm -g @anthropic-ai/claude-code</td></tr>
+          <tr><td>OpenCode</td><td>Agente de terminal open source; adaptadores .opencode/.</td><td>https://opencode.ai/ · https://github.com/anomalyco/opencode</td><td>v2.3.0</td><td>Instalación del agente; el kit genera adaptadores</td></tr>
+          <tr><td>Codex</td><td>CLI de OpenAI; skills globales y MCP.</td><td><a href="https://github.com/openai/codex">https://github.com/openai/codex</a></td><td>0.167.0</td><td>Instalación del agente; el kit copia skills</td></tr>
+          <tr><td>pi</td><td>Agent harness extensible; workspace Gentle Shell.</td><td><a href="https://github.com/earendil-works/pi">https://github.com/earendil-works/pi</a></td><td>1.5.0</td><td>Instalación del agente; el kit copia skills</td></tr>
+          <tr><td>Hermes Agent</td><td>Agente de Nous Research; MCP y skills.</td><td><a href="https://hermes-agent.nousresearch.com/docs">https://hermes-agent.nousresearch.com/docs</a></td><td>0.23.3</td><td>Instalación del agente; el kit copia skills</td></tr>
+       
+        </tbody>
+      </table>
+      <div class="note"><b>Las skills no viajan solas.</b> El instalador copia el núcleo y el perfil a la ruta global de cada agente; si un compañero usa Claude y no ve una skill, se comprueba <code>~/.claude/skills</code>, no el repo del kit.</div>
+    </section>
+
+    <section id="calidad">
+      <div class="head"><div><div class="kicker">03 · Calidad y pruebas</div><h2>Lo que convierte un cambio en evidencia.</h2></div><div class="num">03</div></div>
+      <table class="table">
+        <thead><tr><th>Tecnología</th><th>Para qué la usamos</th><th>URL oficial</th><th>Versión local</th><th>Instalación</th></tr></thead>
+        <tbody>
+          <tr><td>Playwright</td><td>Suite E2E de flujos de usuario; informe, JUnit/JSON y trazas.</td><td><a href="https://playwright.dev/">https://playwright.dev/</a></td><td>1.49.1 (baseline)</td><td>install.sh pregunta; npm + Chromium</td></tr>
+          <tr><td>ruff</td><td>Lint y formato Python opcional en guard.</td><td><a href="https://docs.astral.sh/ruff/">https://docs.astral.sh/ruff/</a></td><td>0.17.6</td><td>install-dev-deps.sh</td></tr>
+          <tr><td>black</td><td>Formato Python opcional; --check en guard.</td><td><a href="https://black.readthedocs.io/">https://black.readthedocs.io/</a></td><td>26.10.1</td><td>install-dev-deps.sh</td></tr>
+          <tr><td>mypy</td><td>Tipos estáticos Python opcional.</td><td><a href="https://mypy-lang.org/">https://mypy-lang.org/</a></td><td>2.4.1</td><td>install-dev-deps.sh</td></tr>
+          <tr><td>ESLint</td><td>Lint JavaScript/TypeScript si hay package.json.</td><td><a href="https://eslint.org/">https://eslint.org/</a></td><td>10.15.0</td><td>install-dev-deps.sh</td></tr>
+          <tr><td>TypeScript / tsc</td><td>Comprobación de tipos TypeScript.</td><td><a href="https://www.typescriptlang.org/">https://www.typescriptlang.org/</a></td><td>7.0.2</td><td>install-dev-deps.sh</td></tr>
+          <tr><td>gitleaks</td><td>Detección de secretos en staged.</td><td><a href="https://github.com/gitleaks/gitleaks">https://github.com/gitleaks/gitleaks</a></td><td>8.30.1</td><td>install-dev-deps.sh; release oficial</td></tr>
+          <tr><td>jq</td><td>Requisito del plugin de Claude Code de Engram.</td><td><a href="https://jqlang.github.io/jq/">https://jqlang.github.io/jq/</a></td><td>1.6</td><td>install-toolchain.sh; gestor de paquetes</td></tr>
+          <tr><td>pipx</td><td>Aísla herramientas Python instaladas por el kit.</td><td><a href="https://pipx.pypa.io/">https://pipx.pypa.io/</a></td><td>—</td><td>Requisito/instalación del sistema</td></tr>
+        </tbody>
+      </table>
+      <div class="note"><b>Opt-in no es un fallo.</b> ruff/black/mypy solo corren si el repo tiene su configuración; eslint/tsc necesitan un proyecto JS/TS. En Odoo el check que manda es el guard del perfil; gitleaks y comments solo miran staged.</div>
+    </section>
+
+    <section id="stack">
+      <div class="head"><div><div class="kicker">04 · Stack de producto</div><h2>El entorno donde se ejecuta la puerta.</h2></div><div class="num">04</div></div>
+      <table class="table">
+        <thead><tr><th>Tecnología</th><th>Para qué la usamos</th><th>URL oficial</th><th>Versión local</th><th>Nota</th></tr></thead>
+        <tbody>
+          <tr><td>Odoo 11</td><td>Producto principal de Scalpers; perfiles, módulos, XML y ORM v11.</td><td><a href="https://www.odoo.com/documentation/11.0/">https://www.odoo.com/documentation/11.0/</a></td><td>11.0</td><td>No Odoo 12+ ni OWL</td></tr>
+          <tr><td>PostgreSQL</td><td>Base de datos de Odoo; pruebas en base desechable.</td><td><a href="https://www.postgresql.org/">https://www.postgresql.org/</a></td><td>Según entorno</td><td>Nunca la base compartida</td></tr>
+          <tr><td>Docker / Compose</td><td>Entorno Doodba de desarrollo y ejecución de Odoo/Postgres.</td><td><a href="https://www.docker.com/">https://www.docker.com/</a></td><td>26.1.4</td><td>No se toca producción</td></tr>
+          <tr><td>Git</td><td>Ramas, hooks, diffs y evidencia de commits.</td><td><a href="https://git-scm.com/">https://git-scm.com/</a></td><td>2.34.1</td><td>Hooks locales</td></tr>
+          <tr><td>Python</td><td>Lenguaje del núcleo, perfiles y herramientas.</td><td><a href="https://www.python.org/">https://www.python.org/</a></td><td>3.14.9 local</td><td>El kit declara 3.8+; Odoo usa su imagen</td></tr>
+          <tr><td>Node.js</td><td>Runtime de Playwright, CodeGraph, agentes y tools JS.</td><td><a href="https://nodejs.org/">https://nodejs.org/</a></td><td>22.23.4</td><td>Necesario para E2E y varios agentes</td></tr>
+          <tr><td>npm</td><td>Instalación de agentes, Playwright, ESLint y TypeScript.</td><td><a href="https://www.npmjs.com/">https://www.npmjs.com/</a></td><td>10.9.9</td><td>Prefijo local del usuario</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="repos">
+      <div class="head"><div><div class="kicker">05 · Repositorios</div><h2>Dónde vive cada cosa.</h2></div><div class="num">05</div></div>
+      <table class="table">
+        <thead><tr><th>Repositorio</th><th>Para qué</th><th>URL</th></tr></thead>
+        <tbody>
+          <tr><td>dev-agent-kit</td><td>Núcleo, instalador, guard, verify, skills, evals, E2E y GGA.</td><td><a href="https://github.com/ScalpersCompany/dev-agent-kit">https://github.com/ScalpersCompany/dev-agent-kit</a></td></tr>
+          <tr><td>dev-agent-profiles</td><td>Perfiles por lenguaje y contrato de equipo.</td><td><a href="https://github.com/ScalpersCompany/dev-agent-profiles">https://github.com/ScalpersCompany/dev-agent-profiles</a></td></tr>
+          <tr><td>scalpers-tech-doc</td><td>Norma de empresa y documentación canónica.</td><td><a href="https://github.com/ScalpersCompany/scalpers-tech-doc">https://github.com/ScalpersCompany/scalpers-tech-doc</a></td></tr>
+          <tr><td>scalpers-v11</td><td>Código de producto Odoo 11 (FactorLibre).</td><td><a href="https://git.factorlibre.com/odoo-11/scalpers-v11">https://git.factorlibre.com/odoo-11/scalpers-v11</a></td></tr>
+          <tr><td>Guía paso a paso</td><td>Instalación, CodeGraph, primera prueba y cómo enseñarlo.</td><td>docs/formacion/guia-paso-a-paso.html</td></tr>
+          <tr><td>Guía del equipo</td><td>Conceptos: skills, perfiles, juez y agentes.</td><td>docs/formacion/guia-equipo.html</td></tr>
+          <tr><td>Presentación</td><td>Deck para proyectar en la formación.</td><td>docs/formacion/plan-formacion-equipo.html</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="opcional">
+      <div class="head"><div><div class="kicker">06 · Opcionales</div><h2>Pueden aparecer, no son la puerta.</h2></div><div class="num">06</div></div>
+      <table class="table">
+        <thead><tr><th>Tecnología</th><th>Para qué</th><th>URL</th><th>Estado</th></tr></thead>
+        <tbody>
+          <tr><td>rsc-harness</td><td>Harness de especificación, tareas y verificación.</td><td><a href="https://github.com/ericrisco/rsc-harness">https://github.com/ericrisco/rsc-harness</a></td><td>Opcional; instalación por repo</td></tr>
+          <tr><td>rsc-brain</td><td>Memoria/wiki autoalojada con MCP.</td><td><a href="https://github.com/ericrisco/rsc-brain">https://github.com/ericrisco/rsc-brain</a></td><td>Opcional; contenedores</td></tr>
+          <tr><td>Homebrew</td><td>Gestor de paquetes para algunas herramientas.</td><td><a href="https://brew.sh/">https://brew.sh/</a></td><td>Opcional</td></tr>
+          <tr><td>GitHub CLI (gh)</td><td>Revisión de PRs y estado de repositorios.</td><td><a href="https://cli.github.com/">https://cli.github.com/</a></td><td>Opcional</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="comprobar">
+      <div class="head"><div><div class="kicker">07 · Comprobar</div><h2>Versiones y fuentes, sin depender de la memoria.</h2></div><div class="num">07</div></div>
+      <div class="code-wrap"><button class="copy" data-copy="#versions">Copiar</button><pre id="versions">engram --version
+gga --version
+gentle-ai --version
+gentle-shell --version
+codegraph --version
+claude --version
+opencode --version
+codex --version
+pi --version
+hermes --version
+node --version
+npm --version
+python3 --version
+ruff --version
+black --version
+mypy --version
+eslint --version
+tsc --version
+gitleaks version
+jq --version</pre></div>
+      <p>La foto es del 2026-11-27. Antes de una formación, comprueba las URLs y ejecuta <code>dev-agent doctor</code>. Si una versión cambia, actualiza esta tabla y el CHANGELOG; no dejes una referencia sin fuente.</p>
+    </section>
+
+    <section id="limites">
+      <div class="head"><div><div class="kicker">08 · Límites</div><h2>Lo que esta tabla no promete.</h2></div><div class="num">08</div></div>
+      <div class="note"><b>Instalado no es configurado.</b> Engram necesita MCP, GGA necesita proveedor y reglas, y las skills necesitan estar en la ruta global del agente.</div>
+      <div class="note"><b>Instalado no es una puerta.</b> Guard y verify son los comandos que deciden; GGA es la segunda revisión; el CI y la persona siguen siendo la garantía final.</div>
+      <div class="note"><b>Sin secretos.</b> Esta página no contiene tokens, claves, rutas de credenciales ni datos de cliente. Las URLs son públicas o internas de Scalpers; no son credenciales.</div>
+      <p><b>Fuente canónica:</b> <a href="REFERENCIAS-TECNOLOGIAS.md">REFERENCIAS-TECNOLOGIAS.md</a> · <a href="formacion/guia-paso-a-paso.html">guía paso a paso</a> · <a href="formacion/guia-equipo.html">guía del equipo</a>.</p>
+      <div class="footer"><span><b>DevAgentKit</b> · referencias</span><span>URL oficial · versión local · papel en el flujo</span></div>
+    </section>
+  </main>
+</div>
+<a class="top-link" href="#nucleo" aria-label="Volver al inicio">↑ Inicio</a>
+<script>
+  document.querySelectorAll('.copy').forEach(button => {
+    button.addEventListener('click', () => {
+      const target = document.querySelector(button.dataset.copy);
+      if (!target) return;
+      navigator.clipboard.writeText(target.innerText).then(() => {
+        const old = button.textContent;
+        button.textContent = 'Copiado';
+        setTimeout(() => { button.textContent = old; }, 1200);
+      });
+    });
+  });
+</script>
+</body>
+</html>

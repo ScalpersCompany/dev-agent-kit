@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guía paso a paso — instalar, probar y enseñar DevAgentKit</title>
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #000000;
+    --paper: #ffffff;
+    --card: #ffffff;
+    --muted: #555555;
+    --line: #d7d7d7;
+    --soft: #f4f4f4;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --serif: ui-serif, Georgia, "Times New Roman", serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); line-height: 1.55; }
+  a { color: var(--ink); text-decoration-color: #999; }
+  .shell { display: grid; grid-template-columns: 270px minmax(0, 1fr); max-width: 1480px; margin: 0 auto; }
+  .side { position: sticky; top: 0; height: 100vh; overflow: auto; padding: 30px 20px 30px 26px; border-right: 1px solid var(--line); background: var(--soft); }
+  .brand { font-family: var(--serif); font-size: 27px; line-height: 1.03; letter-spacing: -.04em; }
+  .brand span { display: block; font-size: 18px; letter-spacing: -.01em; margin-top: 3px; }
+  .sub { color: var(--muted); font-size: 12px; margin-top: 9px; }
+  nav { display: grid; gap: 2px; margin-top: 25px; }
+  nav a { display: block; text-decoration: none; color: var(--muted); font-size: 13px; padding: 7px 8px; border-radius: 6px; }
+  nav a:hover { background: #e7e7e7; color: var(--ink); }
+  nav a strong { color: var(--ink); font-weight: 700; }
+  .side .foot { margin-top: 28px; padding-top: 15px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; }
+  main { min-width: 0; padding: 42px 54px 80px; }
+  .hero { border-bottom: 1px solid var(--line); padding-bottom: 32px; }
+  .kicker { font-size: 11px; letter-spacing: .17em; text-transform: uppercase; color: #000; font-weight: 750; }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; letter-spacing: -.03em; margin: 0; }
+  h1 { font-size: clamp(40px, 5vw, 68px); line-height: .98; max-width: 18ch; margin-top: 12px; }
+  h2 { font-size: clamp(29px, 3vw, 39px); line-height: 1.08; margin-bottom: 10px; }
+  h3 { font-size: 21px; line-height: 1.16; }
+  p { color: var(--muted); font-size: 16px; margin: 0 0 12px; }
+  .lede { color: var(--ink); font-size: 19px; max-width: 72ch; margin-top: 16px; }
+  .meta { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 21px; }
+  .badge { border: 1px solid var(--line); background: var(--paper); border-radius: 999px; padding: 5px 10px; font-size: 12px; color: var(--muted); }
+  .badge.hot { border-color: #000; color: #000; }
+  section { padding: 32px 0 8px; border-bottom: 1px solid var(--line); }
+  .head { display: flex; justify-content: space-between; gap: 20px; align-items: start; margin-bottom: 16px; }
+  .head .num { font-family: var(--mono); font-size: 11px; color: #000; padding-top: 8px; white-space: nowrap; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 11px; padding: 18px 20px; }
+  .card h3 { font-size: 19px; }
+  .card p { font-size: 14px; margin: 7px 0 0; }
+  .card ul { margin: 8px 0 0 18px; padding: 0; color: var(--muted); font-size: 14px; }
+  .card li { margin: 4px 0; }
+  .note { border-left: 3px solid #000; padding: 10px 0 10px 16px; margin: 15px 0; color: var(--muted); font-size: 15px; }
+  .note b { color: var(--ink); }
+  .table { width: 100%; border-collapse: collapse; margin: 13px 0 8px; font-size: 14px; }
+  .table th { text-align: left; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #000; border-bottom: 2px solid #000; padding: 0 8px 8px 0; }
+  .table td { border-bottom: 1px solid var(--line); padding: 9px 8px 9px 0; vertical-align: top; color: var(--muted); }
+  .table td:first-child { color: var(--ink); font-weight: 650; }
+  .code-wrap { position: relative; margin: 12px 0 16px; }
+  pre { background: #000; color: #fff; border-radius: 9px; padding: 15px 17px; overflow: auto; font: 13px/1.55 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
+  .copy { position: absolute; top: 8px; right: 8px; border: 1px solid #666; background: #111; color: #fff; border-radius: 6px; padding: 4px 8px; font: 10px var(--sans); cursor: pointer; }
+  .copy:hover { background: #222; }
+  .steps { counter-reset: step; display: grid; gap: 9px; margin-top: 13px; }
+  .step { position: relative; padding-left: 37px; }
+  .step:before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 0; width: 25px; height: 25px; border-radius: 50%; background: #000; color: #fff; display: grid; place-items: center; font: 700 12px var(--mono); }
+  .step b { color: var(--ink); }
+  .step p { font-size: 14px; margin: 2px 0 0; }
+  details { background: var(--soft); border: 1px solid var(--line); border-radius: 9px; padding: 12px 14px; margin: 8px 0; }
+  summary { cursor: pointer; font-weight: 650; font-size: 14px; }
+  details p, details ul { font-size: 14px; margin-top: 7px; }
+  .footer { margin-top: 34px; display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; color: var(--muted); font-size: 12px; }
+  .top-link { position: fixed; right: 18px; bottom: 16px; background: #000; color: #fff; border-radius: 999px; padding: 8px 12px; text-decoration: none; font-size: 12px; z-index: 4; }
+  @media (max-width: 980px) {
+    .shell { display: block; }
+    .side { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+    nav { grid-template-columns: 1fr 1fr; }
+    main { padding: 30px 22px 60px; }
+    .grid2, .grid3 { grid-template-columns: 1fr; }
+  }
+  @media print {
+    @page { size: A4; margin: 14mm; }
+    .side, .top-link, .copy { display: none; }
+    .shell { display: block; }
+    main { padding: 0; }
+    section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <div class="brand">DevAgentKit<span>de cero a la primera puerta</span></div>
+    <div class="sub">Guía paso a paso · instalación, CodeGraph, pruebas y demostración</div>
+    <nav aria-label="Índice">
+      <a href="#antes"><strong>01</strong> Antes de empezar</a>
+      <a href="#instalar"><strong>02</strong> Descargar e instalar</a>
+      <a href="#despues"><strong>03</strong> Después de instalar</a>
+      <a href="#codegraph"><strong>04</strong> CodeGraph y contexto</a>
+      <a href="#primera"><strong>05</strong> Primera puerta</a>
+      <a href="#e2e"><strong>06</strong> Probar con E2E</a>
+      <a href="#gga"><strong>07</strong> GGA y revisión</a>
+      <a href="#ensenar"><strong>08</strong> Enseñarlo al equipo</a>
+      <a href="#problemas"><strong>09</strong> Problemas frecuentes</a>
+      <a href="#checklist"><strong>10</strong> Checklist</a>
+    </nav>
+    <div class="foot">Solo desarrollo.<br>Sin producción, sin secretos, sin datos de cliente.<br>Versión de formación · 2026-11-26.</div>
+  </aside>
+
+  <main>
+    <header class="hero">
+      <div class="kicker">Formación interna · guía paso a paso</div>
+      <h1>De la descarga a la primera prueba.</h1>
+      <p class="lede">Esta guía sirve para una cosa: que tú puedas enseñar a un compañero, sin improvisar, cómo se descarga el kit, cómo se instala, qué se comprueba después y cómo se demuestra que el sistema funciona. Los comandos están copiados del instalador y del runner actuales. Si algo no se ha ejecutado, se dice; no se pinta de verde.</p>
+      <div class="meta"><span class="badge">instalación guiada</span><span class="badge">CodeGraph + MCP + skills</span><span class="badge hot">evidencia antes de “hecho”</span></div>
+      <p><a href="../REFERENCIAS-TECNOLOGIAS.html">Referencias de tecnologías: URL, versión y papel de cada herramienta</a>.</p>
+    </header>
+
+    <section id="antes">
+      <div class="head"><div><div class="kicker">Paso 0</div><h2>Antes de tocar nada.</h2></div><div class="num">01</div></div>
+      <div class="grid3">
+        <div class="card"><h3>Dónde</h3><p>En el repo de desarrollo, nunca en producción. Si el repo es compartido, usa una rama y un entorno desechable para las pruebas.</p></div>
+        <div class="card"><h3>Qué necesitas</h3><p>bash, git, Python 3, rsync, curl, Node/npm y un agente: Claude Code, OpenCode, Codex, pi o Hermes. El instalador puede poner Engram, GGA, gentle-ai y jq si faltan.</p></div>
+        <div class="card"><h3>Qué no hará</h3><p>No despliega, no reinicia servicios, no toca la base compartida, no guarda secretos y no hace push. Los backups quedan como .bak-&lt;fecha&gt;.</p></div>
+      </div>
+      <div class="note"><b>La regla que hay que decir en voz alta:</b> “instalado” no es “probado”. La instalación termina con un smoke de toolchain, pero el cambio real se prueba con guard, verify y, si hay UI, E2E.</div>
+    </section>
+
+    <section id="instalar">
+      <div class="head"><div><div class="kicker">Paso 1–8</div><h2>Descargar, instalar y responder al menú.</h2></div><div class="num">02</div></div>
+      <p>El instalador se puede leer antes de ejecutarlo. Clona el kit en tu home; si no existe el repo de perfiles, lo clona él. Después abre el menú interactivo.</p>
+      <div class="code-wrap"><button class="copy" data-copy="#c-install">Copiar</button><pre id="c-install">git clone https://github.com/ScalpersCompany/dev-agent-kit.git "$HOME/.dev-agent-kit"
+"$HOME/.dev-agent-kit/install.sh"</pre></div>
+      <div class="steps">
+        <div class="step"><b>Repo de desarrollo.</b><p>Escribe la ruta del repo donde vas a trabajar. No uses `/`, tu `$HOME` ni el propio kit.</p></div>
+        <div class="step"><b>Perfil y perfil activo.</b><p>Elige `odoo11` para el trabajo de Odoo 11. Si instalas varios, uno queda activo; los demás quedan disponibles.</p></div>
+        <div class="step"><b>Agentes.</b><p>Marca Claude Code y/o OpenCode para generar sus adaptadores. Codex, pi y Hermes reciben copias globales. Si usas Claude, el instalador configura también su MCP de Engram.</p></div>
+        <div class="step"><b>CodeGraph, Engram y tech-doc.</b><p>CodeGraph indexa estructura y llamadas; Engram guarda decisiones; tech-doc enlaza la norma de empresa. Si no tienes acceso a tech-doc, se puede omitir y queda pendiente, no verde.</p></div>
+        <div class="step"><b>Confirmar y toolchain.</b><p>El instalador muestra el resumen y pide continuar. Después pregunta por la toolchain: Engram, GGA, gentle-ai y Claude si faltan, jq, MCP de Engram y skills globales. Termina con un smoke.</p></div>
+        <div class="step"><b>Herramientas de guard.</b><p>La siguiente pregunta instala ruff, black, mypy, eslint, tsc y gitleaks. Son opt-in en guard: ruff/black/mypy solo corren si el repo tiene su configuración; eslint/tsc solo si hay package.json/tsconfig; gitleaks y el perfil activo sí se ejecutan.</p></div>
+        <div class="step"><b>E2E y GGA.</b><p>E2E pregunta por dependencias npm, Chromium, comando, URL local y health path. GGA instala las reglas del perfil y pregunta por el pre-push. La URL nunca es producción.</p></div>
+        <div class="step"><b>Verify ahora.</b><p>Si ya tienes un comando de tests o E2E, puedes lanzarlo al final. Si no, se configura después; no se inventa un comando.</p></div>
+      </div>
+      <div class="note"><b>Qué significa “global” aquí:</b> el kit y el wrapper se instalan una vez en tu home, y las skills se copian a las rutas globales de los agentes elegidos. Los hooks y la configuración de verify/E2E viven en el repo porque son locales a ese repo.</div>
+    </section>
+
+    <section id="despues">
+      <div class="head"><div><div class="kicker">Paso 4</div><h2>Los cinco comandos que hay que ejecutar al terminar.</h2></div><div class="num">03</div></div>
+      <div class="code-wrap"><button class="copy" data-copy="#c-after">Copiar</button><pre id="c-after">dev-agent doctor
+dev-agent profile list
+dev-agent codegraph
+codegraph status "$PWD"
+engram ps
+engram doctor
+claude mcp get engram        # si usas Claude Code
+opencode mcp list            # si usas OpenCode
+find "$HOME/.claude/skills" -maxdepth 2 -name SKILL.md | wc -l
+find "$HOME/.config/opencode/skills" -maxdepth 2 -name SKILL.md | wc -l</pre></div>
+      <table class="table">
+        <thead><tr><th>Comando</th><th>Qué debe salir</th><th>Qué no es prueba</th></tr></thead>
+        <tbody>
+          <tr><td><code>dev-agent doctor</code></td><td>ok para el núcleo; warn para opcionales; FAIL si falta algo obligatorio.</td><td>Un warn no es un fallo, pero un FAIL no se ignora.</td></tr>
+          <tr><td><code>dev-agent profile list</code></td><td>El perfil activo marcado con <code>*</code>.</td><td>Una lista sin perfil activo no sirve.</td></tr>
+          <tr><td><code>dev-agent codegraph</code></td><td>Índice sincronizado; <code>codegraph status</code> lo confirma.</td><td>Un índice viejo no es contexto actual.</td></tr>
+          <tr><td><code>engram ps</code> / <code>engram doctor</code></td><td>Servicio y store revisados; 0 errores en el doctor.</td><td>Un MCP en el chat sin store no demuestra memoria.</td></tr>
+          <tr><td><code>claude mcp get engram</code></td><td>El servidor enganchado y conectado.</td><td>Una captura de la UI no es la configuración.</td></tr>
+          <tr><td><code>find ... SKILL.md</code></td><td>Skills del kit y del perfil en la ruta global del agente.</td><td>Tener el repo del kit no instala las skills.</td></tr>
+        </tbody>
+      </table>
+      <div class="note"><b>La toolchain se prueba a sí misma:</b> el instalador ejecuta un smoke de binarios, versiones, MCP de Engram, skills y <code>engram doctor</code>. Si ese smoke falla, no sigas a la formación: corrige la instalación.</div>
+    </section>
+
+    <section id="codegraph">
+      <div class="head"><div><div class="kicker">Paso 5</div><h2>CodeGraph: del árbol a un mapa consultable.</h2></div><div class="num">04</div></div>
+      <p>El instalador intenta indexar el repo si CodeGraph está disponible. Si lo omitiste o el índice no existe, hazlo ahora. El agente debe consultar el mapa antes de hacer búsquedas amplias.</p>
+      <div class="code-wrap"><button class="copy" data-copy="#c-codegraph">Copiar</button><pre id="c-codegraph">cd /ruta/a/tu/repo
+if [ ! -d .codegraph ]; then
+  codegraph init "$PWD"
+else
+  dev-agent codegraph
+fi
+codegraph status "$PWD"
+codegraph query "nombre_de_la_clase_o_endpoint"</pre></div>
+      <div class="grid2">
+        <div class="card"><h3>Qué consigue</h3><p>Estructura, símbolos, llamadas y blast radius. El agente deja de adivinar por el árbol y consulta el mapa.</p></div>
+        <div class="card"><h3>Qué no es</h3><p>No es una puerta de calidad ni sustituye a tests, guard o verify. Un índice desactualizado no es evidencia.</p></div>
+      </div>
+      <div class="note"><b>Para enseñarlo:</b> abre <code>codegraph status</code>, muestra un fichero y su llamada, y explica que el contexto se construye antes de editar. Después pide al agente que consulte CodeGraph antes de tocar el código.</div>
+    </section>
+
+    <section id="primera">
+      <div class="head"><div><div class="kicker">Paso 6</div><h2>La primera puerta: guard y verify.</h2></div><div class="num">05</div></div>
+      <div class="code-wrap"><button class="copy" data-copy="#c-gate">Copiar</button><pre id="c-gate">cd /ruta/a/tu/repo
+git switch -c feat/prueba-devkit
+
+# 1) un cambio pequeño, con su test y su documentación
+# 2) prepara el cambio y pasa el guard
+git add &lt;archivo&gt;
+bash guard/guard.sh --staged
+
+# 3) revisa la configuración antes de la prueba real
+sed -n '1,120p' verify/config.env
+
+# 4) ejecuta la prueba completa
+bash verify/run.sh
+
+# 5) lee la evidencia, no solo el código de salida
+find evidence -name summary.json -print -exec cat {} \;</pre></div>
+      <div class="grid3">
+        <div class="card"><h3>0</h3><p>Todo configurado y ejecutado: el summary dice pass y hay evidencia.</p></div>
+        <div class="card"><h3>1</h3><p>Algo falló: se corrige la causa. No se convierte en verde.</p></div>
+        <div class="card"><h3>2</h3><p>No hay SMOKE_CMD, TEST_CMD ni E2E_CMD. No es un pass: es una configuración incompleta.</p></div>
+      </div>
+      <div class="note"><b>Qué mirar en <code>evidence/&lt;run-id&gt;/</code>:</b> <code>summary.json</code>, los logs, los exit codes y, si hay E2E, <code>e2e/report/</code> y <code>e2e/test-results/</code>. El chat no es la evidencia.</div>
+    </section>
+
+    <section id="e2e">
+      <div class="head"><div><div class="kicker">Paso 7</div><h2>Si el cambio tiene flujo web, añade E2E.</h2></div><div class="num">06</div></div>
+      <p>El instalador pregunta si quieres dependencias npm y Chromium, y escribe la configuración. Si dijiste que no, puedes hacerlo ahora. El E2E se ejecuta después de smoke y tests, nunca en producción.</p>
+      <div class="code-wrap"><button class="copy" data-copy="#c-e2e">Copiar</button><pre id="c-e2e">cd /ruta/a/tu/repo
+( cd e2e && npm install )
+( cd e2e && npx playwright install chromium )
+# edita una URL LOCAL en los dos ficheros de configuración
+grep -E '^E2E_' verify/config.env .dev-agent/verify.env
+bash verify/run.sh
+find evidence -path '*/e2e/report/index.html' -print</pre></div>
+      <div class="note"><b>Un smoke no es un E2E.</b> El smoke comprueba que responde; el E2E recorre un flujo de usuario y deja traza, captura o vídeo del fallo. Si no hay flujo de UI, no inventes uno.</div>
+      <details><summary>Qué contar al compañero si pregunta por Playwright</summary><p>El baseline <code>e2e/tests/health.spec.ts</code> solo comprueba que la app responde y renderiza. Las specs de negocio se añaden en <code>e2e/tests/</code>, con selectores de usuario y aserciones sobre el resultado. Los proveedores externos se sustituyen por un fake local o una cassette; la aplicación bajo prueba no se mockea.</p></details>
+    </section>
+
+    <section id="gga">
+      <div class="head"><div><div class="kicker">Paso 8</div><h2>GGA: la segunda revisión, no la puerta.</h2></div><div class="num">07</div></div>
+      <div class="code-wrap"><button class="copy" data-copy="#c-gga">Copiar</button><pre id="c-gga">cd /ruta/a/tu/repo
+bash scripts/review-gga.sh . --blocking --pr-mode --diff-only
+
+# si solo quieres el informe, sin bloquear:
+bash scripts/review-gga.sh . --advisory --pr-mode --diff-only</pre></div>
+      <div class="grid2">
+        <div class="card"><h3>Qué revisa</h3><p>Las reglas del núcleo más las del perfil activo. Odoo 11 no hereda las reglas de PHP ni al contrario.</p></div>
+        <div class="card"><h3>Qué no hace</h3><p>No ejecuta el pipeline, el lint ni los tests: exige su evidencia. No sustituye a guard, verify, CI ni a la revisión humana.</p></div>
+      </div>
+      <div class="note"><b>Si GGA falla por falta de proveedor:</b> no es un falso positivo; falta configuración. El instalador deja el proveedor vacío a propósito y el doctor lo avisa. No ejecutes <code>gga install</code>: pisaría el pre-commit del kit.</div>
+    </section>
+
+    <section id="ensenar">
+      <div class="head"><div><div class="kicker">Cómo enseñarlo</div><h2>Una sesión de 25 minutos, tres actos.</h2></div><div class="num">08</div></div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Minuto</th><th>Qué haces</th><th>Qué ven</th></tr></thead>
+          <tbody>
+            <tr><td>0–3</td><td>Problema y promesa: el agente propone; la puerta comprueba; la persona decide.</td><td>Una frase, no una lista de herramientas.</td></tr>
+            <tr><td>3–10</td><td>Instalación en directo: clonar, menú, toolchain, doctor.</td><td>El menú real, el smoke y las skills globales.</td></tr>
+            <tr><td>10–16</td><td>CodeGraph y contexto: indexar, consultar, explicar una llamada.</td><td>El mapa antes de editar.</td></tr>
+            <tr><td>16–22</td><td>Guard y verify sobre un cambio pequeño.</td><td>Summary, logs y evidencia; un fallo real si se puede.</td></tr>
+            <tr><td>22–25</td><td>GGA y revisión humana; qué queda pendiente.</td><td>Veredicto y límites; no se promete merge.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid3">
+        <div class="card"><h3>Antes de la sesión</h3><p>Ten un repo desechable, un cambio pequeño, un test que puedas poner en rojo y la URL local de la app. No uses datos de cliente.</p></div>
+        <div class="card"><h3>Durante</h3><p>Haz que el compañero escriba los comandos. Tú explicas qué esperar; no dictas la salida.</p></div>
+        <div class="card"><h3>Al cerrar</h3><p>Pide que repita el flujo sin ti: rama, cambio, guard, verify, evidencia y revisión. Si no puede, la formación no terminó.</p></div>
+      </div>
+      <div class="note"><b>Frase de cierre:</b> “este cambio tiene un test, un summary y un veredicto; lo que falta es esto”. Si no se puede nombrar el artefacto, todavía no está verificado.</div>
+    </section>
+
+    <section id="problemas">
+      <div class="head"><div><div class="kicker">Cuando algo no sale</div><h2>Fallos frecuentes y qué significa cada uno.</h2></div><div class="num">09</div></div>
+      <table class="table">
+        <thead><tr><th>Síntoma</th><th>Causa probable</th><th>Qué hacer</th></tr></thead>
+        <tbody>
+          <tr><td><code>verify</code> sale 2</td><td>No hay SMOKE_CMD, TEST_CMD ni E2E_CMD.</td><td>Configura un comando real en <code>verify/config.env</code> y <code>.dev-agent/verify.env</code>; no lo llames verde.</td></tr>
+          <tr><td><code>guard</code> sale 0 con skipped</td><td>No hay staged, no hay perfil activo o la herramienta no tiene configuración en el repo.</td><td>Prepara el cambio y revisa <code>profile list</code>; un skipped no es un pass. ruff/black/mypy son opt-in.</td></tr>
+          <tr><td><code>profile: skipped</code> con perfil instalado</td><td>El wrapper instalado es antiguo y ejecuta guard sobre el kit, no sobre el repo.</td><td>Actualiza el kit y usa <code>dev-agent guard</code> desde la raíz del repo; el reporte debe quedar en el repo.</td></tr>
+          <tr><td><code>ruff</code>/<code>black</code>/<code>mypy</code> siguen skipped</td><td>Están instalados, pero el repo no tiene su configuración.</td><td>Es opt-in: añade <code>ruff.toml</code>, <code>.black</code> o <code>mypy.ini</code> si quieres esos checks. Odoo usa el guard del perfil.</td></tr>
+          <tr><td><code>guard</code> falla en <code>profile:odoo</code></td><td>Hallazgos reales del perfil en el código existente.</td><td>Revisa el reporte y corrige o justifica; no es un fallo de instalación.</td></tr>
+          <tr><td>CodeGraph no responde</td><td>No está instalado o no hay índice.</td><td><code>codegraph init "$PWD"</code> y después <code>dev-agent codegraph</code>; revisa <code>codegraph status</code>.</td></tr>
+          <tr><td>Claude no ve Engram</td><td>MCP no configurado en <code>~/.claude.json</code> o el binario no está en PATH.</td><td><code>claude mcp get engram</code>; vuelve a ejecutar el instalador con toolchain o añade el MCP con el comando del kit.</td></tr>
+          <tr><td>OpenCode no ve Engram</td><td>Plugin/MCP no instalado en su configuración.</td><td><code>engram setup opencode</code> y <code>opencode mcp list</code>; reinicia OpenCode.</td></tr>
+          <tr><td>Falta una skill</td><td>Se instaló solo el repo del kit, no la copia global.</td><td>Reinstala con toolchain o copia <code>skills/</code> y el perfil a la ruta global del agente.</td></tr>
+          <tr><td>GGA falla sin proveedor</td><td>El proveedor está vacío a propósito.</td><td>Configura uno aprobado en <code>.gga</code>; no lo saltes con <code>gga install</code>.</td></tr>
+          <tr><td>Playwright no arranca</td><td>Faltan npm, Chromium o la URL local.</td><td><code>(cd e2e &amp;&amp; npm install)</code>, <code>npx playwright install chromium</code> y revisa <code>E2E_BASE_URL</code>.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="checklist">
+      <div class="head"><div><div class="kicker">Antes de decirlo</div><h2>Checklist de instalación y primera prueba.</h2></div><div class="num">10</div></div>
+      <div class="grid2">
+        <div class="card"><h3>Instalación</h3><ul><li>Repo correcto y rama de trabajo.</li><li>Perfil activo correcto.</li><li>Toolchain y smoke sin errores.</li><li>MCP de Engram en el agente que se usa.</li><li>Skills globales presentes.</li><li>CodeGraph indexado y sincronizado.</li><li>Hooks instalados.</li></ul></div>
+        <div class="card"><h3>Primera prueba</h3><ul><li>Cambio pequeño con test y documentación.</li><li>Guard sobre staged.</li><li>Verify con summary 0.</li><li>E2E si hay flujo web, con informe y trazas.</li><li>GGA revisado o fallo explicado.</li><li>Evidencia localizada; no una captura del chat.</li><li>Sin push, sin producción, sin secretos.</li></ul></div>
+      </div>
+      <div class="note"><b>Material relacionado:</b> <a href="guia-equipo.html">guía conceptual del equipo</a> · <a href="guia-paso-a-paso.html">guía paso a paso</a> · <a href="plan-formacion-equipo.html">presentación para proyectar</a> · <a href="plan-formacion-tecnico.html">runbook técnico del formador</a> · <a href="../REFERENCIAS-TECNOLOGIAS.html">referencias de tecnologías</a>.</div>
+      <div class="footer"><span><b>DevAgentKit</b> · guía paso a paso</span><span>Instalar · comprobar · probar · enseñar</span></div>
+    </section>
+  </main>
+</div>
+<a class="top-link" href="#antes" aria-label="Volver al inicio">↑ Inicio</a>
+<script>
+  document.querySelectorAll('.copy').forEach(button => {
+    button.addEventListener('click', () => {
+      const target = document.querySelector(button.dataset.copy);
+      if (!target) return;
+      navigator.clipboard.writeText(target.innerText).then(() => {
+        const old = button.textContent;
+        button.textContent = 'Copiado';
+        setTimeout(() => { button.textContent = old; }, 1200);
+      });
+    });
+  });
+</script>
+</body>
+</html>

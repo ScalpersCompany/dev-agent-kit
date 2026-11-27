@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Formación DevAgentKit — guía técnica del formador</title>
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #000000;
+    --paper: #ffffff;
+    --card: #ffffff;
+    --muted: #555555;
+    --line: #d7d7d7;
+    --teal: #000000;
+    --teal-soft: #f0f0f0;
+    --orange: #000000;
+    --orange-soft: #efefef;
+    --dark: #000000;
+    --dark-ink: #ffffff;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --serif: ui-serif, Georgia, "Times New Roman", serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); line-height: 1.55; }
+  a { color: var(--teal); }
+  .shell { display: grid; grid-template-columns: 270px minmax(0, 1fr); max-width: 1560px; margin: 0 auto; }
+  .side { position: sticky; top: 0; height: 100vh; overflow: auto; padding: 30px 22px 30px 28px; border-right: 1px solid var(--line); background: #f5f5f5; }
+  .side .brand { font-family: var(--serif); font-size: 27px; line-height: 1.05; letter-spacing: -.03em; }
+  .side .sub { color: var(--muted); font-size: 12px; margin-top: 8px; }
+  .side nav { margin-top: 26px; display: grid; gap: 2px; }
+  .side a { display: block; text-decoration: none; color: var(--muted); font-size: 13px; padding: 7px 9px; border-radius: 7px; }
+  .side a:hover { background: #e5e5e5; color: var(--ink); }
+  .side a strong { color: var(--ink); font-weight: 650; }
+  .side .foot { margin-top: 30px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; }
+  main { min-width: 0; padding: 44px 54px 80px; }
+  .hero { border-bottom: 1px solid var(--line); padding-bottom: 34px; }
+  .kicker { font-size: 11px; letter-spacing: .17em; text-transform: uppercase; color: var(--orange); font-weight: 750; }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; letter-spacing: -.025em; margin: 0; }
+  h1 { font-size: clamp(40px, 5vw, 70px); line-height: .98; max-width: 16ch; margin-top: 12px; }
+  h2 { font-size: clamp(28px, 3vw, 38px); line-height: 1.08; margin-bottom: 10px; }
+  h3 { font-size: 22px; line-height: 1.18; }
+  p { margin: 0 0 12px; color: var(--muted); font-size: 16px; }
+  .lede { color: var(--ink); font-size: 19px; max-width: 66ch; margin-top: 16px; }
+  .hero-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .badge { border: 1px solid var(--line); border-radius: 999px; padding: 5px 10px; font-size: 12px; color: var(--muted); background: var(--paper); }
+  .badge.hot { border-color: var(--orange); color: var(--orange); }
+  .badge.ok { border-color: #000000; color: #000000; }
+  section { padding: 34px 0 6px; border-bottom: 1px solid var(--line); }
+  .section-head { display: flex; justify-content: space-between; gap: 20px; align-items: start; margin-bottom: 18px; }
+  .section-head .num { font-family: var(--mono); font-size: 11px; color: var(--orange); white-space: nowrap; padding-top: 8px; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
+  .card h3 { font-size: 19px; }
+  .card p { font-size: 14px; margin: 7px 0 0; }
+  .card ul { margin: 8px 0 0 18px; padding: 0; color: var(--muted); font-size: 14px; }
+  .card li { margin: 4px 0; }
+  .table { width: 100%; border-collapse: collapse; margin: 14px 0 8px; font-size: 14px; }
+  .table th { text-align: left; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--orange); border-bottom: 2px solid var(--ink); padding: 0 8px 8px 0; }
+  .table td { border-bottom: 1px solid var(--line); padding: 9px 8px 9px 0; vertical-align: top; color: var(--muted); }
+  .table td:first-child { color: var(--ink); font-weight: 650; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+  .pill.ok { color: #000000; background: #efefef; }
+  .pill.warn { color: #000000; background: #e5e5e5; }
+  .pill.hot { color: var(--orange); background: var(--orange-soft); }
+  .code-wrap { position: relative; margin: 12px 0 16px; }
+  pre { margin: 0; background: #000000; color: #ffffff; border-radius: 10px; padding: 16px 18px; overflow: auto; font: 13px/1.55 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; }
+  .copy { position: absolute; top: 8px; right: 8px; border: 1px solid #666666; background: #222222; color: #ffffff; border-radius: 6px; padding: 4px 8px; font: 10px var(--sans); cursor: pointer; }
+  .copy:hover { background: #333333; }
+  .callout { border-left: 3px solid var(--orange); padding: 10px 0 10px 16px; margin: 16px 0; color: var(--muted); font-size: 15px; }
+  .callout b { color: var(--ink); }
+  .ok { border-left-color: var(--teal); }
+  .steps { counter-reset: step; display: grid; gap: 10px; margin-top: 14px; }
+  .step { position: relative; padding-left: 38px; }
+  .step:before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--teal); color: #fff; display: grid; place-items: center; font: 700 12px var(--mono); }
+  .step b { color: var(--ink); }
+  .step p { margin: 2px 0 0; font-size: 14px; }
+  .checklist { display: grid; gap: 7px; margin: 10px 0 0; padding: 0; list-style: none; }
+  .checklist li { position: relative; padding-left: 24px; color: var(--muted); font-size: 14px; }
+  .checklist li:before { content: "☐"; position: absolute; left: 0; top: -1px; color: var(--teal); font-size: 16px; }
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 15px; margin: 8px 0; }
+  summary { cursor: pointer; font-weight: 650; font-size: 14px; }
+  details p, details ul { font-size: 14px; margin-top: 8px; }
+  .footer { margin-top: 34px; color: var(--muted); font-size: 12px; display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .top-link { position: fixed; right: 20px; bottom: 18px; background: var(--dark); color: var(--dark-ink); text-decoration: none; border-radius: 999px; padding: 8px 12px; font-size: 12px; z-index: 5; }
+  @media (max-width: 980px) {
+    .shell { display: block; }
+    .side { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+    .side nav { grid-template-columns: 1fr 1fr; }
+    main { padding: 30px 22px 60px; }
+    .grid3 { grid-template-columns: 1fr; }
+    .grid2 { grid-template-columns: 1fr; }
+  }
+  @media print {
+    @page { size: A4; margin: 14mm; }
+    .side, .top-link, .copy { display: none; }
+    .shell { display: block; }
+    main { padding: 0; }
+    section { break-inside: avoid; }
+    pre { white-space: pre-wrap; }
+  }
+</style>
+<style>
+  :root {
+    --ink: #000000;
+    --paper: #ffffff;
+    --card: #ffffff;
+    --muted: #555555;
+    --line: #d7d7d7;
+    --teal: #000000;
+    --teal-soft: #efefef;
+    --orange: #000000;
+    --orange-soft: #efefef;
+    --dark: #000000;
+    --dark-ink: #ffffff;
+  }
+  .side { background: #f5f5f5; }
+  .side a:hover { background: #e5e5e5; }
+  .side .brand span { color: #000000; }
+  .kicker, .section-head .num, .table th { color: #000000; }
+  .badge.ok, .badge.hot { border-color: #000000; color: #000000; }
+  .pill.ok { color: #ffffff; background: #000000; }
+  .pill.warn { color: #000000; background: #e5e5e5; }
+  .pill.hot { color: #ffffff; background: #000000; }
+  .callout, .ok { border-left-color: #000000; }
+  .step:before { background: #000000; }
+  .checklist li:before { color: #000000; }
+  a { text-decoration-color: #999999; }
+  .copy { border-color: #555555; background: #111111; color: #ffffff; }
+  .copy:hover { background: #222222; }
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <div class="brand">DevAgentKit<br><span style="color:var(--orange)">formación</span></div>
+    <div class="sub">Guía técnica del formador · plan de 4 sesiones</div>
+    <nav aria-label="Índice">
+      <a href="#objetivo"><strong>01</strong> Objetivo y formato</a>
+      <a href="#plan"><strong>02</strong> Plan de sesiones</a>
+      <a href="#estado"><strong>03</strong> Estado real</a>
+      <a href="#requisitos"><strong>04</strong> Requisitos y seguridad</a>
+      <a href="#mapa"><strong>05</strong> Mapa técnico</a>
+      <a href="#instalacion"><strong>06</strong> Instalación</a>
+      <a href="#flujo"><strong>07</strong> Flujo diario</a>
+      <a href="#verify"><strong>08</strong> Verify y E2E</a>
+      <a href="#gga"><strong>09</strong> GGA por perfil</a>
+      <a href="#demos"><strong>10</strong> Demos y fallos</a>
+      <a href="#evaluacion"><strong>11</strong> Evaluación</a>
+      <a href="#problemas"><strong>12</strong> Problemas y límites</a>
+      <a href="#recursos"><strong>13</strong> Recursos</a>
+    </nav>
+    <div class="foot">Versión de preparación · 2026-11-25<br>No contiene credenciales ni datos de cliente.</div>
+  </aside>
+
+  <main>
+    <header class="hero" id="objetivo">
+      <div class="kicker">01 · Formación interna · material del formador</div>
+      <h1>Enseñar el flujo, no la herramienta.</h1>
+      <p class="lede">Guía para preparar y conducir la formación de DevAgentKit con el equipo. La presentación de compañeros explica el qué y el porqué; este documento guarda el cómo, los comandos, las demos y lo que no se puede prometer.</p>
+      <div class="hero-meta">
+        <span class="badge ok">4 sesiones propuestas</span>
+        <span class="badge">Odoo 11 · PHP 8 · hexagonal</span>
+        <span class="badge">guard · verify · E2E</span>
+        <span class="badge hot">producción fuera</span>
+      </div>
+    </header>
+
+    <section id="plan">
+      <div class="section-head"><div><div class="kicker">02 · Diseño de la formación</div><h2>Plan de cuatro sesiones</h2></div><div class="num">02</div></div>
+      <p>Propuesta ajustable. Cada sesión termina con una evidencia observable, no con una explicación. La primera sesión instala y mira; la segunda ejecuta el flujo completo; la tercera discute perfiles y criterio; la cuarta explica el trabajo repartido entre agentes.</p>
+      <table class="table">
+        <thead><tr><th>Sesión</th><th>Duración</th><th>Objetivo observable</th><th>Evidencia de salida</th></tr></thead>
+        <tbody>
+          <tr><td>1 · Mapa y primera puerta</td><td>90 min</td><td>Instalar en un repo desechable, ejecutar doctor, explicar guard y sus estados.</td><td>Repo con .dev-agent, guard ejecutado y salida comentada.</td></tr>
+          <tr><td>2 · Verify y E2E</td><td>120 min</td><td>Configurar verify, ejecutar tests y un flujo Playwright, leer la evidencia y provocar un fallo.</td><td>summary.json con e2e pass; e2e/report y traza.</td></tr>
+          <tr><td>3 · Perfiles y GGA</td><td>90 min</td><td>Elegir perfil, cargar sus reglas GGA, revisar un diff y decidir con evidencia.</td><td>Diff revisado, reglas del perfil y checklist final.</td></tr>
+          <tr><td>4 · Equipo y roles</td><td>60 min</td><td>Renderizar un agente por rol, explicar el traspaso por referencia y ejecutar team-run en seco.</td><td>roles.json, roles renderizados, --check y team-run --dry-run.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><b>Regla de pacing:</b> no se avanza a la sesión 2 sin que todos hayan visto un guard real y entiendan que <code>skipped</code> no es verde. En la sesión 2, no se avanza al E2E hasta que verify deje un summary legible.</div>
+    </section>
+
+    <section id="estado">
+      <div class="section-head"><div><div class="kicker">03 · Estado real</div><h2>Qué está en main y qué está en rama</h2></div><div class="num">03</div></div>
+      <p>La revisión del código no es la misma si se lee <code>origin/main</code> que la rama local de trabajo. Esta tabla separa lo integrado de lo que todavía no está en GitHub.</p>
+      <table class="table">
+        <thead><tr><th>Repo</th><th>origin/main</th><th>Rama local</th><th>Qué añade la rama</th></tr></thead>
+        <tbody>
+          <tr><td>dev-agent-kit</td><td><code>34093d5</code></td><td><code>fix/opencode-agents-dir</code> · <code>c44903b</code></td><td>Un agente por rol desde <code>roles.json</code>; juez de OpenCode v2 en <code>.opencode/agents/</code>, con permisos de solo lectura.</td></tr>
+          <tr><td>dev-agent-profiles</td><td><code>7ac589d</code></td><td><code>feat/team-profile</code> · <code>28fc70d</code></td><td>Perfil <code>team</code> 0.1.3: contrato de cinco roles, guard, GGA, <code>team-run.sh</code> y tests.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><b>No está integrado.</b> Si la formación se hace desde el clon de GitHub, no presentes <code>team</code> ni <code>dev-agent roles</code> como disponibles: están en la rama local. Se integran o se explican como propuesta, nunca como verde.</div>
+    </section>
+
+    <section id="requisitos">
+      <div class="section-head"><div><div class="kicker">04 · Antes de empezar</div><h2>Requisitos y seguridad</h2></div><div class="num">04</div></div>
+      <div class="grid2">
+        <div class="card"><h3>Entorno</h3><ul><li>Git y terminal; Docker si el repo lo usa.</li><li>Node 20+ y npm para Playwright.</li><li>Python 3.8+ para el núcleo y los perfiles.</li><li>Un repo de desarrollo desechable o una rama de laboratorio.</li><li>Acceso al repo de perfiles y, si aplica, a tech-doc.</li></ul></div>
+        <div class="card"><h3>Límites que se dicen en voz alta</h3><ul><li>Nada de producción, bases compartidas ni datos de cliente.</li><li>Sin tokens ni claves en el repo, la configuración o las capturas.</li><li>El push, el merge y el release son humanos.</li><li>El CI de Scalpers no se modifica desde esta formación.</li><li>Un hook se puede saltar; el CI y la revisión siguen siendo la garantía.</li></ul></div>
+      </div>
+      <div class="callout"><b>Prerrequisito bloqueante:</b> si falta el proveedor aprobado para GGA, la formación puede explicar el flujo y ejecutar guard/verify, pero no debe fingir una revisión GGA. Se resuelve el acceso o se aplaza esa parte.</div>
+    </section>
+
+    <section id="mapa">
+      <div class="section-head"><div><div class="kicker">05 · Arquitectura</div><h2>Mapa técnico</h2></div><div class="num">05</div></div>
+      <div class="grid3">
+        <div class="card"><h3>dev-agent-kit</h3><p>Contrato neutral: AGENTS, skills, comandos, juez, guard, verify, hooks, evals, e2e, instalador. No contiene Odoo ni PHP.</p></div>
+        <div class="card"><h3>dev-agent-profiles</h3><p>Odoo 11, PHP 8, hexagonal y team. Cada perfil aporta guard, verify, skills, evals y su <code>gga/REVIEW-RULES.md</code>.</p></div>
+        <div class="card"><h3>scalpers-tech-doc</h3><p>Norma de empresa canónica. Se enlaza en <code>~/.agents/AGENTS.md</code>; no se copia. El check falla cerrado si el clon no está limpio.</p></div>
+      </div>
+      <div class="code-wrap"><button class="copy" data-copy="#tree">Copiar</button><pre id="tree">repo-de-desarrollo/
+├── AGENTS.md
+├── skills/ commands/ agents/ verify/ guard/ evals/
+├── e2e/                      Playwright: config, package, tests/
+├── .dev-agent/               perfil activo y config local (no se versiona)
+├── .git/hooks/pre-commit     guard --staged
+└── .git/hooks/pre-push       verify/run.sh</pre></div>
+      <p>El repo de producto solo recibe el kit y el perfil activo. <code>team</code> no es un perfil de lenguaje: se activa sobre un perfil base y delega en él los checks del lenguaje. El perfil no se convierte en una copia del producto ni la norma se duplica dentro del kit.</p>
+    </section>
+
+    <section id="instalacion">
+      <div class="section-head"><div><div class="kicker">06 · Puesta en marcha</div><h2>Instalación y configuración</h2></div><div class="num">06</div></div>
+      <div class="steps">
+        <div class="step"><b>Clonar el kit y abrir el instalador.</b><p>Una línea, sin <code>curl | bash</code>; el instalador se puede leer antes de ejecutar.</p></div>
+        <div class="step"><b>Elegir perfil, perfil activo y agentes.</b><p>El menú descubre los perfiles; se puede instalar uno, varios o todos. Siempre queda un perfil activo.</p></div>
+        <div class="step"><b>Decidir extras.</b><p>El instalador pregunta también por Engram, GGA, gentle-ai y Claude: si faltan, los instala, configura el MCP de Engram y copia las skills globales. Después pregunta por las herramientas de guard (ruff, black, mypy, eslint, tsc, gitleaks), CodeGraph, Engram, tech-doc y el harness E2E. Si falta una herramienta opcional, avisa; si falla una obligatoria, para.</p></div>
+        <div class="step"><b>Cerrar con doctor.</b><p>El doctor separa instalado, opcional y FAIL. Un warn no es verde.</p></div>
+      </div>
+      <div class="code-wrap"><button class="copy" data-copy="#install">Copiar</button><pre id="install">git clone https://github.com/ScalpersCompany/dev-agent-kit.git "$HOME/.dev-agent-kit"
+"$HOME/.dev-agent-kit/install.sh"</pre></div>
+      <p>Para un laboratorio pequeño y no interactivo, el kit también ofrece <code>scripts/bootstrap.sh</code> con <code>--profile</code> y <code>--with-verify</code>; no instala CodeGraph, Engram ni tech-doc si no se piden. No es el camino principal de la formación; sirve para repetir el laboratorio.</p>
+      <div class="code-wrap"><button class="copy" data-copy="#bootstrap">Copiar</button><pre id="bootstrap">bash scripts/bootstrap.sh /ruta/al/repo-desechable --profile odoo11 --with-verify</pre></div>
+      <div class="callout"><b>No copies <code>verify/config.env</code> de tu máquina.</b> El perfil se copia con su ejemplo; la configuración real es local y puede contener rutas o comandos que no sirven en otro entorno.</div>
+      <h3>Procedimiento verificado, de la descarga al primer verify</h3>
+      <div class="steps">
+        <div class="step"><b>Comprobar el target.</b><p>Entra en el repo de desarrollo, no en producción. Comprueba que es el repo Odoo Doodba y que el árbol está limpio o que sus cambios están identificados.</p></div>
+        <div class="step"><b>Descargar el kit.</b><p>El clon queda en el home del usuario. No se instala nada en el repo todavía.</p></div>
+        <div class="step"><b>Ejecutar el instalador.</b><p>Elige perfil <code>odoo11</code>, el perfil activo, los agentes y los extras. El instalador respalda lo que reemplaza y crea <code>.dev-agent/</code>, <code>verify/</code>, hooks y <code>e2e/</code>.</p></div>
+        <div class="step"><b>Leer el doctor.</b><p><code>ok</code> es requerido, <code>warn</code> es opcional o pendiente y <code>FAIL</code> es un bloqueo. Un <code>warn</code> no se pinta verde.</p></div>
+        <div class="step"><b>Configurar verify.</b><p>Rellena el comando de tests del repo y el comando E2E si el cambio tiene UI. No uses la base compartida ni producción.</p></div>
+        <div class="step"><b>Ejecutar las puertas.</b><p>Primero guard sobre un cambio staged; después verify. La primera vez, verify debe salir 2 si no hay comandos: eso es configuración incompleta, no un pass.</p></div>
+        <div class="step"><b>Instalar GGA.</b><p>Añade las reglas del perfil y ejecuta la revisión bloqueante. No ejecutes <code>gga install</code>.</p></div>
+        <div class="step"><b>Cerrar con evidencia.</b><p>Deja <code>summary.json</code>, el informe E2E y el veredicto de GGA. El merge y el push siguen siendo humanos.</p></div>
+      </div>
+      <div class="code-wrap"><button class="copy" data-copy="#runbook">Copiar</button><pre id="runbook"># 1. Target: repo de desarrollo, nunca producción
+cd /ruta/a/odoo-doodba-template
+git status
+
+# 2. Descargar el kit
+git clone https://github.com/ScalpersCompany/dev-agent-kit.git "$HOME/.dev-agent-kit"
+
+# 3. Instalador principal: pregunta y ejecuta cada pieza
+#    (toolchain Engram/GGA/gentle/Claude, MCP, skills, E2E, Chromium, GGA y verify)
+DEV_AGENT_PROFILES="$HOME/dev-agent-profiles" \
+  bash "$HOME/.dev-agent-kit/install.sh" \
+  --target /ruta/a/odoo-doodba-template \
+  --profiles odoo11 --active odoo11 \
+  --agents claude,opencode
+
+# 4. Doctor; los warn son opcionales, los FAIL bloquean
+~/.local/bin/dev-agent doctor
+~/.local/bin/dev-agent profile list
+# si el wrapper no está en PATH:
+# "$HOME/.dev-agent-kit/bin/dev-agent" doctor
+
+# 5. El instalador ya escribe la configuración de E2E y de verify.
+#    Revisa las rutas y comandos antes de ejecutar la primera puerta:
+sed -n '1,120p' verify/config.env
+# si no configuraste E2E o tests en el asistente, edita ahora los comandos reales
+# (nunca la base compartida ni producción).
+
+# 6. Primera puerta
+git add <archivo>
+bash guard/guard.sh --staged
+
+# 7. GGA: el instalador ya copió las reglas del perfil y, si dijiste que sí,
+#    dejó el pre-push preparado. La revisión se lanza aparte:
+bash scripts/review-gga.sh . --blocking --pr-mode --diff-only
+
+# 8. E2E: el instalador ya instaló npm/Chromium y escribió E2E_CMD/E2E_BASE_URL.
+#    Solo faltan las specs del flujo real; ejecuta:
+bash verify/run.sh</pre></div>
+      <div class="callout"><b>Checkpoint real de la formación:</b> el instalador termina con un smoke de toolchain (binarios, MCP de Engram y skills) y con el doctor; no confundas ese smoke con verify. El doctor termina con <code>núcleo correcto; los warn son opcionales o pendientes</code>; <code>profile list</code> marca <code>* odoo11</code>; los hooks existen; y si no configuras ningún comando, <code>verify</code> sale 2. Si configuras E2E sin servidor o sin specs, saldrá 1; eso no es un pass. Un <code>guard</code> sin staged puede imprimir <code>guard: passed</code> con <code>comments skipped</code>: no es una prueba del cambio.</div>
+      <details><summary>Ejemplo de TEST_CMD para Odoo 11 en Doodba</summary>
+        <p>El comando de test no se inventa: se toma del repo y se ejecuta contra una base desechable. Este ejemplo está documentado en el perfil; cambia el módulo y la base por los del cambio.</p>
+        <pre>DB="test_devkit_verify_$(date +%Y%m%d_%H%M%S)"
+docker compose -f devel.yaml run --rm --entrypoint odoo odoo \
+  --config=/opt/odoo/auto/odoo.conf -d "$DB" \
+  -i scalpers_partner_vat_unique --stop-after-init --workers=0 --log-level=info
+docker compose -f devel.yaml run --rm --entrypoint odoo odoo \
+  --config=/opt/odoo/auto/odoo.conf -d "$DB" \
+  -u scalpers_partner_vat_unique --test-enable --stop-after-init --workers=0 --log-level=test</pre>
+        <p>En <code>verify/config.env</code>, guarda ese bloque como <code>TEST_CMD</code> o llámalo desde un script del repo. El <code>--entrypoint odoo</code> evita el entrypoint de Doodba que falla si los enlaces de addons ya existen. No uses la base <code>scalpers</code> compartida ni producción.</p>
+      </details>
+    </section>
+
+    <section id="flujo">
+      <div class="section-head"><div><div class="kicker">07 · Operación</div><h2>Flujo diario</h2></div><div class="num">07</div></div>
+      <div class="grid3">
+        <div class="card"><h3>1 · Contexto</h3><p>Leer AGENTS y el fragmento del perfil; abrir la skill que corresponde. El agente no improvisa el proceso.</p></div>
+        <div class="card"><h3>2 · Reproducir</h3><p>Bug: test rojo primero. Feature: criterio de aceptación antes de escribir. Sin esto, no hay verificación real.</p></div>
+        <div class="card"><h3>3 · Implementar</h3><p>Código, tests y documentación en el mismo cambio. Sin comentarios de prosa; docstrings, <code>help</code> y README son documentación.</p></div>
+        <div class="card"><h3>4 · Guard</h3><p>Comprueba lo staged: perfil, comentarios y checks del lenguaje. Es rápido; no es la prueba completa.</p></div>
+        <div class="card"><h3>5 · Verify</h3><p>Arranca, comprueba salud, ejecuta smoke, tests y E2E; deja evidencia por commit.</p></div>
+        <div class="card"><h3>6 · Revisión</h3><p>Una persona lee el diff y la evidencia. GGA es la segunda revisión cuando se ejecuta; no decide el merge.</p></div>
+      </div>
+      <div class="code-wrap"><button class="copy" data-copy="#daily">Copiar</button><pre id="daily">git switch -c feat/mi-cambio
+bash guard/guard.sh --staged
+bash verify/run.sh
+git add .
+git commit -m "feat: ..."</pre></div>
+      <p>El pre-commit ejecuta guard; el pre-push ejecuta verify con <code>.dev-agent/verify.env</code>. Si no hay <code>TEST_CMD</code> ni <code>E2E_CMD</code>, el hook falla cerrado. <code>--no-verify</code> salta el hook local, no el CI.</p>
+    </section>
+
+    <section id="verify">
+      <div class="section-head"><div><div class="kicker">08 · Evidencia</div><h2>Verify y E2E con Playwright</h2></div><div class="num">08</div></div>
+      <p>Verify es la prueba de comportamiento. El E2E no es un smoke: empieza en la entrada pública, recorre el flujo real y comprueba el resultado visible o persistido. El kit trae el baseline; cada cambio añade su spec.</p>
+      <div class="grid2">
+        <div class="card"><h3>Qué ejecuta</h3><ul><li><code>BOOT_CMD</code> y <code>HEALTH_URL</code> si están configurados.</li><li><code>SMOKE_CMD</code>.</li><li><code>TEST_CMD</code>.</li><li><code>E2E_CMD</code>, después de los tests.</li></ul></div>
+        <div class="card"><h3>Qué deja</h3><ul><li><code>evidence/&lt;run-id&gt;/summary.json</code> con <code>e2e</code>.</li><li><code>e2e/report/index.html</code> y <code>junit.xml</code>.</li><li><code>e2e/report/results.json</code>.</li><li><code>e2e/test-results/</code> con trazas, capturas o vídeos de fallo.</li></ul></div>
+      </div>
+      <div class="callout"><b>El instalador ya hace la parte de instalación.</b> Pregunta si quieres dependencias npm y Chromium, y escribe <code>E2E_CMD</code>, <code>E2E_BASE_URL</code> y <code>E2E_HEALTH_PATH</code> en <code>verify/config.env</code> y en <code>.dev-agent/verify.env</code>. Lo que no puede adivinar es la URL real de tu aplicación ni las specs de negocio: esos dos datos son tuyos.</div>
+      <div class="code-wrap"><button class="copy" data-copy="#e2einstall">Copiar</button><pre id="e2einstall"># Si en el asistente dijiste que sí, esto ya está hecho.
+# Para repetirlo a mano:
+( cd e2e && npm install )
+( cd e2e && npx playwright install chromium )
+# Revisa y ajusta la URL local en ambos ficheros:
+grep -E '^E2E_' verify/config.env .dev-agent/verify.env
+bash verify/run.sh</pre></div>
+      <table class="table">
+        <thead><tr><th>Pieza</th><th>¿La instala el instalador principal?</th><th>Qué queda manual</th></tr></thead>
+        <tbody>
+          <tr><td>Harness Playwright</td><td>Sí: <code>e2e/</code> y el script</td><td>Añadir las specs del flujo real.</td></tr>
+          <tr><td>Dependencias npm y Chromium</td><td>Sí, si respondes que sí</td><td>Confirmar que hay red; el instalador no instala en silencio.</td></tr>
+          <tr><td>Configuración E2E</td><td>Sí: pregunta y escribe ambos ficheros</td><td>La URL real de tu app y el comando de tests del repo.</td></tr>
+          <tr><td>Ejecución y evidencia</td><td>Pregunta si quieres ejecutar verify</td><td>Revisar <code>evidence/&lt;run-id&gt;/e2e/</code> y las trazas.</td></tr>
+          <tr><td>GGA</td><td>Sí: reglas y pre-push opcional</td><td>Decidir el proveedor y revisar el diff con criterio.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><b>Un smoke no es un E2E.</b> Un test que se salta, que no se descubre o que no deja artefacto no es evidencia. Si el cambio toca una UI o un flujo de usuario, GGA bloqueará sin la suite y su reporte.</div>
+      <p>El baseline <code>e2e/tests/health.spec.ts</code> solo comprueba que la aplicación responde y renderiza. Las specs de negocio se escriben en <code>e2e/tests/</code>, con selectores de usuario y aserciones sobre el resultado. No se mockea la aplicación bajo prueba; los proveedores externos usan un fake local o una cassette.</p>
+    </section>
+
+    <section id="gga">
+      <div class="section-head"><div><div class="kicker">09 · Criterio</div><h2>GGA por perfil</h2></div><div class="num">09</div></div>
+      <p>El núcleo aporta reglas agnósticas. El perfil activo añade su <code>gga/REVIEW-RULES.md</code> y el instalador compone ambos. Odoo no hereda las reglas de PHP ni al contrario.</p>
+      <table class="table">
+        <thead><tr><th>Perfil</th><th>Qué añade a GGA</th><th>Qué no puede hacer</th></tr></thead>
+        <tbody>
+          <tr><td>odoo11</td><td>Manifest y versión, CHANGELOG/README, flake8, pylint obligatorio, check-xml, pipeline, OCA/ORM, seguridad, migraciones, colas y patrones de MR reales.</td><td>No ejecuta el pipeline ni el lint; exige la evidencia del SHA de cabeza.</td></tr>
+          <tr><td>php</td><td>Strict types, PSR-12, PHPStan, PHPCS, PHPUnit, Composer, seguridad de aplicación y E2E.</td><td>El perfil sigue siendo esqueleto: sus checks de guard no están cableados todavía.</td></tr>
+          <tr><td>hexagonal</td><td>Dominio puro, contrato primero, idempotencia, resultados del proveedor, problem+json, persistencia, tests, Docker y E2E.</td><td>No puede demostrar un flujo de negocio que no exista como spec.</td></tr>
+          <tr><td>team</td><td>Coordinación multiagente: plan, dev, review, verify y judge; superficie de escritura, traspaso por referencia, roles de solo lectura y evidencia. Delega el lenguaje en el perfil base.</td><td>No es un perfil de lenguaje y no sustituye al perfil base.</td></tr>
+        </tbody>
+      </table>
+      <div class="code-wrap"><button class="copy" data-copy="#ggacmd">Copiar</button><pre id="ggacmd"># El instalador principal ya copió las reglas del perfil y preguntó por el pre-push.
+# Para rehacerlo a mano:
+bash scripts/install-gga.sh . --profile "$HOME/dev-agent-profiles/profiles/odoo11"
+bash scripts/review-gga.sh . --blocking --pr-mode --diff-only
+# opcional: bloquear también el pre-push
+bash scripts/install-gga.sh . --profile "$HOME/dev-agent-profiles/profiles/odoo11" --with-pre-push</pre></div>
+      <div class="callout"><b>GGA no es la puerta determinista.</b> Guard y verify son la puerta; GGA es la segunda revisión semántica. No se ejecuta <code>gga install</code>: pisaría el pre-commit del kit.</div>
+      <div class="grid2" style="margin-top:16px">
+        <div class="card"><h3>Trabajo repartido</h3><p>El perfil <code>team</code> fija quién escribe, quién revisa y quién verifica. Los roles se generan desde <code>roles.json</code>; el contrato es la fuente de verdad y <code>--check</code> detecta un agente atrasado.</p></div>
+        <div class="code-wrap"><button class="copy" data-copy="#team">Copiar</button><pre id="team">dev-agent roles claude --check
+dev-agent roles opencode --check
+.dev-agent/profiles/team/bin/team-run.sh . --spec odd/tasks/&lt;feature&gt;.md --dry-run</pre></div>
+      </div>
+    </section>
+
+    <section id="demos">
+      <div class="section-head"><div><div class="kicker">10 · Aula</div><h2>Demos, fallos deliberados y preguntas</h2></div><div class="num">10</div></div>
+      <div class="grid2">
+        <div class="card"><h3>Demo 1 · Instalación y doctor</h3><p>Repo desechable, instalación, perfil activo y doctor. Pregunta: ¿qué señal es <code>warn</code> y por qué no es verde?</p></div>
+        <div class="card"><h3>Demo 2 · Guard y verify</h3><p>Comentario de prosa staged → guard falla; config vacía → verify sale 2; config real → summary y e2e pasan.</p></div>
+        <div class="card"><h3>Demo 3 · E2E con fallo</h3><p>Cambiar una aserción o apuntar a una ruta inexistente; abrir el HTML, la traza y la captura. Pregunta: ¿qué falta para que sea evidencia?</p></div>
+        <div class="card"><h3>Demo 4 · GGA</h3><p>Instalar reglas del perfil, revisar un diff y leer un hallazgo. Pregunta: ¿qué puede comprobar GGA y qué debe venir del pipeline?</p></div>
+      </div>
+      <div class="code-wrap"><button class="copy" data-copy="#fallos">Copiar</button><pre id="fallos"># Fallo deliberado 1: comentario de prosa
+printf '# esto explica el cambio\n' >> ejemplo.py
+git add ejemplo.py
+bash guard/guard.sh --staged
+
+# Fallo deliberado 2: verify sin configuración
+printf 'TEST_CMD=""\nE2E_CMD=""\n' > verify/config.env
+bash verify/run.sh   # exit 2, no es verde
+
+# Fallo deliberado 3: E2E que no llega
+E2E_BASE_URL="http://127.0.0.1:9" bash verify/run.sh
+# leer evidence/&lt;run-id&gt;/e2e/report y test-results</pre></div>
+      <p>Después de cada fallo, el formador pregunta qué artefacto falta y qué se podría afirmar sin él. La respuesta correcta nunca es “lo he probado en local”.</p>
+    </section>
+
+    <section id="evaluacion">
+      <div class="section-head"><div><div class="kicker">11 · Cierre</div><h2>Evaluación y checklist</h2></div><div class="num">11</div></div>
+      <div class="grid2">
+        <div class="card"><h3>El alumno sabe…</h3><ul class="checklist"><li>Explicar qué es el kit y qué no es.</li><li>Instalar en un repo desechable y leer doctor.</li><li>Distinguir skipped, exit 2, FAIL y PASS.</li><li>Configurar verify y ejecutar un E2E.</li><li>Leer summary y e2e/report.</li><li>Elegir perfil y explicar por qué GGA es por perfil.</li><li>Decir qué falta cuando no hay evidencia.</li></ul></div>
+        <div class="card"><h3>Evidencias mínimas</h3><ul class="checklist"><li>Salida de guard sobre un cambio staged.</li><li>Summary con tests y e2e en pass.</li><li>HTML/JUnit/JSON y traza de un fallo.</li><li>Diff revisado con un hallazgo GGA.</li><li>Checklist de límites y seguridad.</li></ul></div>
+      </div>
+      <div class="callout"><b>No se evalúa una presentación:</b> se evalúa una ejecución con salida real. Un alumno que no puede mostrar el summary no ha completado la sesión.</div>
+    </section>
+
+    <section id="problemas">
+      <div class="section-head"><div><div class="kicker">12 · Realidad</div><h2>Problemas frecuentes y límites</h2></div><div class="num">12</div></div>
+      <details><summary>El instalador no encuentra perfiles</summary><p>Comprueba <code>DEV_AGENT_PROFILES</code> o clona dev-agent-profiles. El instalador intenta clonarlo; si no hay acceso, el núcleo puede seguir sin perfil, pero no lo presentes como instalación completa.</p></details>
+      <details><summary>Guard dice skipped</summary><p>No hay staged o falta el perfil activo. No es un pass. Para la demo, stagea un fichero y ejecuta <code>bash guard/guard.sh --staged</code>.</p></details>
+      <details><summary>Verify sale 2</summary><p>No hay <code>SMOKE_CMD</code>, <code>TEST_CMD</code> ni <code>E2E_CMD</code>. Rellena la configuración local; no la copies de otra máquina.</p></details>
+      <details><summary>Playwright no arranca</summary><p>Falta <code>npm install</code> o <code>npx playwright install chromium</code>. Comprueba <code>E2E_BASE_URL</code> antes de culpar al test. El fallo debe dejar traza y captura.</p></details>
+      <details><summary>El hook no ve la configuración</summary><p>El pre-push usa <code>.dev-agent/verify.env</code>, no <code>verify/config.env</code>. Si usas una GUI de git, puede no heredar variables de entorno; exporta <code>DEV_AGENT_KIT</code> o usa la terminal.</p></details>
+      <details><summary>El perfil PHP no está cableado</summary><p>El perfil y sus reglas GGA existen, pero PHPStan/PHPCS/PHPUnit en guard siguen pendientes. No presentes el perfil como completamente operativo.</p></details>
+      <details><summary>GGA no puede ver el pipeline</summary><p>GGA lee el diff y la evidencia; no ejecuta git, lint ni CI. Debe exigir el pipeline id y estado del SHA de cabeza. Si no están, no es PASS.</p></details>
+      <details><summary>El E2E es solo el baseline</summary><p><code>health.spec.ts</code> no es la suite completa. Cada flujo de usuario necesita su spec; GGA bloquea una UI sin ella.</p></details>
+      <div class="callout"><b>Límites que se dicen:</b> el CI de producto no se toca; el push/merge/release son humanos; el kit no despliega; el hook se puede saltar; un warn no es verde.</div>
+    </section>
+
+    <section id="recursos">
+      <div class="section-head"><div><div class="kicker">13 · Material</div><h2>Recursos para preparar</h2></div><div class="num">13</div></div>
+      <div class="grid2">
+        <div class="card"><h3>Documentación</h3><ul><li><code>docs/INSTALACION-Y-FUNCIONAMIENTO.md</code></li><li><code>docs/USO-RAPIDO.md</code></li><li><code>docs/OPERATIONS.md</code></li><li><code>docs/FORMACION-DEV-AGENT-KIT.md</code></li><li><code>docs/CREAR-PERFIL.md</code></li><li><code>docs/EQUIPO-MULTI-AGENTE.md</code></li><li><code>docs/formacion/guia-equipo.html</code> — guía conceptual para el equipo.</li></ul></div>
+        <div class="card"><h3>Presentaciones</h3><ul><li><code>docs/formacion/plan-formacion-equipo.html</code> — la que se proyecta al equipo.</li><li><code>docs/formacion/dev-agent-kit-formacion.html</code> — taller anterior, si se reutiliza.</li></ul></div>
+        <div class="card"><h3>Repositorios</h3><ul><li><code>https://github.com/ScalpersCompany/dev-agent-kit</code></li><li><code>https://github.com/ScalpersCompany/dev-agent-profiles</code></li><li><code>https://github.com/ScalpersCompany/scalpers-tech-doc</code></li><li><code>dev-agent-profiles/profiles/team</code> — contrato de roles, team-run y tests.</li></ul></div>
+        <div class="card"><h3>Antes de la sesión</h3><ul><li>Probar la instalación en el repo desechable.</li><li>Probar guard, verify y E2E una vez.</li><li>Comprobar que el proveedor aprobado responde.</li><li>Preparar un fallo real y su artefacto.</li><li>Revisar que no hay secretos en la pantalla compartida.</li></ul></div>
+      </div>
+      <div class="footer"><span><b>DevAgentKit</b> · guía técnica del formador</span><span>Documento de preparación · sin datos de producción</span></div>
+    </section>
+  </main>
+</div>
+<a class="top-link" href="#objetivo" aria-label="Volver al inicio">↑ Inicio</a>
+<script>
+  document.querySelectorAll('.copy').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const target = document.querySelector(button.dataset.copy);
+      if (!target) return;
+      try {
+        await navigator.clipboard.writeText(target.textContent);
+        const old = button.textContent;
+        button.textContent = 'Copiado';
+        setTimeout(() => { button.textContent = old; }, 1200);
+      } catch (error) {
+        button.textContent = 'Selecciona y copia';
+        setTimeout(() => { button.textContent = 'Copiar'; }, 1600);
+      }
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guía del equipo — DevAgentKit: skills, perfiles y juez</title>
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #000000;
+    --paper: #ffffff;
+    --card: #ffffff;
+    --muted: #555555;
+    --line: #d7d7d7;
+    --soft: #f4f4f4;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --serif: ui-serif, Georgia, "Times New Roman", serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); line-height: 1.55; }
+  a { color: var(--ink); text-decoration-color: #999; }
+  .shell { display: grid; grid-template-columns: 260px minmax(0, 1fr); max-width: 1480px; margin: 0 auto; }
+  .side { position: sticky; top: 0; height: 100vh; overflow: auto; padding: 30px 20px 30px 26px; border-right: 1px solid var(--line); background: var(--soft); }
+  .brand { font-family: var(--serif); font-size: 27px; line-height: 1.03; letter-spacing: -.04em; }
+  .brand span { display: block; font-size: 18px; letter-spacing: -.01em; margin-top: 3px; }
+  .sub { color: var(--muted); font-size: 12px; margin-top: 9px; }
+  nav { display: grid; gap: 2px; margin-top: 25px; }
+  nav a { display: block; text-decoration: none; color: var(--muted); font-size: 13px; padding: 7px 8px; border-radius: 6px; }
+  nav a:hover { background: #e7e7e7; color: var(--ink); }
+  nav a strong { color: var(--ink); font-weight: 700; }
+  .side .foot { margin-top: 28px; padding-top: 15px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; }
+  main { min-width: 0; padding: 42px 54px 80px; }
+  .hero { border-bottom: 1px solid var(--line); padding-bottom: 32px; }
+  .kicker { font-size: 11px; letter-spacing: .17em; text-transform: uppercase; color: #000; font-weight: 750; }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; letter-spacing: -.03em; margin: 0; }
+  h1 { font-size: clamp(40px, 5vw, 68px); line-height: .98; max-width: 17ch; margin-top: 12px; }
+  h2 { font-size: clamp(29px, 3vw, 39px); line-height: 1.08; margin-bottom: 10px; }
+  h3 { font-size: 21px; line-height: 1.16; }
+  p { color: var(--muted); font-size: 16px; margin: 0 0 12px; }
+  .lede { color: var(--ink); font-size: 19px; max-width: 66ch; margin-top: 16px; }
+  .meta { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 21px; }
+  .badge { border: 1px solid var(--line); background: var(--paper); border-radius: 999px; padding: 5px 10px; font-size: 12px; color: var(--muted); }
+  .badge.hot { border-color: #000; color: #000; }
+  section { padding: 32px 0 8px; border-bottom: 1px solid var(--line); }
+  .head { display: flex; justify-content: space-between; gap: 20px; align-items: start; margin-bottom: 16px; }
+  .head .num { font-family: var(--mono); font-size: 11px; color: #000; padding-top: 8px; white-space: nowrap; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 11px; padding: 18px 20px; }
+  .card h3 { font-size: 19px; }
+  .card p { font-size: 14px; margin: 7px 0 0; }
+  .card ul { margin: 8px 0 0 18px; padding: 0; color: var(--muted); font-size: 14px; }
+  .card li { margin: 4px 0; }
+  .note { border-left: 3px solid #000; padding: 10px 0 10px 16px; margin: 15px 0; color: var(--muted); font-size: 15px; }
+  .note b { color: var(--ink); }
+  .table { width: 100%; border-collapse: collapse; margin: 13px 0 8px; font-size: 14px; }
+  .table th { text-align: left; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #000; border-bottom: 2px solid #000; padding: 0 8px 8px 0; }
+  .table td { border-bottom: 1px solid var(--line); padding: 9px 8px 9px 0; vertical-align: top; color: var(--muted); }
+  .table td:first-child { color: var(--ink); font-weight: 650; }
+  .code-wrap { position: relative; margin: 12px 0 16px; }
+  pre { background: #000; color: #fff; border-radius: 9px; padding: 15px 17px; overflow: auto; font: 13px/1.55 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
+  .copy { position: absolute; top: 8px; right: 8px; border: 1px solid #666; background: #111; color: #fff; border-radius: 6px; padding: 4px 8px; font: 10px var(--sans); cursor: pointer; }
+  .copy:hover { background: #222; }
+  .steps { counter-reset: step; display: grid; gap: 9px; margin-top: 13px; }
+  .step { position: relative; padding-left: 37px; }
+  .step:before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 0; width: 25px; height: 25px; border-radius: 50%; background: #000; color: #fff; display: grid; place-items: center; font: 700 12px var(--mono); }
+  .step b { color: var(--ink); }
+  .step p { font-size: 14px; margin: 2px 0 0; }
+  details { background: var(--soft); border: 1px solid var(--line); border-radius: 9px; padding: 12px 14px; margin: 8px 0; }
+  summary { cursor: pointer; font-weight: 650; font-size: 14px; }
+  details p, details ul { font-size: 14px; margin-top: 7px; }
+  .quiz { border-top: 1px solid var(--line); margin-top: 18px; padding-top: 14px; }
+  .quiz p { font-size: 14px; }
+  .footer { margin-top: 34px; display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; color: var(--muted); font-size: 12px; }
+  .top-link { position: fixed; right: 18px; bottom: 16px; background: #000; color: #fff; border-radius: 999px; padding: 8px 12px; text-decoration: none; font-size: 12px; z-index: 4; }
+  @media (max-width: 980px) {
+    .shell { display: block; }
+    .side { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+    nav { grid-template-columns: 1fr 1fr; }
+    main { padding: 30px 22px 60px; }
+    .grid2, .grid3 { grid-template-columns: 1fr; }
+  }
+  @media print {
+    @page { size: A4; margin: 14mm; }
+    .side, .top-link, .copy { display: none; }
+    .shell { display: block; }
+    main { padding: 0; }
+    section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <div class="brand">DevAgentKit<span>lo que tienes entre manos</span></div>
+    <div class="sub">Guía del equipo · conceptos y ejemplos</div>
+    <nav aria-label="Índice">
+      <a href="#mapa"><strong>01</strong> El mapa</a>
+      <a href="#skills"><strong>02</strong> Skills</a>
+      <a href="#perfiles"><strong>03</strong> Perfiles</a>
+      <a href="#juez"><strong>04</strong> Juez</a>
+      <a href="#agentes"><strong>05</strong> Agentes</a>
+      <a href="#flujo"><strong>06</strong> El flujo</a>
+      <a href="#chuleta"><strong>07</strong> Chuleta</a>
+      <a href="#practica"><strong>08</strong> Para practicar</a>
+    </nav>
+    <div class="foot">Sin secretos, sin datos de cliente, sin producción.<br>Versión de formación · 2026-11-26.</div>
+  </aside>
+
+  <main>
+    <header class="hero">
+      <div class="kicker">Formación interna · guía del participante</div>
+      <h1>Saber qué tienes entre manos.</h1>
+      <p class="lede">Una guía para entender las piezas que usamos todos los días: qué es una skill, para qué existe un juez separado, qué aporta un perfil y cómo encajan en un cambio real. No es un manual de comandos: es el mapa para que las conversaciones empiecen en el mismo sitio.</p>
+      <div class="meta"><span class="badge">Odoo 11 · PHP 8 · hexagonal</span><span class="badge">skills · perfiles · juez</span><span class="badge hot">la persona decide</span></div>
+    </header>
+
+    <section id="mapa">
+      <div class="head"><div><div class="kicker">01 · El mapa</div><h2>Cuatro repos, tres capas y una puerta.</h2></div><div class="num">01</div></div>
+      <div class="grid3">
+        <div class="card"><h3>dev-agent-kit</h3><p>El contrato neutral: skills, comandos, juez, guard, verify, hooks, evals, e2e e instalador. No contiene Odoo ni PHP.</p></div>
+        <div class="card"><h3>dev-agent-profiles</h3><p>El dominio: Odoo 11, PHP 8, hexagonal y, en rama local, team. Cada perfil añade guard, verify, skills, evals y GGA.</p></div>
+        <div class="card"><h3>scalpers-tech-doc</h3><p>La norma de empresa. Se enlaza, no se copia. Si el clon no está limpio, el check falla cerrado.</p></div>
+      </div>
+      <div class="note"><b>La puerta no es un agente.</b> Guard y verify son comandos; GGA es una segunda revisión; el juez evalúa skills. El agente es la herramienta que usas, no la garantía.</div>
+    </section>
+
+    <section id="skills">
+      <div class="head"><div><div class="kicker">02 · Skills</div><h2>Una skill es un procedimiento que se puede repetir.</h2></div><div class="num">02</div></div>
+      <p>No es un prompt suelto ni una colección de frases. Es un fichero <code>SKILL.md</code> con un nombre, una descripción que dice cuándo usarlo y una secuencia de pasos que termina en una salida verificable. El agente la lee; tú puedes leerla y discutirla.</p>
+      <div class="grid2">
+        <div class="card"><h3>Anatomía</h3><ul><li><code>name</code>: identificador corto.</li><li><code>description</code>: cuándo se usa y qué produce.</li><li>Cuerpo: pasos, criterios de salida, fallos y formato del informe.</li><li><code>references/</code>, <code>scripts/</code> y <code>templates/</code> cuando hacen falta.</li></ul></div>
+        <div class="card"><h3>Dónde vive</h3><ul><li><code>skills/</code> del kit: las cinco core.</li><li><code>profiles/&lt;perfil&gt;/skills/</code>: las del dominio.</li><li>Adaptadores generados en <code>.claude/skills</code> y <code>.opencode/skills</code>.</li><li>La fuente es la del kit o el perfil; los adaptadores no se editan a mano.</li></ul></div>
+      </div>
+      <table class="table">
+        <thead><tr><th>Skill core</th><th>Cuándo</th><th>Qué deja</th></tr></thead>
+        <tbody>
+          <tr><td>dev-verify</td><td>después de un cambio, antes de decir “hecho”</td><td>evidencia y veredicto; no una narración</td></tr>
+          <tr><td>repro-first</td><td>al corregir un bug</td><td>un test rojo que reproduce el fallo</td></tr>
+          <tr><td>review-diff</td><td>antes de revisar</td><td>hallazgos con archivo, línea y veredicto</td></tr>
+          <tr><td>correct</td><td>cuando una corrección se repite</td><td>un lint, test o check que evita la reincidencia</td></tr>
+          <tr><td>query-readonly</td><td>una pregunta de datos</td><td>consulta de solo lectura y evidencia</td></tr>
+        </tbody>
+      </table>
+      <div class="code-wrap"><button class="copy" data-copy="#skillcmd">Copiar</button><pre id="skillcmd"># ver la fuente de una skill
+sed -n '1,80p' skills/dev-verify/SKILL.md
+
+# regenerar los adaptadores del repo
+bash scripts/install-agent-adapters.sh . --agents claude,opencode \
+  --profile "$HOME/dev-agent-profiles/profiles/odoo11"</pre></div>
+      <div class="callout"><b>Regla de oro:</b> si una skill no termina en un comando, un fichero o un veredicto, es una opinión. Una skill se mejora cuando un fallo real muestra que le falta un paso; no se reescribe porque suene mejor.</div>
+      <div class="note"><b>Perfil ≠ skill.</b> La skill dice <i>cómo</i> hacer una tarea; el perfil dice <i>qué</i> significa hacerlo bien en ese stack.</div>
+    </section>
+
+    <section id="perfiles">
+      <div class="head"><div><div class="kicker">03 · Perfiles</div><h2>El perfil pone el lenguaje; el núcleo pone la puerta.</h2></div><div class="num">03</div></div>
+      <p>El kit no sabe Odoo ni PHP. Un perfil declara el lenguaje, sus checks, sus skills y sus reglas GGA. El repo tiene un perfil activo; las reglas de un stack no se heredan en otro.</p>
+      <div class="grid2">
+        <div class="card"><h3>Qué contiene</h3><ul><li><code>profile.json</code> y <code>profile.env</code>.</li><li><code>guard/</code> y <code>verify/</code>.</li><li><code>skills/</code> y <code>evals/</code>.</li><li><code>gga/REVIEW-RULES.md</code>: las reglas de revisión del perfil.</li></ul></div>
+        <div class="card"><h3>Cómo se usa</h3><ul><li>El instalador pregunta qué perfil o perfiles instalar.</li><li>El activo queda en <code>.dev-agent/config</code>.</li><li><code>dev-agent profile list</code> y <code>dev-agent profile use &lt;nombre&gt;</code>.</li><li>No mezcles reglas de Odoo con PHP o hexagonal.</li></ul></div>
+      </div>
+      <table class="table">
+        <thead><tr><th>Perfil</th><th>Qué aporta</th><th>Estado</th></tr></thead>
+        <tbody>
+          <tr><td>odoo11</td><td>Guard, lint, verify, skills de Odoo y GGA con manifest, OCA/ORM, XML y pipeline.</td><td><span class="badge">implementado</span></td></tr>
+          <tr><td>php</td><td>Reglas PHP 8, PSR-12, PHPStan, PHPCS, PHPUnit y GGA. El cableado de guard sigue pendiente.</td><td><span class="badge">esqueleto</span></td></tr>
+          <tr><td>hexagonal</td><td>Dominio puro, contrato, idempotencia, guard, verify, GGA y tests.</td><td><span class="badge">implementado</span></td></tr>
+          <tr><td>team</td><td>Roles plan, dev, review, verify y judge; team-run; delega el lenguaje en el perfil base.</td><td><span class="badge hot">rama local, pendiente</span></td></tr>
+        </tbody>
+      </table>
+      <div class="code-wrap"><button class="copy" data-copy="#profilecmd">Copiar</button><pre id="profilecmd">dev-agent profile list
+dev-agent profile use odoo11
+cat .dev-agent/config</pre></div>
+      <div class="callout"><b>El perfil activo es uno.</b> Puedes instalar varios, pero no se aplican a la vez. Si guard dice <code>profile: skipped</code>, no hay perfil activo o falta su carpeta: no es un pass.</div>
+    </section>
+
+    <section id="juez">
+      <div class="head"><div><div class="kicker">04 · Juez</div><h2>El que ejecuta no se pone las notas.</h2></div><div class="num">04</div></div>
+      <p>El juez es un evaluador separado que lee una rúbrica, la salida de otro agente y los artefactos de la ejecución. Devuelve un JSON con una nota por criterio; el harness calcula la media ponderada y decide si la skill pasa.</p>
+      <div class="grid2">
+        <div class="card"><h3>Cómo funciona</h3><ul><li><code>agents/judge.md</code> es el prompt estricto; solo devuelve JSON.</li><li><code>evals/harness.py</code> ejecuta K copias en un entorno desechable.</li><li>El baseline usa K=3 y umbral 8,5; el rubric manda.</li><li>El juez debe ser un modelo distinto del que ejecutó la skill.</li></ul></div>
+        <div class="card"><h3>Qué no es</h3><ul><li>No es GGA: GGA revisa un diff; el juez puntúa una skill.</li><li>No es el CI: el CI ejecuta el repo; el juez mide el comportamiento de la skill.</li><li>No se ejecuta en cada commit.</li><li>No convierte una media alta en una aprobación humana.</li></ul></div>
+      </div>
+      <div class="code-wrap"><button class="copy" data-copy="#evalcmd">Copiar</button><pre id="evalcmd">python3 evals/harness.py \
+  --case-dir evals/cases/dev-verify/01-fix-failing-test \
+  --rubric evals/rubric.dev-verify.json \
+  --agent opencode --model &lt;modelo-aprobado&gt; \
+  --judge-agent opencode --judge-model &lt;modelo-aprobado-distinto&gt; \
+  --k 3
+
+# validar el caso sin gastar modelo
+python3 evals/harness.py \
+  --case-dir evals/cases/dev-verify/01-fix-failing-test \
+  --rubric evals/rubric.dev-verify.json --dry-run</pre></div>
+      <div class="note"><b>Qué mirar:</b> el <code>score.json</code> con la media, el umbral, el juez y las razones. Un timeout o un error del ejecutor no es una nota baja: es una evaluación inválida. Una corrida aislada no demuestra una skill; el K y las razones sí.</div>
+    </section>
+
+    <section id="agentes">
+      <div class="head"><div><div class="kicker">05 · Agentes</div><h2>Una fuente, varios clientes.</h2></div><div class="num">05</div></div>
+      <p>OpenCode, Claude Code, Codex, pi y Hermes no tienen que usar el mismo formato. El kit mantiene una fuente neutral y genera los adaptadores que cada uno lee. Cambiar de agente no cambia el contrato.</p>
+      <div class="grid2">
+        <div class="card"><h3>Lo neutral</h3><ul><li><code>AGENTS.md</code>, <code>skills/</code>, <code>commands/</code>, <code>agents/</code>.</li><li>El juez y el runner neutral.</li><li>La puerta son comandos de shell y Python.</li></ul></div>
+        <div class="card"><h3>Lo generado</h3><ul><li><code>.claude/</code>, <code>.opencode/</code> y las copias globales.</li><li>No se editan: se regeneran desde la fuente.</li><li><code>dev-agent roles</code> genera un agente por rol desde <code>roles.json</code>; está en rama local.</li></ul></div>
+      </div>
+      <div class="note"><b>Roles:</b> el perfil <code>team</code> separa plan, dev, review, verify y judge. La revisión y la verificación trabajan sobre una copia y demuestran que el árbol no cambió; el juez no se puntúa a sí mismo. No está en <code>main</code>: se explica como propuesta hasta integrarlo.</div>
+    </section>
+
+    <section id="flujo">
+      <div class="head"><div><div class="kicker">06 · El flujo</div><h2>Qué se ejecuta y cuándo.</h2></div><div class="num">06</div></div>
+      <div class="grid3">
+        <div class="card"><h3>Cambio normal</h3><p>Skill → guard → verify → E2E si hay UI → revisión humana. GGA es la segunda revisión del diff. El juez no entra aquí.</p></div>
+        <div class="card"><h3>Cambio de skill</h3><p>Se escribe o modifica la skill, se ejecuta el caso con <code>--dry-run</code>, luego K=3 con juez separado. Se compara con el baseline.</p></div>
+        <div class="card"><h3>Entrega</h3><p>El hook local y el CI son compuertas; el push, el merge y el release son humanos. La evidencia es el summary, el informe E2E y el veredicto.</p></div>
+      </div>
+      <div class="code-wrap"><button class="copy" data-copy="#daily2">Copiar</button><pre id="daily2">dev-agent guard
+dev-agent verify
+dev-agent review-gga
+# solo si cambias una skill o su rubric
+python3 evals/harness.py \
+  --case-dir evals/cases/dev-verify/01-fix-failing-test \
+  --rubric evals/rubric.dev-verify.json --dry-run</pre></div>
+      <div class="note"><b>La frase que hay que poder decir:</b> “este cambio tiene un test, un E2E cuando aplica, un summary y un veredicto; lo que falta es esto”. Si no se puede nombrar el artefacto, todavía no está verificado.</div>
+    </section>
+
+    <section id="chuleta">
+      <div class="head"><div><div class="kicker">07 · Chuleta</div><h2>Comandos que se usan de verdad.</h2></div><div class="num">07</div></div>
+      <table class="table">
+        <thead><tr><th>Quiero…</th><th>Comando</th><th>Qué debo ver</th></tr></thead>
+        <tbody>
+          <tr><td>Ver qué está instalado</td><td><code>dev-agent doctor</code></td><td><code>ok</code>, <code>warn</code> o <code>FAIL</code>; un warn no es verde</td></tr>
+          <tr><td>Ver el perfil activo</td><td><code>dev-agent profile list</code></td><td><code>*</code> junto al perfil activo</td></tr>
+          <tr><td>Pasar la primera puerta</td><td><code>bash guard/guard.sh --staged</code></td><td>sin hallazgos; un <code>skipped</code> o un <code>passed</code> con checks skipped no es pass</td></tr>
+          <tr><td>Probar comportamiento</td><td><code>bash verify/run.sh</code></td><td><code>summary.json</code> y <code>e2e/</code></td></tr>
+          <tr><td>Revisión semántica</td><td><code>bash scripts/review-gga.sh . --blocking</code></td><td><code>STATUS: PASSED</code> o hallazgos</td></tr>
+          <tr><td>Validar una eval</td><td><code>python3 evals/harness.py --case-dir ... --rubric ... --dry-run</code></td><td>cero modelo, caso y rubric leídos</td></tr>
+        </tbody>
+      </table>
+      <div class="note"><b>No hacer:</b> no usar <code>--no-verify</code> como solución, no ejecutar <code>gga install</code>, no editar los adaptadores generados, no copiar configuración de otra máquina, no apuntar a producción.</div>
+    </section>
+
+    <section id="practica">
+      <div class="head"><div><div class="kicker">08 · Para practicar</div><h2>Tres ejercicios para comprobar que se entiende.</h2></div><div class="num">08</div></div>
+      <div class="grid3">
+        <div class="card"><h3>Leer una skill</h3><p>Abre <code>skills/repro-first/SKILL.md</code> y señala sus pasos, su salida y el fallo que evita. ¿Qué cambiarías si un bug se repite?</p></div>
+        <div class="card"><h3>Separar juez y GGA</h3><p>Explica en dos frases qué evalúa cada uno y por qué no se sustituyen. ¿Qué evidencia produce cada uno?</p></div>
+        <div class="card"><h3>Elegir perfil</h3><p>Un repo Odoo con vistas y XML, otro PHP sin checks cableados y un microservicio hexagonal. ¿Qué perfil activas en cada uno y qué queda pendiente?</p></div>
+      </div>
+      <div class="quiz">
+        <p><b>Pregunta de cierre:</b> si alguien dice “está hecho, lo he probado”, ¿qué tres artefactos le pides antes de aceptar el cambio?</p>
+        <p><b>Para el paso a paso:</b> abre <a href="guia-paso-a-paso.html">guía de instalación, CodeGraph y primera prueba</a>.</p>
+        <p><b>Referencias:</b> <a href="../REFERENCIAS-TECNOLOGIAS.html">tecnologías, URL oficial y versiones</a>.</p>
+      </div>
+      <div class="footer"><span><b>DevAgentKit</b> · guía del equipo</span><span>Sin secretos · sin datos de cliente · sin producción</span></div>
+    </section>
+  </main>
+</div>
+<a class="top-link" href="#mapa" aria-label="Volver al inicio">↑ Inicio</a>
+<script>
+  document.querySelectorAll('.copy').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const target = document.querySelector(button.dataset.copy);
+      if (!target) return;
+      try {
+        await navigator.clipboard.writeText(target.textContent);
+        const old = button.textContent;
+        button.textContent = 'Copiado';
+        setTimeout(() => { button.textContent = old; }, 1200);
+      } catch (error) {
+        button.textContent = 'Selecciona y copia';
+        setTimeout(() => { button.textContent = 'Copiar'; }, 1600);
+      }
+    });
+  });
+</script>
+</body>
+</html>
